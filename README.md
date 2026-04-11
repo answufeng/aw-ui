@@ -1,10 +1,8 @@
 # aw-ui
 
-Common UI component library for Android. Provides StateLayout, TitleBar, RecyclerView adapters, dialogs, animations, and custom layouts.
+Android 通用 UI 组件库，提供 StateLayout、TitleBar、RecyclerView 适配器、对话框、动画和自定义布局。
 
-## Installation
-
-Add the dependency in your module-level `build.gradle.kts`:
+## 引入
 
 ```kotlin
 dependencies {
@@ -12,29 +10,17 @@ dependencies {
 }
 ```
 
-Make sure you have the JitPack repository in your root `settings.gradle.kts`:
+## 功能特性
 
-```kotlin
-dependencyResolutionManagement {
-    repositories {
-        google()
-        mavenCentral()
-        maven("https://jitpack.io")
-    }
-}
-```
+- StateLayout：4 状态容器（内容/加载中/空/错误），支持懒加载和动画
+- TitleBar：通用标题栏，支持沉浸式
+- SimpleAdapter / MultiTypeAdapter：RecyclerView 适配器，内置 DiffUtil
+- BrickDialog / LoadingDialog：对话框工具
+- BrickAnim：视图动画扩展（fadeIn、fadeOut、slideIn、slideOut）
+- RoundLayout / FlowLayout / BadgeView：自定义布局
+- DividerDecoration：RecyclerView 分割线
 
-## Features
-
-- StateLayout: 4-state container (Content/Loading/Empty/Error) with lazy inflate and animation
-- TitleBar: Common toolbar with immersion support
-- SimpleAdapter / MultiTypeAdapter: RecyclerView adapters with DiffUtil
-- BrickDialog / LoadingDialog: Dialog utilities
-- BrickAnim: View animation extensions (fadeIn, fadeOut, slideIn, slideOut)
-- RoundLayout / FlowLayout / BadgeView: Custom layouts
-- DividerDecoration: RecyclerView divider
-
-## Usage
+## 使用示例
 
 ```kotlin
 // StateLayout
@@ -51,12 +37,12 @@ val adapter = SimpleAdapter(ItemBinding::inflate,
     }
 ) { binding, item, _ -> binding.tvName.text = item.name }
 
-// Animations
+// 动画
 view.fadeIn()
 view.fadeOut()
 view.slideInFromBottom()
 ```
 
-## License
+## 许可证
 
-Apache License 2.0. See [LICENSE](LICENSE) for details.
+Apache License 2.0，详见 [LICENSE](LICENSE)。
