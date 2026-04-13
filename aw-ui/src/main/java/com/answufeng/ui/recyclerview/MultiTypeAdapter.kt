@@ -15,6 +15,7 @@ import androidx.viewbinding.ViewBinding
  * ### 线程要求
  * [submitList] 和 [register] 必须在**主线程**调用（RecyclerView 适配器约束）。
  * [register] 应在 [submitList] 之前完成，否则可能出现未注册类型异常。
+ * DiffUtil 计算在主线程同步执行，大数据量场景建议使用 [SimpleAdapter]（基于 AsyncListDiffer）。
  *
  * ### 基本用法
  * ```kotlin

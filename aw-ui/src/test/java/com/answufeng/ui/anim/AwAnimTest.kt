@@ -13,7 +13,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28])
-class BrickAnimTest {
+class AwAnimTest {
 
     private lateinit var activity: Activity
     private lateinit var testView: View
@@ -153,6 +153,5 @@ class BrickAnimTest {
         var ended = false
         val anim = testView.fadeIn(onEnd = { ended = true })
         assertNotNull(anim)
-        // Callback wired up (not verifying execution in Robolectric)
     }
 }

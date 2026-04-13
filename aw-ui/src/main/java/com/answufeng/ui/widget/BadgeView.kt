@@ -28,7 +28,7 @@ import kotlin.math.min
  * ```xml
  * <FrameLayout ...>
  *     <ImageView ... />
- *     <com.ail.brick.ui.widget.BadgeView
+ *     <com.answufeng.ui.widget.BadgeView
  *         android:layout_width="wrap_content"
  *         android:layout_height="wrap_content"
  *         android:layout_gravity="end|top"
@@ -128,8 +128,13 @@ class BadgeView @JvmOverloads constructor(
 
     override fun onRestoreInstanceState(state: Parcelable?) {
         if (state is Bundle) {
-            @Suppress("DEPRECATION")
-            super.onRestoreInstanceState(state.getParcelable("superState"))
+            val superState: Parcelable? = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                state.getParcelable("superState", Parcelable::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                state.getParcelable("superState")
+            }
+            super.onRestoreInstanceState(superState)
             count = state.getInt("count", 0)
         } else {
             super.onRestoreInstanceState(state)

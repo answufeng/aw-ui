@@ -13,7 +13,7 @@ import org.robolectric.shadows.ShadowDialog
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28])
-class BrickDialogTest {
+class AwDialogTest {
 
     private lateinit var activity: AppCompatActivity
 
@@ -27,40 +27,35 @@ class BrickDialogTest {
 
     @Test
     fun `confirm shows a dialog`() {
-        BrickDialog.confirm(activity, "Title", "Message") {}
-        val dialog = ShadowDialog.getLatestDialog()
+        val dialog = AwDialog.confirm(activity, "Title", "Message") {}
         assertNotNull(dialog)
         assertTrue(dialog.isShowing)
     }
 
     @Test
     fun `alert shows a dialog`() {
-        BrickDialog.alert(activity, "Alert", "Content")
-        val dialog = ShadowDialog.getLatestDialog()
+        val dialog = AwDialog.alert(activity, "Alert", "Content")
         assertNotNull(dialog)
         assertTrue(dialog.isShowing)
     }
 
     @Test
     fun `input shows a dialog with text field`() {
-        BrickDialog.input(activity, "Input", hint = "Enter text") {}
-        val dialog = ShadowDialog.getLatestDialog()
+        val dialog = AwDialog.input(activity, "Input", hint = "Enter text") {}
         assertNotNull(dialog)
         assertTrue(dialog.isShowing)
     }
 
     @Test
     fun `list shows a dialog`() {
-        BrickDialog.list(activity, "Pick", listOf("A", "B", "C")) {}
-        val dialog = ShadowDialog.getLatestDialog()
+        val dialog = AwDialog.list(activity, "Pick", listOf("A", "B", "C")) {}
         assertNotNull(dialog)
         assertTrue(dialog.isShowing)
     }
 
     @Test
     fun `bottomList shows a dialog`() {
-        BrickDialog.bottomList(activity, "Choose", listOf("X", "Y")) {}
-        val dialog = ShadowDialog.getLatestDialog()
+        val dialog = AwDialog.bottomList(activity, "Choose", listOf("X", "Y")) {}
         assertNotNull(dialog)
         assertTrue(dialog.isShowing)
     }
@@ -68,8 +63,7 @@ class BrickDialogTest {
     @Test
     fun `custom with view shows a dialog`() {
         val view = TextView(activity).apply { text = "Custom" }
-        BrickDialog.custom(activity, title = "Custom", view = view)
-        val dialog = ShadowDialog.getLatestDialog()
+        val dialog = AwDialog.custom(activity, title = "Custom", view = view)
         assertNotNull(dialog)
         assertTrue(dialog.isShowing)
     }
@@ -77,7 +71,7 @@ class BrickDialogTest {
     @Test
     fun `confirm onConfirm callback fires`() {
         var confirmed = false
-        BrickDialog.confirm(activity, "T", "M") { confirmed = true }
+        AwDialog.confirm(activity, "T", "M") { confirmed = true }
         val dialog = ShadowDialog.getLatestDialog() as? androidx.appcompat.app.AlertDialog
         assertNotNull("Dialog should be AlertDialog", dialog)
         org.robolectric.shadows.ShadowLooper.idleMainLooper()
@@ -91,7 +85,7 @@ class BrickDialogTest {
     @Test
     fun `confirm onCancel callback fires`() {
         var cancelled = false
-        BrickDialog.confirm(activity, "T", "M", onCancel = { cancelled = true }) {}
+        AwDialog.confirm(activity, "T", "M", onCancel = { cancelled = true }) {}
         val dialog = ShadowDialog.getLatestDialog() as? androidx.appcompat.app.AlertDialog
         assertNotNull("Dialog should be AlertDialog", dialog)
         org.robolectric.shadows.ShadowLooper.idleMainLooper()
@@ -100,5 +94,17 @@ class BrickDialogTest {
         button.performClick()
         org.robolectric.shadows.ShadowLooper.idleMainLooper()
         assertTrue(cancelled)
+    }
+
+    @Test
+    fun `confirm returns dialog instance`() {
+        val dialog = AwDialog.confirm(activity, "T", "M") {}
+        assertNotNull(dialog)
+    }
+
+    @Test
+    fun `alert returns dialog instance`() {
+        val dialog = AwDialog.alert(activity, "T", "M")
+        assertNotNull(dialog)
     }
 }

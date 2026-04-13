@@ -42,6 +42,10 @@ import androidx.viewbinding.ViewBinding
  * - **NO_MORE**：已加载全部数据
  * - **FAILED**：加载失败，点击可重试
  *
+ * ### 注意
+ * - 滚动检测仅支持 [LinearLayoutManager]，其他 LayoutManager 不会自动触发加载
+ * - 所有方法必须在主线程调用
+ *
  * @param VB   ViewBinding 类型
  * @param T    数据类型
  * @param inflate       ViewBinding 的 inflate 函数引用
@@ -60,7 +64,7 @@ class LoadMoreAdapter<VB : ViewBinding, T>(
     }
 
     private val dataList = mutableListOf<T>()
-    @Volatile private var loadState = LoadState.IDLE
+    private var loadState = LoadState.IDLE
     private var onLoadMore: (() -> Unit)? = null
     private var onItemClick: ((T, Int) -> Unit)? = null
     private var onItemLongClick: ((T, Int) -> Boolean)? = null
@@ -180,36 +184,47 @@ class LoadMoreAdapter<VB : ViewBinding, T>(
      * @param list 新增数据
      */
     fun loadMore(list: List<T>) {
+        val hadFooter = showFooter()
         val start = dataList.size
         dataList.addAll(list)
         loadState = LoadState.IDLE
-        notifyItemRangeInserted(start, list.size)
-        // 更新 footer
-        if (showFooter()) notifyItemChanged(dataList.size)
+        if (hadFooter && !showFooter()) {
+            notifyDataSetChanged()
+        } else {
+            notifyItemRangeInserted(start, list.size)
+            if (showFooter()) notifyItemChanged(dataList.size)
+        }
     }
 
     /**
      * 标记为没有更多数据。
      */
     fun noMore() {
+        val hadFooter = showFooter()
         loadState = LoadState.NO_MORE
-        notifyItemChanged(dataList.size)
+        if (hadFooter) notifyItemChanged(dataList.size)
+        else notifyItemInserted(dataList.size)
     }
 
     /**
      * 标记加载失败（用户可点击 footer 重试）。
      */
     fun loadFailed() {
+        val hadFooter = showFooter()
         loadState = LoadState.FAILED
-        notifyItemChanged(dataList.size)
+        if (hadFooter) notifyItemChanged(dataList.size)
+        else notifyItemInserted(dataList.size)
     }
 
     /**
      * 重置加载状态为 IDLE。
      */
     fun resetLoadState() {
+        val hadFooter = showFooter()
         loadState = LoadState.IDLE
-        notifyDataSetChanged()
+        if (hadFooter && !showFooter()) {
+            notifyItemRemoved(dataList.size)
+        }
     }
 
     /**
@@ -240,7 +255,7 @@ class LoadMoreAdapter<VB : ViewBinding, T>(
         onItemLongClick = listener
     }
 
-    private fun showFooter(): Boolean = loadState != LoadState.IDLE || dataList.isNotEmpty()
+    private fun showFooter(): Boolean = loadState != LoadState.IDLE
 
     // ==================== ViewHolder ====================
 

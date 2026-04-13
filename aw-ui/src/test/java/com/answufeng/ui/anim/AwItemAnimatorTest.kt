@@ -13,7 +13,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28])
-class BrickItemAnimatorTest {
+class AwItemAnimatorTest {
 
     private lateinit var activity: Activity
     private lateinit var itemView: View
@@ -34,38 +34,38 @@ class BrickItemAnimatorTest {
 
     @Test
     fun `animateItem FADE_SLIDE_UP does not crash`() {
-        BrickItemAnimator.animateItem(itemView, 0, BrickItemAnimator.AnimType.FADE_SLIDE_UP)
+        AwItemAnimator.animateItem(itemView, 0, AwItemAnimator.AnimType.FADE_SLIDE_UP)
     }
 
     @Test
     fun `animateItem FADE_SLIDE_LEFT does not crash`() {
-        BrickItemAnimator.animateItem(itemView, 1, BrickItemAnimator.AnimType.FADE_SLIDE_LEFT)
+        AwItemAnimator.animateItem(itemView, 1, AwItemAnimator.AnimType.FADE_SLIDE_LEFT)
     }
 
     @Test
     fun `animateItem FADE_SLIDE_RIGHT does not crash`() {
-        BrickItemAnimator.animateItem(itemView, 2, BrickItemAnimator.AnimType.FADE_SLIDE_RIGHT)
+        AwItemAnimator.animateItem(itemView, 2, AwItemAnimator.AnimType.FADE_SLIDE_RIGHT)
     }
 
     @Test
     fun `animateItem FADE_IN does not crash`() {
-        BrickItemAnimator.animateItem(itemView, 0, BrickItemAnimator.AnimType.FADE_IN)
+        AwItemAnimator.animateItem(itemView, 0, AwItemAnimator.AnimType.FADE_IN)
     }
 
     @Test
     fun `animateItem SCALE_IN does not crash`() {
-        BrickItemAnimator.animateItem(itemView, 0, BrickItemAnimator.AnimType.SCALE_IN)
+        AwItemAnimator.animateItem(itemView, 0, AwItemAnimator.AnimType.SCALE_IN)
     }
 
     @Test
     fun `custom duration and delay`() {
-        BrickItemAnimator.animateItem(itemView, 3, duration = 500L, delayPerItem = 100L)
+        AwItemAnimator.animateItem(itemView, 3, duration = 500L, delayPerItem = 100L)
     }
 
     @Test
     fun `resetItem restores default state`() {
-        BrickItemAnimator.animateItem(itemView, 0, BrickItemAnimator.AnimType.SCALE_IN)
-        BrickItemAnimator.resetItem(itemView)
+        AwItemAnimator.animateItem(itemView, 0, AwItemAnimator.AnimType.SCALE_IN)
+        AwItemAnimator.resetItem(itemView)
         assertEquals(1f, itemView.alpha)
         assertEquals(0f, itemView.translationX)
         assertEquals(0f, itemView.translationY)
@@ -75,9 +75,15 @@ class BrickItemAnimatorTest {
 
     @Test
     fun `all AnimType values are handled`() {
-        for (type in BrickItemAnimator.AnimType.values()) {
-            BrickItemAnimator.animateItem(itemView, 0, type)
-            BrickItemAnimator.resetItem(itemView)
+        for (type in AwItemAnimator.AnimType.entries) {
+            AwItemAnimator.animateItem(itemView, 0, type)
+            AwItemAnimator.resetItem(itemView)
         }
+    }
+
+    @Test
+    fun `delay is capped at MAX_DELAY`() {
+        AwItemAnimator.animateItem(itemView, 100, delayPerItem = 100L)
+        AwItemAnimator.resetItem(itemView)
     }
 }

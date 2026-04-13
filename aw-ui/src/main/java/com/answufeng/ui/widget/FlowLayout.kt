@@ -17,14 +17,14 @@ import kotlin.math.max
  *
  * ### XML 用法
  * ```xml
- * <com.ail.brick.ui.widget.FlowLayout
+ * <com.answufeng.ui.widget.FlowLayout
  *     android:layout_width="match_parent"
  *     android:layout_height="wrap_content"
  *     app:flow_maxLines="3"
  *     app:flow_gravity="center">
  *     <TextView ... />
  *     <TextView ... />
- * </com.ail.brick.ui.widget.FlowLayout>
+ * </com.answufeng.ui.widget.FlowLayout>
  * ```
  *
  * | XML 属性 | 说明 | 默认值 |

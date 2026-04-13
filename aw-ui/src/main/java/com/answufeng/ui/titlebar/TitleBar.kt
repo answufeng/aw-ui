@@ -26,7 +26,7 @@ import com.google.android.material.color.MaterialColors
  *
  * ### XML 用法
  * ```xml
- * <com.ail.brick.ui.titlebar.TitleBar
+ * <com.answufeng.ui.titlebar.TitleBar
  *     android:id="@+id/titleBar"
  *     android:layout_width="match_parent"
  *     android:layout_height="wrap_content"

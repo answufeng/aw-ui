@@ -1,2 +1,2 @@
-# brick-ui ProGuard rules (release build)
+# aw-ui ProGuard rules (release build)
 # Consumer-facing rules are in consumer-rules.pro

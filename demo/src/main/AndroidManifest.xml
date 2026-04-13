@@ -5,7 +5,7 @@
         android:label="aw-ui Demo"
         android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar">
         <activity
-            android:name=".com.answufeng.ui.demo.MainActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

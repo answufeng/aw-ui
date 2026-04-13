@@ -18,7 +18,7 @@ import com.answufeng.ui.R
  *
  * ### XML 用法
  * ```xml
- * <com.ail.brick.ui.statelayout.StateLayout
+ * <com.answufeng.ui.statelayout.StateLayout
  *     android:id="@+id/stateLayout"
  *     android:layout_width="match_parent"
  *     android:layout_height="match_parent"
@@ -29,7 +29,7 @@ import com.answufeng.ui.R
  *
  *     <!-- 第一个子 View 被用作内容视图 -->
  *     <RecyclerView ... />
- * </com.ail.brick.ui.statelayout.StateLayout>
+ * </com.answufeng.ui.statelayout.StateLayout>
  * ```
  *
  * ### 代码切换状态
@@ -59,7 +59,6 @@ class StateLayout @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     /** 当前页面状态 */
-    @Volatile
     var currentState: State = State.CONTENT
         private set
 
@@ -83,9 +82,9 @@ class StateLayout @JvmOverloads constructor(
     private var errorView: View? = null
     private var stateChangeListener: OnStateChangeListener? = null
 
-    @LayoutRes private var loadingLayoutRes: Int = R.layout.brick_state_loading
-    @LayoutRes private var emptyLayoutRes: Int = R.layout.brick_state_empty
-    @LayoutRes private var errorLayoutRes: Int = R.layout.brick_state_error
+    @LayoutRes private var loadingLayoutRes: Int = R.layout.aw_state_loading
+    @LayoutRes private var emptyLayoutRes: Int = R.layout.aw_state_empty
+    @LayoutRes private var errorLayoutRes: Int = R.layout.aw_state_error
 
     private var onRetryListener: (() -> Unit)? = null
 
@@ -97,9 +96,9 @@ class StateLayout @JvmOverloads constructor(
 
     init {
         val ta = context.obtainStyledAttributes(attrs, R.styleable.StateLayout)
-        loadingLayoutRes = ta.getResourceId(R.styleable.StateLayout_loadingLayout, R.layout.brick_state_loading)
-        emptyLayoutRes = ta.getResourceId(R.styleable.StateLayout_emptyLayout, R.layout.brick_state_empty)
-        errorLayoutRes = ta.getResourceId(R.styleable.StateLayout_errorLayout, R.layout.brick_state_error)
+        loadingLayoutRes = ta.getResourceId(R.styleable.StateLayout_loadingLayout, R.layout.aw_state_loading)
+        emptyLayoutRes = ta.getResourceId(R.styleable.StateLayout_emptyLayout, R.layout.aw_state_empty)
+        errorLayoutRes = ta.getResourceId(R.styleable.StateLayout_errorLayout, R.layout.aw_state_error)
         enableAnimation = ta.getBoolean(R.styleable.StateLayout_enableAnimation, true)
         animationDuration = ta.getInt(R.styleable.StateLayout_animationDuration, 200).toLong()
         ta.recycle()
@@ -121,8 +120,13 @@ class StateLayout @JvmOverloads constructor(
 
     override fun onRestoreInstanceState(state: Parcelable?) {
         if (state is Bundle) {
-            @Suppress("DEPRECATION")
-            super.onRestoreInstanceState(state.getParcelable("superState"))
+            val superState: Parcelable? = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                state.getParcelable("superState", Parcelable::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                state.getParcelable("superState")
+            }
+            super.onRestoreInstanceState(superState)
             val saved = state.getString("state", State.CONTENT.name)
             val restoredState = try { State.valueOf(saved) } catch (_: Exception) { State.CONTENT }
             if (restoredState != currentState) {
@@ -184,13 +188,22 @@ class StateLayout @JvmOverloads constructor(
     }
 
     /** 直接设置加载中视图实例 */
-    fun setLoadingView(view: View) { loadingView = view }
+    fun setLoadingView(view: View) {
+        loadingView?.let { removeView(it) }
+        loadingView = view
+    }
 
     /** 直接设置空数据视图实例 */
-    fun setEmptyView(view: View) { emptyView = view }
+    fun setEmptyView(view: View) {
+        emptyView?.let { removeView(it) }
+        emptyView = view
+    }
 
     /** 直接设置错误视图实例 */
-    fun setErrorView(view: View) { errorView = view }
+    fun setErrorView(view: View) {
+        errorView?.let { removeView(it) }
+        errorView = view
+    }
 
     /**
      * 设置状态变更监听器。
@@ -219,31 +232,25 @@ class StateLayout @JvmOverloads constructor(
         showOrHide(state, State.ERROR) { ensureErrorView() }
     }
 
-    /**
-     * 直接控制 contentView 可见性（带动画）
-     */
     private fun showOrHide(view: View?, show: Boolean) {
         view ?: return
         if (show) {
             if (view.visibility != VISIBLE) {
                 view.visibility = VISIBLE
-                if (enableAnimation) view.fadeIn()
+                if (enableAnimation) view.fadeInInternal()
             }
         } else {
             view.visibility = GONE
         }
     }
 
-    /**
-     * 状态视图的显示/隐藏控制（带懒加载+动画）
-     */
     private inline fun showOrHide(current: State, target: State, create: () -> View?) {
         if (current == target) {
             val view = create() ?: return
             if (view.parent == null) addView(view)
             if (view.visibility != VISIBLE) {
                 view.visibility = VISIBLE
-                if (enableAnimation) view.fadeIn()
+                if (enableAnimation) view.fadeInInternal()
             }
         } else {
             when (target) {
@@ -265,8 +272,7 @@ class StateLayout @JvmOverloads constructor(
         announceForAccessibility(message)
     }
 
-    /** 淡入动画（使用 ViewPropertyAnimator） */
-    private fun View.fadeIn() {
+    private fun View.fadeInInternal() {
         alpha = 0f
         animate()
             .alpha(1f)

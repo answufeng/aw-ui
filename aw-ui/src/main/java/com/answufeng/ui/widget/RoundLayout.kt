@@ -19,14 +19,14 @@ import com.answufeng.ui.R
  *
  * ### XML 用法
  * ```xml
- * <com.ail.brick.ui.widget.RoundLayout
+ * <com.answufeng.ui.widget.RoundLayout
  *     android:layout_width="match_parent"
  *     android:layout_height="wrap_content"
  *     app:round_radius="12dp"
  *     app:round_strokeColor="#FF0000"
  *     app:round_strokeWidth="1dp">
  *     <!-- 子视图将被圆角裁切 -->
- * </com.ail.brick.ui.widget.RoundLayout>
+ * </com.answufeng.ui.widget.RoundLayout>
  * ```
  *
  * | XML 属性 | 说明 | 默认值 |

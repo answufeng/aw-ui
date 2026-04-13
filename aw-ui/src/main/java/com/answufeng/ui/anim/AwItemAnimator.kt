@@ -1,30 +1,34 @@
 package com.answufeng.ui.anim
 
-import android.animation.Animator
-import android.animation.ObjectAnimator
 import android.view.View
 import android.view.animation.DecelerateInterpolator
-import androidx.recyclerview.widget.RecyclerView
 
 /**
  * RecyclerView Item 入场动画工具。
  *
  * ### 用法
  * ```kotlin
- * recyclerView.itemAnimator = BrickItemAnimator.fadeSlideUp()
- * // 或手动在 onBindViewHolder 中调用
- * BrickItemAnimator.animateItem(holder.itemView, position)
+ * // 在 onBindViewHolder 中调用
+ * AwItemAnimator.animateItem(holder.itemView, position)
  * ```
  *
  * ### 在 Adapter 中使用
  * ```kotlin
  * override fun onBindViewHolder(holder: ViewHolder, position: Int) {
  *     bind(holder, getItem(position))
- *     BrickItemAnimator.animateItem(holder.itemView, position)
+ *     AwItemAnimator.animateItem(holder.itemView, position)
+ * }
+ * ```
+ *
+ * ### 重置动画状态（防止复用问题）
+ * ```kotlin
+ * override fun onViewRecycled(holder: ViewHolder) {
+ *     super.onViewRecycled(holder)
+ *     AwItemAnimator.resetItem(holder.itemView)
  * }
  * ```
  */
-object BrickItemAnimator {
+object AwItemAnimator {
 
     /**
      * Item 入场类型。
@@ -42,10 +46,13 @@ object BrickItemAnimator {
         SCALE_IN
     }
 
+    private const val MAX_DELAY = 500L
+
     /**
      * 为 item View 执行入场动画。
      *
      * 每个 item 会根据 [position] 产生递增延迟，营造逐个出现的效果。
+     * 总延迟上限为 [MAX_DELAY]，避免列表深处 item 等待过久。
      *
      * @param itemView      RecyclerView 的 item 视图
      * @param position      adapter position
@@ -60,7 +67,9 @@ object BrickItemAnimator {
         duration: Long = 300L,
         delayPerItem: Long = 50L
     ) {
-        val delay = position * delayPerItem
+        val delay = minOf(position * delayPerItem, MAX_DELAY)
+
+        itemView.animate().cancel()
 
         when (type) {
             AnimType.FADE_SLIDE_UP -> {
