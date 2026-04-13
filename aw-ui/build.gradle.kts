@@ -58,4 +58,4 @@ dependencies {
     androidTestImplementation(libs.androidx.test.ext.junit)
 }
 
-apply(from = "${rootDir}/gradle/publish.gradle")
+apply(from = "${rootDir}/gradle/publish.gradle.kts")

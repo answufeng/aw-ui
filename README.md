@@ -1,5 +1,7 @@
 # aw-ui
 
+[![](https://jitpack.io/v/answufeng/aw-ui.svg)](https://jitpack.io/#answufeng/aw-ui)
+
 Android 通用 UI 组件库，提供 StateLayout、TitleBar、RecyclerView 适配器、对话框、动画和自定义布局。
 
 ## 引入
