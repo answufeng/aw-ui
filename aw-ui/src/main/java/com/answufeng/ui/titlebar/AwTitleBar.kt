@@ -27,7 +27,7 @@ import com.google.android.material.color.MaterialColors
  *
  * ### XML 用法
  * ```xml
- * <com.answufeng.ui.titlebar.TitleBar
+ * <com.answufeng.ui.titlebar.AwTitleBar
  *     android:id="@+id/titleBar"
  *     android:layout_width="match_parent"
  *     android:layout_height="wrap_content"
@@ -58,7 +58,7 @@ import com.google.android.material.color.MaterialColors
  * | `titleBar_bgColor` | 背景颜色（默认白色） |
  * | `titleBar_immersive` | 是否适配沉浸式状态栏（默认 false） |
  */
-class TitleBar @JvmOverloads constructor(
+class AwTitleBar @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

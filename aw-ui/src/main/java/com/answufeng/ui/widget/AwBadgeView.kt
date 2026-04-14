@@ -28,7 +28,7 @@ import kotlin.math.min
  * ```xml
  * <FrameLayout ...>
  *     <ImageView ... />
- *     <com.answufeng.ui.widget.BadgeView
+ *     <com.answufeng.ui.widget.AwBadgeView
  *         android:layout_width="wrap_content"
  *         android:layout_height="wrap_content"
  *         android:layout_gravity="end|top"
@@ -53,11 +53,11 @@ import kotlin.math.min
  * | `badge_textColor` | 文字颜色 | 白色 |
  * | `badge_textSize` | 文字大小 | 10sp |
  */
-class BadgeView @JvmOverloads constructor(
+class AwBadgeView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : View(context, attrs, defStyleAttr) {
+) : AppCompatTextView(context, attrs, defStyleAttr) {
 
     private val bgPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG)

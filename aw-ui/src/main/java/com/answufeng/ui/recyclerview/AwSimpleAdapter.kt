@@ -21,7 +21,7 @@ import androidx.viewbinding.ViewBinding
  *
  * ### 基本用法
  * ```kotlin
- * val adapter = SimpleAdapter<ItemUserBinding, User>(
+ * val adapter = AwSimpleAdapter<ItemUserBinding, User>(
  *     inflate = ItemUserBinding::inflate,
  *     diffCallback = object : DiffUtil.ItemCallback<User>() {
  *         override fun areItemsTheSame(old: User, new: User) = old.id == new.id
@@ -38,7 +38,7 @@ import androidx.viewbinding.ViewBinding
  *
  * ### Payload 局部更新
  * ```kotlin
- * val adapter = SimpleAdapter<ItemUserBinding, User>(
+ * val adapter = AwSimpleAdapter<ItemUserBinding, User>(
  *     inflate = ItemUserBinding::inflate,
  *     diffCallback = userDiffCallback,
  *     bind = { binding, item, _ -> bindFull(binding, item) },
@@ -62,12 +62,12 @@ import androidx.viewbinding.ViewBinding
  * @param bind              数据绑定回调 (binding, item, position)
  * @param bindWithPayload   局部更新绑定回调（可选），用于 DiffUtil payload 场景
  */
-class SimpleAdapter<VB : ViewBinding, T>(
-    private val inflate: (LayoutInflater, ViewGroup, Boolean) -> VB,
-    diffCallback: DiffUtil.ItemCallback<T>,
+class AwSimpleAdapter<VB : ViewBinding, T>(
+    private val inflate: (LayoutInflater, ViewGroup?, Boolean) -> VB,
+    private val diffCallback: DiffUtil.ItemCallback<T>,
     private val bind: (VB, T, Int) -> Unit,
     private val bindWithPayload: ((VB, T, Int, List<Any>) -> Unit)? = null
-) : ListAdapter<T, SimpleAdapter.BindingViewHolder<VB>>(diffCallback) {
+) : ListAdapter<T, AwSimpleAdapter<VB, T>.ViewHolder>(diffCallback) {
 
     private var onItemClick: ((T, Int) -> Unit)? = null
     private var onItemLongClick: ((T, Int) -> Boolean)? = null

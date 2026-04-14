@@ -21,7 +21,7 @@ import com.google.android.material.color.MaterialColors
  *
  * ### 基本用法
  * ```kotlin
- * val adapter = LoadMoreAdapter<ItemBinding, Article>(
+ * val adapter = AwLoadMoreAdapter<ItemBinding, Article>(
  *     inflate = ItemBinding::inflate,
  *     diffCallback = object : DiffUtil.ItemCallback<Article>() {
  *         override fun areItemsTheSame(old: Article, new: Article) = old.id == new.id
@@ -55,7 +55,7 @@ import com.google.android.material.color.MaterialColors
  * @param diffCallback  DiffUtil 比较回调
  * @param bind          数据绑定回调 (binding, item, position)
  */
-class LoadMoreAdapter<VB : ViewBinding, T>(
+class AwLoadMoreAdapter<VB : ViewBinding, T>(
     private val inflate: (LayoutInflater, ViewGroup, Boolean) -> VB,
     diffCallback: DiffUtil.ItemCallback<T>,
     private val bind: (VB, T, Int) -> Unit

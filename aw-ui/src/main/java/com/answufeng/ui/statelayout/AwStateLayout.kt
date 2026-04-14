@@ -99,7 +99,7 @@ fun interface StateTransition {
  *
  * ### XML 用法
  * ```xml
- * <com.answufeng.ui.statelayout.StateLayout
+ * <com.answufeng.ui.statelayout.AwStateLayout
  *     android:id="@+id/stateLayout"
  *     android:layout_width="match_parent"
  *     android:layout_height="match_parent"
@@ -110,7 +110,7 @@ fun interface StateTransition {
  *
  *     <!-- 第一个子 View 被用作内容视图 -->
  *     <RecyclerView ... />
- * </com.answufeng.ui.statelayout.StateLayout>
+ * </com.answufeng.ui.statelayout.AwStateLayout>
  * ```
  *
  * ### 代码切换状态
@@ -135,7 +135,7 @@ fun interface StateTransition {
  *
  * 状态视图使用懒加载策略——首次切换到某状态时才 inflate 对应布局。
  */
-class StateLayout @JvmOverloads constructor(
+class AwStateLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

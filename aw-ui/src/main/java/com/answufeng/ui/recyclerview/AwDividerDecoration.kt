@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
  *
  * ```kotlin
  * recyclerView.addItemDecoration(
- *     DividerDecoration(
+ *     AwDividerDecoration(
  *         height = 1.dp,
  *         color = Color.LTGRAY,
  *         paddingStart = 16.dp,
@@ -31,7 +31,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
  * @param paddingStart 左侧缩进（px）
  * @param paddingEnd   右侧缩进（px）
  */
-class DividerDecoration(
+class AwDividerDecoration(
     private val height: Int = 1,
     @ColorInt private val color: Int = 0xFFE0E0E0.toInt(),
     private val paddingStart: Int = 0,

@@ -29,7 +29,7 @@ internal data class TypeRegistration(
  *
  * ### 基本用法
  * ```kotlin
- * val adapter = MultiTypeAdapter(
+ * val adapter = AwMultiTypeAdapter(
  *     itemDiff = { old, new -> old.id == new.id },
  *     contentDiff = { old, new -> old == new }
  * )
@@ -72,10 +72,10 @@ internal data class TypeRegistration(
  * @param contentDiff 用于判断两个相同 item 的内容是否发生变化（如比较全部字段），
  *                    如未提供则退化为使用 [itemDiff] 判断
  */
-class MultiTypeAdapter(
+class AwMultiTypeAdapter(
     private val itemDiff: ((old: Any, new: Any) -> Boolean)? = null,
     private val contentDiff: ((old: Any, new: Any) -> Boolean)? = null
-) : RecyclerView.Adapter<MultiTypeAdapter.BindingHolder>() {
+) : RecyclerView.Adapter<AwMultiTypeAdapter.BindingHolder>() {
 
     @PublishedApi
     internal val registrations = mutableListOf<TypeRegistration>()
@@ -198,7 +198,7 @@ class MultiTypeAdapter(
  * }
  * ```
  */
-class MultiTypeAdapterBuilder {
+class AwMultiTypeAdapterBuilder {
     private var itemDiff: ((Any, Any) -> Boolean)? = null
     private var contentDiff: ((Any, Any) -> Boolean)? = null
 
@@ -241,18 +241,18 @@ class MultiTypeAdapterBuilder {
         ))
     }
 
-    fun build(): MultiTypeAdapter {
-        val adapter = MultiTypeAdapter(itemDiff, contentDiff)
+    fun build(): AwMultiTypeAdapter {
+        val adapter = AwMultiTypeAdapter(itemDiff, contentDiff)
         adapter.registrations.addAll(registrations)
         return adapter
     }
 }
 
 /**
- * 使用 DSL 构建 [MultiTypeAdapter]。
+ * 使用 DSL 构建 [AwMultiTypeAdapter]。
  *
- * @see MultiTypeAdapterBuilder
+ * @see AwMultiTypeAdapterBuilder
  */
-fun multiTypeAdapter(block: MultiTypeAdapterBuilder.() -> Unit): MultiTypeAdapter {
-    return MultiTypeAdapterBuilder().apply(block).build()
+fun awMultiTypeAdapter(block: AwMultiTypeAdapterBuilder.() -> Unit): AwMultiTypeAdapter {
+    return AwMultiTypeAdapterBuilder().apply(block).build()
 }
