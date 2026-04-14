@@ -4,15 +4,7 @@
 
 Android 通用 UI 组件库，提供 StateLayout、TitleBar、RecyclerView 适配器、对话框、动画和自定义布局。
 
-## 引入
-
-```kotlin
-dependencies {
-    implementation("com.github.answufeng:aw-ui:1.0.0")
-}
-```
-
-## 功能特性
+## 特性
 
 | 组件 | 说明 |
 |---|---|
@@ -29,6 +21,22 @@ dependencies {
 | FlowLayout | 流式布局（自动换行标签布局） |
 | BadgeView | 角标视图（红点 / 数字 Badge） |
 | DividerDecoration | RecyclerView 通用分割线 |
+
+## 引入
+
+```kotlin
+// settings.gradle.kts
+dependencyResolutionManagement {
+    repositories {
+        maven { url = uri("https://jitpack.io") }
+    }
+}
+
+// app/build.gradle.kts
+dependencies {
+    implementation("com.github.answufeng:aw-ui:1.0.0")
+}
+```
 
 ## 使用示例
 
