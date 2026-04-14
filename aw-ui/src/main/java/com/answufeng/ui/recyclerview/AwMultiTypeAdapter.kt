@@ -185,7 +185,7 @@ class AwMultiTypeAdapter(
 }
 
 /**
- * MultiTypeAdapter 的 DSL 构建器。
+ * AwMultiTypeAdapter 的 DSL 构建器。
  *
  * ```kotlin
  * val adapter = multiTypeAdapter {

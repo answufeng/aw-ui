@@ -136,17 +136,17 @@ class AwTitleBar @JvmOverloads constructor(
         rightContainer.addView(ivRight)
         addView(rightContainer)
 
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.TitleBar)
-        title = ta.getString(R.styleable.TitleBar_titleBar_title) ?: ""
-        val showBack = ta.getBoolean(R.styleable.TitleBar_titleBar_showBack, true)
-        val leftIcon = ta.getResourceId(R.styleable.TitleBar_titleBar_leftIcon, 0)
-        val rightText = ta.getString(R.styleable.TitleBar_titleBar_rightText)
-        val rightIcon = ta.getResourceId(R.styleable.TitleBar_titleBar_rightIcon, 0)
-        val titleColor = ta.getColor(R.styleable.TitleBar_titleBar_titleColor,
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.AwTitleBar)
+        title = ta.getString(R.styleable.AwTitleBar_titleBar_title) ?: ""
+        val showBack = ta.getBoolean(R.styleable.AwTitleBar_titleBar_showBack, true)
+        val leftIcon = ta.getResourceId(R.styleable.AwTitleBar_titleBar_leftIcon, 0)
+        val rightText = ta.getString(R.styleable.AwTitleBar_titleBar_rightText)
+        val rightIcon = ta.getResourceId(R.styleable.AwTitleBar_titleBar_rightIcon, 0)
+        val titleColor = ta.getColor(R.styleable.AwTitleBar_titleBar_titleColor,
             MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnSurface, Color.BLACK))
-        val bgColor = ta.getColor(R.styleable.TitleBar_titleBar_bgColor,
+        val bgColor = ta.getColor(R.styleable.AwTitleBar_titleBar_bgColor,
             MaterialColors.getColor(this, com.google.android.material.R.attr.colorSurface, Color.WHITE))
-        val immersive = ta.getBoolean(R.styleable.TitleBar_titleBar_immersive, false)
+        val immersive = ta.getBoolean(R.styleable.AwTitleBar_titleBar_immersive, false)
         ta.recycle()
 
         if (leftIcon != 0) ivBack.setImageResource(leftIcon)

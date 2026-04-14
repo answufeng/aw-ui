@@ -39,7 +39,7 @@ class AwDividerDecoration(
 ) : RecyclerView.ItemDecoration() {
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        this.color = this@DividerDecoration.color
+        this.color = this@AwDividerDecoration.color
         style = Paint.Style.FILL
     }
 

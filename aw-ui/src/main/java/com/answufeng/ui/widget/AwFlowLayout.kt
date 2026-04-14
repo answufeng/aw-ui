@@ -18,14 +18,14 @@ import kotlin.math.max
  *
  * ### XML 用法
  * ```xml
- * <com.answufeng.ui.widget.FlowLayout
+ * <com.answufeng.ui.widget.AwFlowLayout
  *     android:layout_width="match_parent"
  *     android:layout_height="wrap_content"
  *     app:flow_maxLines="3"
  *     app:flow_gravity="center">
  *     <TextView ... />
  *     <TextView ... />
- * </com.answufeng.ui.widget.FlowLayout>
+ * </com.answufeng.ui.widget.AwFlowLayout>
  * ```
  *
  * | XML 属性 | 说明 | 默认值 |
@@ -35,7 +35,7 @@ import kotlin.math.max
  * | `flow_maxLines` | 最大行数（0 = 不限制） | 0 |
  * | `flow_gravity` | 行内对齐方式（start/center/end） | start |
  */
-class FlowLayout @JvmOverloads constructor(
+class AwFlowLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -64,11 +64,11 @@ class FlowLayout @JvmOverloads constructor(
     private val lines = mutableListOf<LineInfo>()
 
     init {
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout)
-        horizontalSpacing = ta.getDimensionPixelSize(R.styleable.FlowLayout_flow_horizontalSpacing, defaultSpacing)
-        verticalSpacing = ta.getDimensionPixelSize(R.styleable.FlowLayout_flow_verticalSpacing, defaultSpacing)
-        maxLines = ta.getInt(R.styleable.FlowLayout_flow_maxLines, 0)
-        flowGravity = ta.getInt(R.styleable.FlowLayout_flow_gravity, Gravity.START)
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.AwFlowLayout)
+        horizontalSpacing = ta.getDimensionPixelSize(R.styleable.AwFlowLayout_flow_horizontalSpacing, defaultSpacing)
+        verticalSpacing = ta.getDimensionPixelSize(R.styleable.AwFlowLayout_flow_verticalSpacing, defaultSpacing)
+        maxLines = ta.getInt(R.styleable.AwFlowLayout_flow_maxLines, 0)
+        flowGravity = ta.getInt(R.styleable.AwFlowLayout_flow_gravity, Gravity.START)
         ta.recycle()
     }
 

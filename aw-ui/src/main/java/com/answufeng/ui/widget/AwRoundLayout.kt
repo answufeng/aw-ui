@@ -24,14 +24,14 @@ import com.answufeng.ui.R
  *
  * ### XML 用法
  * ```xml
- * <com.answufeng.ui.widget.RoundLayout
+ * <com.answufeng.ui.widget.AwRoundLayout
  *     android:layout_width="match_parent"
  *     android:layout_height="wrap_content"
  *     app:round_radius="12dp"
  *     app:round_strokeColor="#FF0000"
  *     app:round_strokeWidth="1dp">
  *     <!-- 子视图将被圆角裁切 -->
- * </com.answufeng.ui.widget.RoundLayout>
+ * </com.answufeng.ui.widget.AwRoundLayout>
  * ```
  *
  * | XML 属性 | 说明 | 默认值 |
@@ -44,7 +44,7 @@ import com.answufeng.ui.R
  * | `round_strokeColor` | 描边颜色 | 透明 |
  * | `round_strokeWidth` | 描边宽度 | 0 |
  */
-class RoundLayout @JvmOverloads constructor(
+class AwRoundLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -81,14 +81,14 @@ class RoundLayout @JvmOverloads constructor(
         }
 
     init {
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.RoundLayout)
-        val allRadius = ta.getDimension(R.styleable.RoundLayout_round_radius, 0f)
-        val tl = ta.getDimension(R.styleable.RoundLayout_round_topLeftRadius, allRadius)
-        val tr = ta.getDimension(R.styleable.RoundLayout_round_topRightRadius, allRadius)
-        val bl = ta.getDimension(R.styleable.RoundLayout_round_bottomLeftRadius, allRadius)
-        val br = ta.getDimension(R.styleable.RoundLayout_round_bottomRightRadius, allRadius)
-        strokeColor = ta.getColor(R.styleable.RoundLayout_round_strokeColor, Color.TRANSPARENT)
-        strokeWidth = ta.getDimension(R.styleable.RoundLayout_round_strokeWidth, 0f)
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.AwRoundLayout)
+        val allRadius = ta.getDimension(R.styleable.AwRoundLayout_round_radius, 0f)
+        val tl = ta.getDimension(R.styleable.AwRoundLayout_round_topLeftRadius, allRadius)
+        val tr = ta.getDimension(R.styleable.AwRoundLayout_round_topRightRadius, allRadius)
+        val bl = ta.getDimension(R.styleable.AwRoundLayout_round_bottomLeftRadius, allRadius)
+        val br = ta.getDimension(R.styleable.AwRoundLayout_round_bottomRightRadius, allRadius)
+        strokeColor = ta.getColor(R.styleable.AwRoundLayout_round_strokeColor, Color.TRANSPARENT)
+        strokeWidth = ta.getDimension(R.styleable.AwRoundLayout_round_strokeWidth, 0f)
         ta.recycle()
 
         setRadii(tl, tr, br, bl)

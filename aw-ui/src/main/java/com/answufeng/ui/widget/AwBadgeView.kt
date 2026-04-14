@@ -80,13 +80,13 @@ class AwBadgeView @JvmOverloads constructor(
         }
 
     init {
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.BadgeView)
-        count = ta.getInteger(R.styleable.BadgeView_badge_count, 0)
-        bgPaint.color = ta.getColor(R.styleable.BadgeView_badge_bgColor,
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.AwBadgeView)
+        count = ta.getInteger(R.styleable.AwBadgeView_badge_count, 0)
+        bgPaint.color = ta.getColor(R.styleable.AwBadgeView_badge_bgColor,
             MaterialColors.getColor(this, com.google.android.material.R.attr.colorError, Color.RED))
-        textPaint.color = ta.getColor(R.styleable.BadgeView_badge_textColor,
+        textPaint.color = ta.getColor(R.styleable.AwBadgeView_badge_textColor,
             MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnError, Color.WHITE))
-        textPaint.textSize = ta.getDimension(R.styleable.BadgeView_badge_textSize, 10f * resources.displayMetrics.density)
+        textPaint.textSize = ta.getDimension(R.styleable.AwBadgeView_badge_textSize, 10f * resources.displayMetrics.density)
         ta.recycle()
 
         textPaint.textAlign = Paint.Align.CENTER

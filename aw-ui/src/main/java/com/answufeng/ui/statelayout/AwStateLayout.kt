@@ -181,12 +181,12 @@ class AwStateLayout @JvmOverloads constructor(
     var transition: StateTransition = StateTransition.FADE
 
     init {
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.StateLayout)
-        loadingLayoutRes = ta.getResourceId(R.styleable.StateLayout_loadingLayout, R.layout.aw_state_loading)
-        emptyLayoutRes = ta.getResourceId(R.styleable.StateLayout_emptyLayout, R.layout.aw_state_empty)
-        errorLayoutRes = ta.getResourceId(R.styleable.StateLayout_errorLayout, R.layout.aw_state_error)
-        enableAnimation = ta.getBoolean(R.styleable.StateLayout_enableAnimation, true)
-        animationDuration = ta.getInt(R.styleable.StateLayout_animationDuration, 200).toLong()
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.AwStateLayout)
+        loadingLayoutRes = ta.getResourceId(R.styleable.AwStateLayout_loadingLayout, R.layout.aw_state_loading)
+        emptyLayoutRes = ta.getResourceId(R.styleable.AwStateLayout_emptyLayout, R.layout.aw_state_empty)
+        errorLayoutRes = ta.getResourceId(R.styleable.AwStateLayout_errorLayout, R.layout.aw_state_error)
+        enableAnimation = ta.getBoolean(R.styleable.AwStateLayout_enableAnimation, true)
+        animationDuration = ta.getInt(R.styleable.AwStateLayout_animationDuration, 200).toLong()
         ta.recycle()
     }
 
@@ -296,7 +296,7 @@ class AwStateLayout @JvmOverloads constructor(
      *
      * ```kotlin
      * stateLayout.setOnStateChangeListener { oldState, newState ->
-     *     Log.d("StateLayout", "$oldState -> $newState")
+     *     Log.d("AwStateLayout", "$oldState -> $newState")
      * }
      * ```
      *
