@@ -6,17 +6,30 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import org.robolectric.shadows.ShadowLooper
+
+/**
+ * Idle the main looper multiple times to ensure AsyncListDiffer
+ * has fully completed its diffing and dispatch operations.
+ */
+private fun idleMainLooperFully() {
+    repeat(5) {
+        ShadowLooper.idleMainLooper()
+    }
+}
 
 /**
  * SimpleAdapter / MultiTypeAdapter 的 Robolectric 测试。
@@ -33,6 +46,9 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28])
 class AdapterTest {
+
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var activity: Activity
     private lateinit var recyclerView: RecyclerView
@@ -66,6 +82,7 @@ class AdapterTest {
         )
         recyclerView.adapter = adapter
         adapter.submitList(listOf("A", "B", "C"))
+        idleMainLooperFully()
         assertEquals(3, adapter.itemCount)
     }
 
@@ -78,6 +95,7 @@ class AdapterTest {
         )
         recyclerView.adapter = adapter
         adapter.submitList(emptyList())
+        idleMainLooperFully()
         assertEquals(0, adapter.itemCount)
     }
 
@@ -111,6 +129,7 @@ class AdapterTest {
         }
         recyclerView.adapter = adapter
         adapter.submitList(listOf("X", "Y"))
+        idleMainLooperFully()
 
         // Force layout so ViewHolders are created
         recyclerView.measure(
@@ -134,13 +153,12 @@ class AdapterTest {
     @Test
     fun `MultiTypeAdapter registers types and reports itemCount`() {
         val adapter = MultiTypeAdapter()
-        adapter.register(TextItem::class,
-            create = { parent -> TestBinding(TextView(parent.context)) },
-            bind = { binding, item, _ ->
-                (binding as TestBinding).textView.text = (item as TextItem).text
-            }
+        adapter.register<TextItem, TestBinding>(
+            inflate = { _, parent, _ -> TestBinding(TextView(parent.context)) },
+            bind = { binding, item, _ -> binding.textView.text = item.text }
         )
         adapter.submitList(listOf(TextItem(1, "Hello"), TextItem(2, "World")))
+        idleMainLooperFully()
         assertEquals(2, adapter.itemCount)
     }
 
@@ -152,28 +170,33 @@ class AdapterTest {
             },
             contentDiff = { old, new -> old == new }
         )
-        adapter.register(TextItem::class,
-            create = { parent -> TestBinding(TextView(parent.context)) },
+        adapter.register<TextItem, TestBinding>(
+            inflate = { _, parent, _ -> TestBinding(TextView(parent.context)) },
             bind = { _, _, _ -> }
         )
         recyclerView.adapter = adapter
 
         adapter.submitList(listOf(TextItem(1, "A"), TextItem(2, "B")))
+        idleMainLooperFully()
         assertEquals(2, adapter.itemCount)
 
         adapter.submitList(listOf(TextItem(1, "A"), TextItem(2, "B"), TextItem(3, "C")))
+        idleMainLooperFully()
+        Thread.sleep(100)
+        idleMainLooperFully()
         assertEquals(3, adapter.itemCount)
     }
 
     @Test(expected = IllegalStateException::class)
     fun `MultiTypeAdapter throws for unregistered type`() {
         val adapter = MultiTypeAdapter()
-        adapter.register(TextItem::class,
-            create = { parent -> TestBinding(TextView(parent.context)) },
+        adapter.register<TextItem, TestBinding>(
+            inflate = { _, parent, _ -> TestBinding(TextView(parent.context)) },
             bind = { _, _, _ -> }
         )
         recyclerView.adapter = adapter
         adapter.submitList(listOf(NumberItem(1, 42)))
+        idleMainLooperFully()
         // Force getItemViewType
         adapter.getItemViewType(0)
     }
@@ -181,11 +204,12 @@ class AdapterTest {
     @Test
     fun `MultiTypeAdapter getItem returns correct item`() {
         val adapter = MultiTypeAdapter()
-        adapter.register(TextItem::class,
-            create = { parent -> TestBinding(TextView(parent.context)) },
+        adapter.register<TextItem, TestBinding>(
+            inflate = { _, parent, _ -> TestBinding(TextView(parent.context)) },
             bind = { _, _, _ -> }
         )
         adapter.submitList(listOf(TextItem(1, "Hello")))
+        idleMainLooperFully()
         assertEquals(TextItem(1, "Hello"), adapter.getItem(0))
     }
 
@@ -200,6 +224,7 @@ class AdapterTest {
             )
         }
         adapter.submitList(listOf(TextItem(1, "DSL")))
+        idleMainLooperFully()
         assertEquals(1, adapter.itemCount)
     }
 }

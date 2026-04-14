@@ -15,6 +15,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.answufeng.ui.R
 import com.google.android.material.color.MaterialColors
 
@@ -232,14 +233,12 @@ class TitleBar @JvmOverloads constructor(
     fun applyImmersivePadding() {
         if (immersivePaddingApplied) return
         immersivePaddingApplied = true
-        post {
-            val statusBarHeight = getStatusBarHeight()
-            setPadding(paddingLeft, paddingTop + statusBarHeight, paddingRight, paddingBottom)
+        ViewCompat.setOnApplyWindowInsetsListener(this) { v, insets ->
+            val statusBarInsets = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+            v.setPadding(v.paddingLeft, statusBarInsets.top, v.paddingRight, v.paddingBottom)
+            insets
         }
-    }
-
-    private fun getStatusBarHeight(): Int {
-        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
-        return if (resourceId > 0) resources.getDimensionPixelSize(resourceId) else 0
+        // 请求应用 WindowInsets
+        ViewCompat.requestApplyInsets(this)
     }
 }

@@ -13,6 +13,7 @@ import androidx.viewbinding.ViewBinding
  *
  * 内置 DiffUtil 差量更新，自动处理 item 点击与长按。
  * 支持设置空数据视图——当列表为空时自动显示 emptyView。
+ * 支持 Payload 局部更新——仅刷新 item 中变化的 View。
  *
  * ### 线程要求
  * [submitList] 必须在**主线程**调用（继承自 [ListAdapter] 约束），
@@ -35,6 +36,20 @@ import androidx.viewbinding.ViewBinding
  * adapter.submitList(userList)
  * ```
  *
+ * ### Payload 局部更新
+ * ```kotlin
+ * val adapter = SimpleAdapter<ItemUserBinding, User>(
+ *     inflate = ItemUserBinding::inflate,
+ *     diffCallback = userDiffCallback,
+ *     bind = { binding, item, _ -> bindFull(binding, item) },
+ *     bindWithPayload = { binding, item, _, payloads ->
+ *         payloads.forEach { payload ->
+ *             if (payload is String) binding.tvName.text = payload
+ *         }
+ *     }
+ * )
+ * ```
+ *
  * ### 空视图用法
  * ```kotlin
  * adapter.setEmptyView(emptyView)  // 列表为空时自动显示
@@ -42,14 +57,16 @@ import androidx.viewbinding.ViewBinding
  *
  * @param VB   ViewBinding 类型
  * @param T    数据类型
- * @param inflate       ViewBinding 的 inflate 函数引用
- * @param diffCallback  DiffUtil 比较回调
- * @param bind          数据绑定回调 (binding, item, position)
+ * @param inflate           ViewBinding 的 inflate 函数引用
+ * @param diffCallback      DiffUtil 比较回调
+ * @param bind              数据绑定回调 (binding, item, position)
+ * @param bindWithPayload   局部更新绑定回调（可选），用于 DiffUtil payload 场景
  */
 class SimpleAdapter<VB : ViewBinding, T>(
     private val inflate: (LayoutInflater, ViewGroup, Boolean) -> VB,
     diffCallback: DiffUtil.ItemCallback<T>,
-    private val bind: (VB, T, Int) -> Unit
+    private val bind: (VB, T, Int) -> Unit,
+    private val bindWithPayload: ((VB, T, Int, List<Any>) -> Unit)? = null
 ) : ListAdapter<T, SimpleAdapter.BindingViewHolder<VB>>(diffCallback) {
 
     private var onItemClick: ((T, Int) -> Unit)? = null
@@ -89,6 +106,14 @@ class SimpleAdapter<VB : ViewBinding, T>(
     override fun onBindViewHolder(holder: BindingViewHolder<VB>, position: Int) {
         val item = getItem(position)
         bind(holder.binding, item, position)
+    }
+
+    override fun onBindViewHolder(holder: BindingViewHolder<VB>, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isNotEmpty() && bindWithPayload != null) {
+            bindWithPayload(holder.binding, getItem(position), position, payloads)
+        } else {
+            super.onBindViewHolder(holder, position, payloads)
+        }
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {

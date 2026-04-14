@@ -34,27 +34,27 @@ class AwItemAnimatorTest {
 
     @Test
     fun `animateItem FADE_SLIDE_UP does not crash`() {
-        AwItemAnimator.animateItem(itemView, 0, AwItemAnimator.AnimType.FADE_SLIDE_UP)
+        AwItemAnimator.animateItem(itemView, 0, type = AwItemAnimator.AnimType.FADE_SLIDE_UP)
     }
 
     @Test
     fun `animateItem FADE_SLIDE_LEFT does not crash`() {
-        AwItemAnimator.animateItem(itemView, 1, AwItemAnimator.AnimType.FADE_SLIDE_LEFT)
+        AwItemAnimator.animateItem(itemView, 1, type = AwItemAnimator.AnimType.FADE_SLIDE_LEFT)
     }
 
     @Test
     fun `animateItem FADE_SLIDE_RIGHT does not crash`() {
-        AwItemAnimator.animateItem(itemView, 2, AwItemAnimator.AnimType.FADE_SLIDE_RIGHT)
+        AwItemAnimator.animateItem(itemView, 2, type = AwItemAnimator.AnimType.FADE_SLIDE_RIGHT)
     }
 
     @Test
     fun `animateItem FADE_IN does not crash`() {
-        AwItemAnimator.animateItem(itemView, 0, AwItemAnimator.AnimType.FADE_IN)
+        AwItemAnimator.animateItem(itemView, 0, type = AwItemAnimator.AnimType.FADE_IN)
     }
 
     @Test
     fun `animateItem SCALE_IN does not crash`() {
-        AwItemAnimator.animateItem(itemView, 0, AwItemAnimator.AnimType.SCALE_IN)
+        AwItemAnimator.animateItem(itemView, 0, type = AwItemAnimator.AnimType.SCALE_IN)
     }
 
     @Test
@@ -64,7 +64,7 @@ class AwItemAnimatorTest {
 
     @Test
     fun `resetItem restores default state`() {
-        AwItemAnimator.animateItem(itemView, 0, AwItemAnimator.AnimType.SCALE_IN)
+        AwItemAnimator.animateItem(itemView, 0, type = AwItemAnimator.AnimType.SCALE_IN)
         AwItemAnimator.resetItem(itemView)
         assertEquals(1f, itemView.alpha)
         assertEquals(0f, itemView.translationX)
@@ -76,7 +76,7 @@ class AwItemAnimatorTest {
     @Test
     fun `all AnimType values are handled`() {
         for (type in AwItemAnimator.AnimType.entries) {
-            AwItemAnimator.animateItem(itemView, 0, type)
+            AwItemAnimator.animateItem(itemView, 0, type = type)
             AwItemAnimator.resetItem(itemView)
         }
     }
@@ -84,6 +84,18 @@ class AwItemAnimatorTest {
     @Test
     fun `delay is capped at MAX_DELAY`() {
         AwItemAnimator.animateItem(itemView, 100, delayPerItem = 100L)
+        AwItemAnimator.resetItem(itemView)
+    }
+
+    @Test
+    fun `firstVisiblePosition reduces delay`() {
+        AwItemAnimator.animateItem(itemView, 100, firstVisiblePosition = 95, delayPerItem = 50L)
+        AwItemAnimator.resetItem(itemView)
+    }
+
+    @Test
+    fun `firstVisiblePosition zero is default`() {
+        AwItemAnimator.animateItem(itemView, 5, delayPerItem = 50L)
         AwItemAnimator.resetItem(itemView)
     }
 }

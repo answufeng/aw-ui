@@ -3,12 +3,17 @@ package com.answufeng.ui.widget
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Outline
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
+import android.os.Build
 import android.util.AttributeSet
+import android.view.View
+import android.view.ViewOutlineProvider
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
+import androidx.annotation.RequiresApi
 import com.answufeng.ui.R
 
 /**
@@ -50,6 +55,9 @@ class RoundLayout @JvmOverloads constructor(
     private val radii = FloatArray(8)
     private var pathDirty = true
 
+    /** 是否使用 ViewOutlineProvider 实现圆角裁切（统一圆角时为 true，独立圆角时回退为 false） */
+    private var useOutlineProvider = true
+
     private val strokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
     }
@@ -84,6 +92,18 @@ class RoundLayout @JvmOverloads constructor(
         ta.recycle()
 
         setRadii(tl, tr, br, bl)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            outlineProvider = object : ViewOutlineProvider() {
+                @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+                override fun getOutline(view: View, outline: Outline) {
+                    if (useOutlineProvider) {
+                        outline.setRoundRect(0, 0, view.width, view.height, radii[0])
+                    }
+                }
+            }
+            clipToOutline = true
+        }
     }
 
     /**
@@ -100,6 +120,11 @@ class RoundLayout @JvmOverloads constructor(
         radii[4] = bottomRight; radii[5] = bottomRight
         radii[6] = bottomLeft; radii[7] = bottomLeft
         pathDirty = true
+        // 检查是否所有圆角半径相同，若不同则回退到 clipPath 方式
+        useOutlineProvider = topLeft == topRight && topRight == bottomRight && bottomRight == bottomLeft
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            clipToOutline = useOutlineProvider
+        }
         invalidate()
     }
 
@@ -126,30 +151,47 @@ class RoundLayout @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         pathDirty = true
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            invalidateOutline()
+        } else {
+            invalidate()
+        }
     }
 
     override fun dispatchDraw(canvas: Canvas) {
-        if (pathDirty) {
-            clipPath.reset()
-            clipPath.addRoundRect(
-                RectF(0f, 0f, width.toFloat(), height.toFloat()),
-                radii,
-                Path.Direction.CW
-            )
-            pathDirty = false
-        }
-        canvas.save()
-        canvas.clipPath(clipPath)
-        super.dispatchDraw(canvas)
-        canvas.restore()
+        if (useOutlineProvider && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            super.dispatchDraw(canvas)
+            // 描边绘制在子 View 之上
+            if (strokeWidth > 0f && strokeColor != Color.TRANSPARENT) {
+                val half = strokeWidth / 2f
+                strokeRect.set(half, half, width - half, height - half)
+                strokePath.reset()
+                strokePath.addRoundRect(strokeRect, radii, Path.Direction.CW)
+                canvas.drawPath(strokePath, strokePaint)
+            }
+        } else {
+            if (pathDirty) {
+                clipPath.reset()
+                clipPath.addRoundRect(
+                    RectF(0f, 0f, width.toFloat(), height.toFloat()),
+                    radii,
+                    Path.Direction.CW
+                )
+                pathDirty = false
+            }
+            canvas.save()
+            canvas.clipPath(clipPath)
+            super.dispatchDraw(canvas)
+            canvas.restore()
 
-        // 描边绘制在子 View 之上，使用 Path 支持四角独立圆角
-        if (strokeWidth > 0f && strokeColor != Color.TRANSPARENT) {
-            val half = strokeWidth / 2f
-            strokeRect.set(half, half, width - half, height - half)
-            strokePath.reset()
-            strokePath.addRoundRect(strokeRect, radii, Path.Direction.CW)
-            canvas.drawPath(strokePath, strokePaint)
+            // 描边绘制在子 View 之上，使用 Path 支持四角独立圆角
+            if (strokeWidth > 0f && strokeColor != Color.TRANSPARENT) {
+                val half = strokeWidth / 2f
+                strokeRect.set(half, half, width - half, height - half)
+                strokePath.reset()
+                strokePath.addRoundRect(strokeRect, radii, Path.Direction.CW)
+                canvas.drawPath(strokePath, strokePaint)
+            }
         }
     }
 }

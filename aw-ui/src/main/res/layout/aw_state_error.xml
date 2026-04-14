@@ -18,14 +18,16 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="加载失败"
-        android:textColor="#999999"
+        android:textColor="@color/aw_state_text_color"
         android:textSize="14sp" />
 
     <Button
         android:id="@+id/btnRetry"
-        style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="点击重试" />
+        android:text="点击重试"
+        android:textColor="?android:attr/colorAccent"
+        android:background="?android:attr/selectableItemBackground"
+        android:minHeight="48dp" />
 </LinearLayout>

@@ -19,7 +19,6 @@ import java.lang.ref.WeakReference
  * 全局单例 Loading 对话框。
  *
  * 同一时刻最多显示一个实例，重复调用 [show] 会先关闭前一个。
- * 内部使用 [WeakReference] 持有 Dialog 以避免 Activity 泄漏。
  *
  * ### 用法
  * ```kotlin
@@ -40,7 +39,7 @@ import java.lang.ref.WeakReference
  */
 object LoadingDialog {
 
-    private var dialogRef: WeakReference<Dialog>? = null
+    private var dialog: Dialog? = null
     private var lifecycleObserver: DefaultLifecycleObserver? = null
     private var lifecycleOwnerRef: WeakReference<LifecycleOwner>? = null
 
@@ -78,7 +77,7 @@ object LoadingDialog {
             })
         }
 
-        val dialog = MaterialAlertDialogBuilder(context)
+        val newDialog = MaterialAlertDialogBuilder(context)
             .setView(layout)
             .setCancelable(cancelable)
             .create()
@@ -94,9 +93,9 @@ object LoadingDialog {
                 }
                 show()
             }
-        dialogRef = WeakReference(dialog)
+        this.dialog = newDialog
         bindLifecycle(context)
-        return dialog
+        return newDialog
     }
 
     /**
@@ -104,14 +103,14 @@ object LoadingDialog {
      */
     fun dismiss() {
         unbindLifecycle()
-        dialogRef?.get()?.let { dialog ->
+        dialog?.let { d ->
             try {
-                if (dialog.isShowing) dialog.dismiss()
+                if (d.isShowing) d.dismiss()
             } catch (_: Exception) {
                 // Activity 已销毁时 dismiss 可能抛异常，安全忽略
             }
         }
-        dialogRef = null
+        dialog = null
     }
 
     /**
@@ -150,7 +149,7 @@ object LoadingDialog {
         onCancel: (() -> Unit)? = null
     ): Dialog {
         dismiss()
-        val dialog = MaterialAlertDialogBuilder(context)
+        val newDialog = MaterialAlertDialogBuilder(context)
             .setView(view)
             .setCancelable(cancelable)
             .create()
@@ -166,9 +165,9 @@ object LoadingDialog {
                 }
                 show()
             }
-        dialogRef = WeakReference(dialog)
+        this.dialog = newDialog
         bindLifecycle(context)
-        return dialog
+        return newDialog
     }
 
     private fun bindLifecycle(context: Context) {

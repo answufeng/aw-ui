@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.answufeng.ui.anim.AwItemAnimator
 import com.answufeng.ui.anim.bounce
+import com.answufeng.ui.anim.createFadeIn
+import com.answufeng.ui.anim.createFadeOut
 import com.answufeng.ui.anim.fadeIn
 import com.answufeng.ui.anim.fadeOut
 import com.answufeng.ui.anim.fadeSlideIn
@@ -30,6 +32,7 @@ import com.answufeng.ui.recyclerview.DividerDecoration
 import com.answufeng.ui.recyclerview.LoadMoreAdapter
 import com.answufeng.ui.recyclerview.SimpleAdapter
 import com.answufeng.ui.statelayout.StateLayout
+import com.answufeng.ui.statelayout.StateTransition
 import com.answufeng.ui.titlebar.TitleBar
 import com.answufeng.ui.widget.BadgeView
 import com.answufeng.ui.widget.FlowLayout
@@ -145,6 +148,13 @@ class MainActivity : AppCompatActivity() {
             }
         })
         container.addView(btnRow)
+
+        val transitionRow = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        transitionRow.addView(button("FADE") { stateLayout.transition = StateTransition.FADE })
+        transitionRow.addView(button("CROSS_FADE") { stateLayout.transition = StateTransition.CROSS_FADE })
+        transitionRow.addView(button("SLIDE") { stateLayout.transition = StateTransition.slideFromBottom() })
+        transitionRow.addView(button("NONE") { stateLayout.transition = StateTransition.NONE })
+        container.addView(transitionRow)
     }
 
     // ==================== TitleBar ====================
@@ -303,8 +313,9 @@ class MainActivity : AppCompatActivity() {
 
         val adapter = SimpleAdapter(
             inflate = TextItemBinding::inflate,
-            diffCallback = diffCallback
-        ) { binding, item, _ -> binding.textView.text = item }
+            diffCallback = diffCallback,
+            bind = { binding, item, _ -> binding.textView.text = item }
+        )
 
         recyclerView.adapter = adapter
         adapter.submitList((1..5).map { "Item $it" })
@@ -334,7 +345,7 @@ class MainActivity : AppCompatActivity() {
 
         adapter.setOnLoadMoreListener {
             window?.decorView?.postDelayed({
-                val currentSize = adapter.currentList().size
+                val currentSize = adapter.currentList.size
                 val nextPage = (currentSize + 1..currentSize + 5).map { "Page Item $it" }
                 if (currentSize >= 30) {
                     adapter.noMore()
@@ -345,7 +356,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         recyclerView.adapter = adapter
-        adapter.submitList((1..10).map { "Item $it" })
+        adapter.submitInitialList((1..10).map { "Item $it" })
         container.addView(recyclerView)
     }
 
@@ -374,6 +385,17 @@ class MainActivity : AppCompatActivity() {
         row2.addView(button("bounce") { target.bounce() })
         row2.addView(button("fadeSlideIn") { target.fadeSlideIn() })
         container.addView(row2)
+
+        val row3 = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        row3.addView(button("组合: out→in") {
+            val out = target.createFadeOut(goneOnEnd = false)
+            val inn = target.createFadeIn()
+            android.animation.AnimatorSet().apply {
+                play(out).before(inn)
+                start()
+            }
+        })
+        container.addView(row3)
     }
 
     // ==================== AwItemAnimator ====================
@@ -387,7 +409,7 @@ class MainActivity : AppCompatActivity() {
                     val child = lm.getChildAt(i) ?: continue
                     val pos = rv.getChildAdapterPosition(child)
                     if (pos != RecyclerView.NO_POSITION) {
-                        AwItemAnimator.animateItem(child, pos, AwItemAnimator.AnimType.FADE_SLIDE_UP)
+                        AwItemAnimator.animateItem(child, pos, type = AwItemAnimator.AnimType.FADE_SLIDE_UP)
                     }
                 }
             }
@@ -414,8 +436,9 @@ class MainActivity : AppCompatActivity() {
 
         val adapter = SimpleAdapter(
             inflate = TextItemBinding::inflate,
-            diffCallback = diffCallback
-        ) { binding, item, _ -> binding.textView.text = item }
+            diffCallback = diffCallback,
+            bind = { binding, item, _ -> binding.textView.text = item }
+        )
 
         recyclerView.adapter = adapter
         adapter.submitList((1..4).map { "分割线 Item $it" })

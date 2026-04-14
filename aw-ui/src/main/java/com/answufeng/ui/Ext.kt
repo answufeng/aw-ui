@@ -2,6 +2,7 @@ package com.answufeng.ui
 
 import android.content.Context
 import android.util.TypedValue
+import android.view.View
 
 val Int.dp: Int
     get() = TypedValue.applyDimension(
@@ -27,10 +28,30 @@ val Float.sp: Float
         android.content.res.Resources.getSystem().displayMetrics
     )
 
-fun Context.dp(value: Int): Int = TypedValue.applyDimension(
-    TypedValue.COMPLEX_UNIT_DIP, value.toFloat(), resources.displayMetrics
-).toInt()
+fun Context.dp(value: Float): Float = TypedValue.applyDimension(
+    TypedValue.COMPLEX_UNIT_DIP, value, resources.displayMetrics
+)
 
 fun Context.sp(value: Int): Int = TypedValue.applyDimension(
     TypedValue.COMPLEX_UNIT_SP, value.toFloat(), resources.displayMetrics
 ).toInt()
+
+fun Context.sp(value: Float): Float = TypedValue.applyDimension(
+    TypedValue.COMPLEX_UNIT_SP, value, resources.displayMetrics
+)
+
+fun View.dp(value: Int): Int = TypedValue.applyDimension(
+    TypedValue.COMPLEX_UNIT_DIP, value.toFloat(), resources.displayMetrics
+).toInt()
+
+fun View.dp(value: Float): Float = TypedValue.applyDimension(
+    TypedValue.COMPLEX_UNIT_DIP, value, resources.displayMetrics
+)
+
+fun View.sp(value: Int): Int = TypedValue.applyDimension(
+    TypedValue.COMPLEX_UNIT_SP, value.toFloat(), resources.displayMetrics
+).toInt()
+
+fun View.sp(value: Float): Float = TypedValue.applyDimension(
+    TypedValue.COMPLEX_UNIT_SP, value, resources.displayMetrics
+)

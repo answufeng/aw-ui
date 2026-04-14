@@ -32,6 +32,8 @@ class AwAnimTest {
         }
     }
 
+    // ==================== 便捷型 API（自动 start）====================
+
     @Test
     fun `fadeIn returns animator and sets visible`() {
         testView.visibility = View.GONE
@@ -153,5 +155,119 @@ class AwAnimTest {
         var ended = false
         val anim = testView.fadeIn(onEnd = { ended = true })
         assertNotNull(anim)
+    }
+
+    // ==================== 创建型 API（不自动 start）====================
+
+    @Test
+    fun `createFadeIn returns animator but does not start it`() {
+        testView.visibility = View.GONE
+        val anim = testView.createFadeIn()
+        assertNotNull(anim)
+        assertFalse(anim.isRunning)
+        // createFadeIn sets visibility to VISIBLE and alpha to 0 as preparation
+        assertEquals(View.VISIBLE, testView.visibility)
+    }
+
+    @Test
+    fun `createFadeOut returns animator but does not start it`() {
+        testView.alpha = 1f
+        val anim = testView.createFadeOut()
+        assertNotNull(anim)
+        assertFalse(anim.isRunning)
+    }
+
+    @Test
+    fun `createShake returns animator but does not start it`() {
+        val anim = testView.createShake()
+        assertNotNull(anim)
+        assertFalse(anim.isRunning)
+    }
+
+    @Test
+    fun `createBounce returns animator but does not start it`() {
+        val anim = testView.createBounce()
+        assertNotNull(anim)
+        assertFalse(anim.isRunning)
+    }
+
+    @Test
+    fun `createScaleIn returns animator but does not start it`() {
+        val anim = testView.createScaleIn()
+        assertNotNull(anim)
+        assertFalse(anim.isRunning)
+        assertEquals(View.VISIBLE, testView.visibility)
+    }
+
+    @Test
+    fun `createScaleOut returns animator but does not start it`() {
+        val anim = testView.createScaleOut()
+        assertNotNull(anim)
+        assertFalse(anim.isRunning)
+    }
+
+    @Test
+    fun `createPulse returns animator but does not start it`() {
+        val anim = testView.createPulse()
+        assertNotNull(anim)
+        assertFalse(anim.isRunning)
+    }
+
+    @Test
+    fun `createFadeSlideIn returns animator but does not start it`() {
+        val anim = testView.createFadeSlideIn()
+        assertNotNull(anim)
+        assertFalse(anim.isRunning)
+        assertEquals(View.VISIBLE, testView.visibility)
+    }
+
+    @Test
+    fun `createFadeSlideOut returns animator but does not start it`() {
+        val anim = testView.createFadeSlideOut()
+        assertNotNull(anim)
+        assertFalse(anim.isRunning)
+    }
+
+    @Test
+    fun `createRotate returns animator but does not start it`() {
+        val anim = testView.createRotate()
+        assertNotNull(anim)
+        assertFalse(anim.isRunning)
+    }
+
+    @Test
+    fun `createSlideInFromBottom returns animator but does not start it`() {
+        val anim = testView.createSlideInFromBottom()
+        assertNotNull(anim)
+        assertFalse(anim.isRunning)
+        assertEquals(View.VISIBLE, testView.visibility)
+    }
+
+    @Test
+    fun `createSlideOutToTop returns animator but does not start it`() {
+        val anim = testView.createSlideOutToTop()
+        assertNotNull(anim)
+        assertFalse(anim.isRunning)
+    }
+
+    @Test
+    fun `createFadeIn with custom duration`() {
+        val anim = testView.createFadeIn(duration = 500L)
+        assertNotNull(anim)
+        assertFalse(anim.isRunning)
+    }
+
+    @Test
+    fun `createFadeOut with goneOnEnd false`() {
+        val anim = testView.createFadeOut(goneOnEnd = false)
+        assertNotNull(anim)
+        assertFalse(anim.isRunning)
+    }
+
+    @Test
+    fun `createShake with custom amplitude`() {
+        val anim = testView.createShake(amplitude = 20f, duration = 600L)
+        assertNotNull(anim)
+        assertFalse(anim.isRunning)
     }
 }

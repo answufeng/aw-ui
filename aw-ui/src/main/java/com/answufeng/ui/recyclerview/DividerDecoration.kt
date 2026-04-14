@@ -8,6 +8,7 @@ import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 
 /**
  * RecyclerView 通用分割线装饰器。
@@ -60,6 +61,18 @@ class DividerDecoration(
                     outRect.bottom = height
                 }
             }
+            is StaggeredGridLayoutManager -> {
+                val lp = view.layoutParams as? StaggeredGridLayoutManager.LayoutParams
+                val spanIndex = lp?.spanIndex ?: 0
+                val spanCount = lm.spanCount
+                // 水平方向：均分间距
+                outRect.left = height * spanIndex / spanCount
+                outRect.right = height * (spanCount - 1 - spanIndex) / spanCount
+                // 垂直方向：除最后一行外添加底部间距
+                if (position < itemCount - 1) {
+                    outRect.bottom = height
+                }
+            }
             else -> {
                 if (position < itemCount - 1) {
                     outRect.bottom = height
@@ -71,6 +84,7 @@ class DividerDecoration(
     override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         when (parent.layoutManager) {
             is GridLayoutManager -> drawGrid(c, parent)
+            is StaggeredGridLayoutManager -> drawStaggeredGrid(c, parent)
             else -> drawLinear(c, parent)
         }
     }
@@ -90,6 +104,28 @@ class DividerDecoration(
     }
 
     private fun drawGrid(c: Canvas, parent: RecyclerView) {
+        val childCount = parent.childCount
+        for (i in 0 until childCount) {
+            val child = parent.getChildAt(i)
+            val position = parent.getChildAdapterPosition(child)
+            if (position == RecyclerView.NO_POSITION) continue
+            val params = child.layoutParams as RecyclerView.LayoutParams
+            // 绘制底部
+            val bottom = child.bottom + params.bottomMargin
+            c.drawRect(
+                child.left.toFloat(), bottom.toFloat(),
+                child.right.toFloat(), (bottom + height).toFloat(), paint
+            )
+            // 绘制右侧
+            val right = child.right + params.rightMargin
+            c.drawRect(
+                right.toFloat(), child.top.toFloat(),
+                (right + height).toFloat(), child.bottom.toFloat(), paint
+            )
+        }
+    }
+
+    private fun drawStaggeredGrid(c: Canvas, parent: RecyclerView) {
         val childCount = parent.childCount
         for (i in 0 until childCount) {
             val child = parent.getChildAt(i)

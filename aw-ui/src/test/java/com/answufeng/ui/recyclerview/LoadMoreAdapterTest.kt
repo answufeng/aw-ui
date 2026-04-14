@@ -3,21 +3,37 @@ package com.answufeng.ui.recyclerview
 import android.app.Activity
 import android.view.View
 import android.widget.TextView
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import org.robolectric.shadows.ShadowLooper
+
+/**
+ * Idle the main looper multiple times to ensure AsyncListDiffer
+ * has fully completed its diffing and dispatch operations.
+ */
+private fun idleMainLooperFully() {
+    repeat(5) {
+        ShadowLooper.idleMainLooper()
+    }
+}
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28])
 class LoadMoreAdapterTest {
+
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var activity: Activity
     private lateinit var recyclerView: RecyclerView
@@ -49,24 +65,30 @@ class LoadMoreAdapterTest {
     fun `submitList sets initial data`() {
         val adapter = createAdapter()
         recyclerView.adapter = adapter
-        adapter.submitList(listOf("A", "B", "C"))
-        assertEquals(3, adapter.currentList().size)
+        adapter.submitInitialList(listOf("A", "B", "C"))
+        idleMainLooperFully()
+        assertEquals(3, adapter.currentList.size)
     }
 
     @Test
     fun `loadMore appends data`() {
         val adapter = createAdapter()
         recyclerView.adapter = adapter
-        adapter.submitList(listOf("A", "B"))
+        adapter.submitInitialList(listOf("A", "B"))
+        idleMainLooperFully()
         adapter.loadMore(listOf("C", "D"))
-        assertEquals(4, adapter.currentList().size)
+        idleMainLooperFully()
+        Thread.sleep(100)
+        idleMainLooperFully()
+        assertEquals(4, adapter.currentList.size)
     }
 
     @Test
     fun `noMore changes state`() {
         val adapter = createAdapter()
         recyclerView.adapter = adapter
-        adapter.submitList(listOf("A"))
+        adapter.submitInitialList(listOf("A"))
+        idleMainLooperFully()
         adapter.noMore()
         // Should not crash, footer updated
     }
@@ -75,7 +97,8 @@ class LoadMoreAdapterTest {
     fun `loadFailed changes state`() {
         val adapter = createAdapter()
         recyclerView.adapter = adapter
-        adapter.submitList(listOf("A"))
+        adapter.submitInitialList(listOf("A"))
+        idleMainLooperFully()
         adapter.loadFailed()
         // Should not crash
     }
@@ -84,17 +107,19 @@ class LoadMoreAdapterTest {
     fun `resetLoadState resets to IDLE`() {
         val adapter = createAdapter()
         recyclerView.adapter = adapter
-        adapter.submitList(listOf("A"))
+        adapter.submitInitialList(listOf("A"))
+        idleMainLooperFully()
         adapter.noMore()
         adapter.resetLoadState()
         // State should be IDLE again
     }
 
     @Test
-    fun `currentList returns copy`() {
+    fun `currentList returns list`() {
         val adapter = createAdapter()
-        adapter.submitList(listOf("X", "Y"))
-        val list = adapter.currentList()
+        adapter.submitInitialList(listOf("X", "Y"))
+        idleMainLooperFully()
+        val list = adapter.currentList
         assertEquals(listOf("X", "Y"), list)
     }
 
@@ -128,7 +153,8 @@ class LoadMoreAdapterTest {
         val adapter = createAdapter()
         adapter.setOnItemClickListener { item, _ -> clicked = item }
         recyclerView.adapter = adapter
-        adapter.submitList(listOf("A", "B"))
+        adapter.submitInitialList(listOf("A", "B"))
+        idleMainLooperFully()
 
         recyclerView.measure(
             View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY),

@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.LayoutRes
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 /**
@@ -40,6 +42,17 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 object AwDialog {
 
     /**
+     * 检查当前上下文是否允许显示对话框。
+     *
+     * 如果 context 是 [LifecycleOwner]，则要求其 lifecycle 至少处于 [Lifecycle.State.RESUMED] 状态，
+     * 否则抛出 [IllegalStateException]。
+     */
+    private fun canShowDialog(context: Context): Boolean {
+        val owner = context as? LifecycleOwner ?: return true
+        return owner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
+    }
+
+    /**
      * 显示确认对话框（确定 + 取消）。
      *
      * @param context       上下文
@@ -60,6 +73,7 @@ object AwDialog {
         onCancel: (() -> Unit)? = null,
         onConfirm: () -> Unit
     ): Dialog {
+        check(canShowDialog(context)) { "Cannot show dialog: lifecycle is not at least RESUMED" }
         return MaterialAlertDialogBuilder(context)
             .setTitle(title)
             .setMessage(message)
@@ -85,6 +99,7 @@ object AwDialog {
         buttonText: String = "确定",
         onDismiss: (() -> Unit)? = null
     ): Dialog {
+        check(canShowDialog(context)) { "Cannot show dialog: lifecycle is not at least RESUMED" }
         return MaterialAlertDialogBuilder(context)
             .setTitle(title)
             .setMessage(message)
@@ -116,6 +131,7 @@ object AwDialog {
         negativeText: String = "取消",
         onInput: (String) -> Unit
     ): Dialog {
+        check(canShowDialog(context)) { "Cannot show dialog: lifecycle is not at least RESUMED" }
         val textInputLayout = com.google.android.material.textfield.TextInputLayout(context).apply {
             val density = resources.displayMetrics.density
             val h = (24 * density).toInt()
@@ -152,6 +168,7 @@ object AwDialog {
         items: List<String>,
         onSelect: (Int) -> Unit
     ): Dialog {
+        check(canShowDialog(context)) { "Cannot show dialog: lifecycle is not at least RESUMED" }
         return MaterialAlertDialogBuilder(context)
             .setTitle(title)
             .setItems(items.toTypedArray()) { _, which -> onSelect(which) }
@@ -175,6 +192,7 @@ object AwDialog {
         items: List<String>,
         onSelect: (Int) -> Unit
     ): Dialog {
+        check(canShowDialog(context)) { "Cannot show dialog: lifecycle is not at least RESUMED" }
         val builder = MaterialAlertDialogBuilder(context)
         title?.let { builder.setTitle(it) }
         builder.setItems(items.toTypedArray()) { _, which -> onSelect(which) }
@@ -210,6 +228,7 @@ object AwDialog {
         onConfirm: (() -> Unit)? = null,
         onBind: ((View) -> Unit)? = null
     ): Dialog {
+        check(canShowDialog(context)) { "Cannot show dialog: lifecycle is not at least RESUMED" }
         val view = LayoutInflater.from(context).inflate(layoutRes, null)
         onBind?.invoke(view)
         val builder = MaterialAlertDialogBuilder(context)
@@ -239,6 +258,7 @@ object AwDialog {
         negativeText: String? = "取消",
         onConfirm: (() -> Unit)? = null
     ): Dialog {
+        check(canShowDialog(context)) { "Cannot show dialog: lifecycle is not at least RESUMED" }
         val builder = MaterialAlertDialogBuilder(context)
             .setView(view)
         title?.let { builder.setTitle(it) }

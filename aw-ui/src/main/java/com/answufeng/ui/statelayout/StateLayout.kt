@@ -6,9 +6,90 @@ import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import androidx.annotation.LayoutRes
 import com.answufeng.ui.R
+
+/**
+ * 状态切换过渡动画策略。
+ *
+ * 通过 [transition] 方法自定义视图显示时的动画效果。
+ * 可使用伴生对象中提供的预设动画，或通过 Lambda 创建自定义动画。
+ *
+ * ### 预设动画
+ * - [NONE]    — 无动画
+ * - [FADE]    — 淡入（alpha 0 → 1）
+ * - [CROSS_FADE] — 交叉淡入（alpha + 轻微缩放）
+ * - [slideFromBottom] — 从底部滑入
+ *
+ * ### 自定义动画
+ * ```kotlin
+ * StateTransition { view, duration ->
+ *     view.alpha = 0f
+ *     view.animate()
+ *         .alpha(1f)
+ *         .setDuration(duration)
+ *         .start()
+ * }
+ * ```
+ */
+fun interface StateTransition {
+    /**
+     * 对即将显示的视图执行过渡动画。
+     *
+     * @param view     即将显示的视图
+     * @param duration 动画时长（毫秒）
+     */
+    fun transition(view: View, duration: Long)
+
+    companion object {
+        /** 无动画 */
+        @JvmField
+        val NONE = StateTransition { _, _ -> }
+
+        /** 淡入动画（alpha 0 → 1） */
+        @JvmField
+        val FADE = StateTransition { view, duration ->
+            view.alpha = 0f
+            view.animate()
+                .alpha(1f)
+                .setDuration(duration)
+                .start()
+        }
+
+        /** 交叉淡入动画（alpha 0 → 1 + 轻微缩放 0.92 → 1） */
+        @JvmField
+        val CROSS_FADE = StateTransition { view, duration ->
+            view.alpha = 0f
+            view.scaleX = 0.92f
+            view.scaleY = 0.92f
+            view.animate()
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(duration)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
+        }
+
+        /**
+         * 从底部滑入动画（translationY + alpha）。
+         *
+         * @return 从底部滑入的过渡动画实例
+         */
+        @JvmStatic
+        fun slideFromBottom(): StateTransition = StateTransition { view, duration ->
+            view.alpha = 0f
+            view.translationY = view.height.toFloat()
+            view.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setDuration(duration)
+                .start()
+        }
+    }
+}
 
 /**
  * 四态页面容器：**内容 / 加载中 / 空数据 / 错误**。
@@ -48,6 +129,8 @@ import com.answufeng.ui.R
  * ```kotlin
  * stateLayout.enableAnimation = false       // 关闭动画
  * stateLayout.animationDuration = 300L      // 自定义时长
+ * stateLayout.transition = StateTransition.CROSS_FADE  // 交叉淡入
+ * stateLayout.transition = StateTransition.slideFromBottom() // 从底部滑入
  * ```
  *
  * 状态视图使用懒加载策略——首次切换到某状态时才 inflate 对应布局。
@@ -93,6 +176,9 @@ class StateLayout @JvmOverloads constructor(
 
     /** 动画时长（毫秒），默认 200ms */
     var animationDuration: Long = 200L
+
+    /** 状态切换过渡动画策略，默认 [StateTransition.FADE] */
+    var transition: StateTransition = StateTransition.FADE
 
     init {
         val ta = context.obtainStyledAttributes(attrs, R.styleable.StateLayout)
@@ -237,7 +323,7 @@ class StateLayout @JvmOverloads constructor(
         if (show) {
             if (view.visibility != VISIBLE) {
                 view.visibility = VISIBLE
-                if (enableAnimation) view.fadeInInternal()
+                if (enableAnimation) transition.transition(view, animationDuration)
             }
         } else {
             view.visibility = GONE
@@ -247,10 +333,11 @@ class StateLayout @JvmOverloads constructor(
     private inline fun showOrHide(current: State, target: State, create: () -> View?) {
         if (current == target) {
             val view = create() ?: return
-            if (view.parent == null) addView(view)
-            if (view.visibility != VISIBLE) {
+            val isNewlyAdded = view.parent == null
+            if (isNewlyAdded) addView(view)
+            if (isNewlyAdded || view.visibility != VISIBLE) {
                 view.visibility = VISIBLE
-                if (enableAnimation) view.fadeInInternal()
+                if (enableAnimation) transition.transition(view, animationDuration)
             }
         } else {
             when (target) {
@@ -270,14 +357,6 @@ class StateLayout @JvmOverloads constructor(
             State.ERROR -> "加载失败"
         }
         announceForAccessibility(message)
-    }
-
-    private fun View.fadeInInternal() {
-        alpha = 0f
-        animate()
-            .alpha(1f)
-            .setDuration(animationDuration)
-            .start()
     }
 
     private fun ensureLoadingView(): View? {

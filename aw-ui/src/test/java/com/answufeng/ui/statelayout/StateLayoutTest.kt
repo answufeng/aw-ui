@@ -22,6 +22,7 @@ import org.robolectric.annotation.Config
  * - 状态变更监听器
  * - 重复切换同状态不触发回调
  * - 动画开关控制
+ * - StateTransition 过渡动画策略
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28])
@@ -127,5 +128,76 @@ class StateLayoutTest {
         assertEquals(2, transitions.size)
         assertEquals(StateLayout.State.CONTENT to StateLayout.State.LOADING, transitions[0])
         assertEquals(StateLayout.State.LOADING to StateLayout.State.CONTENT, transitions[1])
+    }
+
+    // ==================== StateTransition 过渡动画策略 ====================
+
+    @Test
+    fun `transition NONE disables animation on state change`() {
+        stateLayout.transition = StateTransition.NONE
+        // State change should still work without animation
+        stateLayout.showLoading()
+        assertEquals(StateLayout.State.LOADING, stateLayout.currentState)
+        // Verify the transition is NONE
+        assertSame(StateTransition.NONE, stateLayout.transition)
+    }
+
+    @Test
+    fun `transition NONE still switches states correctly`() {
+        stateLayout.transition = StateTransition.NONE
+        stateLayout.showLoading()
+        stateLayout.showEmpty()
+        assertEquals(StateLayout.State.EMPTY, stateLayout.currentState)
+        stateLayout.showError()
+        assertEquals(StateLayout.State.ERROR, stateLayout.currentState)
+        stateLayout.showContent()
+        assertEquals(StateLayout.State.CONTENT, stateLayout.currentState)
+        assertEquals(View.VISIBLE, contentView.visibility)
+    }
+
+    @Test
+    fun `custom transition lambda is invoked on state change`() {
+        var transitionInvoked = false
+        var transitionView: View? = null
+        var transitionDuration: Long = -1L
+        stateLayout.transition = StateTransition { view, duration ->
+            transitionInvoked = true
+            transitionView = view
+            transitionDuration = duration
+        }
+        stateLayout.showLoading()
+        assertTrue("Custom transition should be invoked when animation is enabled", transitionInvoked)
+        assertNotNull("Transition view should be provided", transitionView)
+        assertEquals(stateLayout.animationDuration, transitionDuration)
+    }
+
+    @Test
+    fun `custom transition is not invoked when animation is disabled`() {
+        var transitionInvoked = false
+        stateLayout.transition = StateTransition { _, _ ->
+            transitionInvoked = true
+        }
+        stateLayout.enableAnimation = false
+        stateLayout.showLoading()
+        assertFalse("Transition should not be invoked when animation is disabled", transitionInvoked)
+        // State should still change
+        assertEquals(StateLayout.State.LOADING, stateLayout.currentState)
+    }
+
+    @Test
+    fun `transition FADE is the default`() {
+        assertSame(StateTransition.FADE, stateLayout.transition)
+    }
+
+    @Test
+    fun `transition CROSS_FADE can be set`() {
+        stateLayout.transition = StateTransition.CROSS_FADE
+        assertSame(StateTransition.CROSS_FADE, stateLayout.transition)
+    }
+
+    @Test
+    fun `transition slideFromBottom can be set`() {
+        stateLayout.transition = StateTransition.slideFromBottom()
+        assertNotNull(stateLayout.transition)
     }
 }

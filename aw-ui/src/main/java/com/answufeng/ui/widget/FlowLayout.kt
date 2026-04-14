@@ -3,6 +3,7 @@ package com.answufeng.ui.widget
 import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import com.answufeng.ui.R
 import kotlin.math.max
@@ -147,6 +148,7 @@ class FlowLayout @JvmOverloads constructor(
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         val parentWidth = r - l - paddingStart - paddingEnd
+        val isRtl = layoutDirection == View.LAYOUT_DIRECTION_RTL
 
         // 收集可见子 View
         val visibleChildren = mutableListOf<android.view.View>()
@@ -161,21 +163,38 @@ class FlowLayout @JvmOverloads constructor(
             val startOffset = when (flowGravity) {
                 Gravity.END, Gravity.RIGHT -> parentWidth - line.lineWidth
                 Gravity.CENTER_HORIZONTAL, Gravity.CENTER -> (parentWidth - line.lineWidth) / 2
-                else -> 0
+                else -> if (isRtl) parentWidth - line.lineWidth else 0
             }
-            var x = paddingStart + startOffset
 
-            for (seq in line.startIndex..line.endIndex.coerceAtMost(visibleChildren.size - 1)) {
-                val child = visibleChildren[seq]
-                val lp = child.layoutParams as MarginLayoutParams
-
-                child.layout(
-                    x + lp.leftMargin,
-                    y + lp.topMargin,
-                    x + lp.leftMargin + child.measuredWidth,
-                    y + lp.topMargin + child.measuredHeight
-                )
-                x += child.measuredWidth + lp.leftMargin + lp.rightMargin + horizontalSpacing
+            if (isRtl) {
+                // RTL: 从右侧开始，向左排列
+                var x = paddingStart + startOffset + line.lineWidth
+                for (seq in line.startIndex..line.endIndex.coerceAtMost(visibleChildren.size - 1)) {
+                    val child = visibleChildren[seq]
+                    val lp = child.layoutParams as MarginLayoutParams
+                    x -= child.measuredWidth + lp.rightMargin
+                    child.layout(
+                        x + lp.leftMargin,
+                        y + lp.topMargin,
+                        x + lp.leftMargin + child.measuredWidth,
+                        y + lp.topMargin + child.measuredHeight
+                    )
+                    x -= lp.leftMargin + horizontalSpacing
+                }
+            } else {
+                // LTR: 从左侧开始，向右排列
+                var x = paddingStart + startOffset
+                for (seq in line.startIndex..line.endIndex.coerceAtMost(visibleChildren.size - 1)) {
+                    val child = visibleChildren[seq]
+                    val lp = child.layoutParams as MarginLayoutParams
+                    child.layout(
+                        x + lp.leftMargin,
+                        y + lp.topMargin,
+                        x + lp.leftMargin + child.measuredWidth,
+                        y + lp.topMargin + child.measuredHeight
+                    )
+                    x += child.measuredWidth + lp.leftMargin + lp.rightMargin + horizontalSpacing
+                }
             }
 
             y += line.lineHeight + verticalSpacing

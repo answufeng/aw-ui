@@ -51,23 +51,25 @@ object AwItemAnimator {
     /**
      * 为 item View 执行入场动画。
      *
-     * 每个 item 会根据 [position] 产生递增延迟，营造逐个出现的效果。
-     * 总延迟上限为 [MAX_DELAY]，避免列表深处 item 等待过久。
+     * 每个 item 会根据 [position] 相对于 [firstVisiblePosition] 产生递增延迟，
+     * 营造逐个出现的效果。总延迟上限为 [MAX_DELAY]，避免列表深处 item 等待过久。
      *
-     * @param itemView      RecyclerView 的 item 视图
-     * @param position      adapter position
-     * @param type          动画类型，默认 [AnimType.FADE_SLIDE_UP]
-     * @param duration      单个 item 动画时长（毫秒），默认 300ms
-     * @param delayPerItem  每个 item 的递增延迟（毫秒），默认 50ms
+     * @param itemView            RecyclerView 的 item 视图
+     * @param position            adapter position
+     * @param firstVisiblePosition 第一个可见 item 的 position，用于计算相对延迟，默认 0
+     * @param type                动画类型，默认 [AnimType.FADE_SLIDE_UP]
+     * @param duration            单个 item 动画时长（毫秒），默认 300ms
+     * @param delayPerItem        每个 item 的递增延迟（毫秒），默认 50ms
      */
     fun animateItem(
         itemView: View,
         position: Int,
+        firstVisiblePosition: Int = 0,
         type: AnimType = AnimType.FADE_SLIDE_UP,
         duration: Long = 300L,
         delayPerItem: Long = 50L
     ) {
-        val delay = minOf(position * delayPerItem, MAX_DELAY)
+        val delay = minOf(maxOf(0, position - firstVisiblePosition) * delayPerItem, MAX_DELAY)
 
         itemView.animate().cancel()
 
