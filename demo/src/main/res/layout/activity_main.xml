@@ -1,316 +1,463 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/background_light">
+    android:background="@color/background">
 
-    <LinearLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:background="@color/primary">
 
-        <TextView
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingVertical="24dp"
-            android:text="aw-ui 组件演示"
-            android:textColor="@android:color/black"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:layout_height="?attr/actionBarSize"
+            android:theme="@style/Toolbar.AwUi"
+            app:title="UI 组件演示"
+            app:titleTextColor="@color/on_primary" />
 
-        <TextView
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="16dp"
+        android:layout_marginTop="?attr/actionBarSize"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        style="@style/Card.AwUi">
+
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="输入组件"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp" />
-
-        <com.answufeng.ui.widget.AwSmartEditText
-            android:id="@+id/smartEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="手机号（仅数字，最多11位）"
-            android:padding="12dp"
-            android:background="@android:color/white"
-            app:smart_maxLength="11" />
-
-        <com.answufeng.ui.widget.AwPasswordInputView
-            android:id="@+id/passwordInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:password_hint="请输入密码"
-            app:password_showToggle="true"
-            app:password_showStrength="true" />
-
-        <com.answufeng.ui.widget.AwCodeInputView
-            android:id="@+id/codeInputView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="12dp"
-            app:code_length="6" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="选择组件"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp" />
-
-        <com.answufeng.ui.widget.AwSegmentedControl
-            android:id="@+id/segmentedControl"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            app:seg_items="@array/segment_items"
-            app:seg_selectedIndex="0" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="进度和加载"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <com.answufeng.ui.widget.AwCircleProgressBar
-                android:id="@+id/circleProgressBar"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                app:circleProgress_progress="65"
-                app:circleProgress_showText="true" />
+            android:layout_height="match_parent"
+            android:padding="16dp">
 
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="16dp"
-                android:orientation="vertical">
-
-                <com.answufeng.ui.widget.AwSkeletonView
-                    android:layout_width="match_parent"
-                    android:layout_height="16dp"
-                    android:layout_marginBottom="8dp"
-                    app:skeleton_cornerRadius="4dp" />
-
-                <com.answufeng.ui.widget.AwSkeletonView
-                    android:layout_width="200dp"
-                    android:layout_height="16dp"
-                    android:layout_marginBottom="8dp"
-                    app:skeleton_cornerRadius="4dp" />
-
-                <com.answufeng.ui.widget.AwSkeletonView
-                    android:layout_width="150dp"
-                    android:layout_height="16dp"
-                    app:skeleton_cornerRadius="4dp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="工具组件"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <com.answufeng.ui.widget.AwSwitchButton
-                android:id="@+id/switchButton"
-                android:layout_width="52dp"
-                android:layout_height="28dp" />
-
-            <com.answufeng.ui.widget.AwCountDownView
-                android:id="@+id/countDownView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:textColor="#F44336"
-                app:countdown_seconds="10" />
-
-            <Button
-                android:id="@+id/btnStartCountDown"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="开始倒计时"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <com.answufeng.ui.widget.AwMarqueeTextView
-            android:id="@+id/marqueeTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="这是一条跑马灯文本，当文字内容超出视图宽度时会自动滚动显示"
-            android:textSize="16sp"
-            app:marquee_speed="1"
-            app:marquee_pauseDuration="1000" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="特殊效果"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp" />
-
-        <com.answufeng.ui.widget.AwRoundImageView
-            android:id="@+id/roundImageView"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@android:drawable/ic_menu_camera"
-            app:roundImg_isCircle="true"
-            app:roundImg_borderWidth="2dp"
-            app:roundImg_borderColor="#FFFFFF" />
-
-        <com.answufeng.ui.widget.AwExpandableLayout
-            android:id="@+id/expandableLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:expandable_expanded="false">
-
-            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#F5F5F5"
-                android:padding="16dp"
-                android:text="这是可展开/收起的内容区域。点击上方的按钮可以切换展开状态，展开和收起都有平滑的高度动画效果。" />
-        </com.answufeng.ui.widget.AwExpandableLayout>
+                android:orientation="vertical">
 
-        <Button
-            android:id="@+id/btnToggleExpand"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="展开/收起" />
+                <!-- 输入组件卡片 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    style="@style/Card.AwUi">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="对话框"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="输入组件"
+                            style="@style/Text.AwUi.Subtitle"
+                            android:layout_marginBottom="12dp" />
 
-            <Button
-                android:id="@+id/btnAlertDialog"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="AlertDialog"
-                android:textSize="12sp"
-                android:layout_marginEnd="4dp" />
+                        <com.answufeng.ui.widget.AwSmartEditText
+                            android:id="@+id/smartEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="手机号（仅数字，最多11位）"
+                            android:padding="12dp"
+                            app:smart_maxLength="11" />
 
-            <Button
-                android:id="@+id/btnActionSheet"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="ActionSheet"
-                android:textSize="12sp"
-                android:layout_marginStart="4dp" />
+                        <com.answufeng.ui.widget.AwPasswordInputView
+                            android:id="@+id/passwordInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            app:password_hint="请输入密码"
+                            app:password_showToggle="true"
+                            app:password_showStrength="true" />
 
-            <Button
-                android:id="@+id/btnLoading"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Loading"
-                android:textSize="12sp"
-                android:layout_marginStart="4dp" />
-        </LinearLayout>
+                        <com.answufeng.ui.widget.AwCodeInputView
+                            android:id="@+id/codeInputView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="12dp"
+                            app:code_length="6" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="表单验证"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-        <EditText
-            android:id="@+id/etUsername"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="用户名（至少3个字符）"
-            android:padding="12dp" />
+                <!-- 选择和进度卡片 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    style="@style/Card.AwUi">
 
-        <EditText
-            android:id="@+id/etEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="邮箱"
-            android:inputType="textEmailAddress"
-            android:padding="12dp" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-        <Button
-            android:id="@+id/btnValidate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="验证表单" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="选择和进度"
+                            style="@style/Text.AwUi.Subtitle"
+                            android:layout_marginBottom="12dp" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="布局组件"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp" />
+                        <com.answufeng.ui.widget.AwSegmentedControl
+                            android:id="@+id/segmentedControl"
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            app:seg_items="@array/segment_items"
+                            app:seg_selectedIndex="0" />
 
-        <com.answufeng.ui.widget.AwFlowLayout
-            android:id="@+id/flowLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:flow_horizontalSpacing="8dp"
-            app:flow_verticalSpacing="8dp" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="16dp">
 
-        <com.answufeng.ui.widget.AwBadgeView
-            android:id="@+id/badgeView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp" />
+                            <com.answufeng.ui.widget.AwCircleProgressBar
+                                android:id="@+id/circleProgressBar"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                app:circleProgress_progress="65"
+                                app:circleProgress_showText="true" />
 
-        <TextView
-            android:id="@+id/tvLog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="操作日志将显示在这里..."
-            android:textSize="12sp"
-            android:lineSpacingExtra="4dp"
-            android:background="#F5F5F5"
-            android:padding="12dp" />
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="16dp"
+                                android:orientation="vertical">
 
-    </LinearLayout>
+                                <com.answufeng.ui.widget.AwSkeletonView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="16dp"
+                                    android:layout_marginBottom="8dp"
+                                    app:skeleton_cornerRadius="4dp" />
 
-</ScrollView>
+                                <com.answufeng.ui.widget.AwSkeletonView
+                                    android:layout_width="200dp"
+                                    android:layout_height="16dp"
+                                    android:layout_marginBottom="8dp"
+                                    app:skeleton_cornerRadius="4dp" />
+
+                                <com.answufeng.ui.widget.AwSkeletonView
+                                    android:layout_width="150dp"
+                                    android:layout_height="16dp"
+                                    app:skeleton_cornerRadius="4dp" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 工具组件卡片 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    style="@style/Card.AwUi">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="工具组件"
+                            style="@style/Text.AwUi.Subtitle"
+                            android:layout_marginBottom="12dp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <com.answufeng.ui.widget.AwSwitchButton
+                                android:id="@+id/switchButton"
+                                android:layout_width="52dp"
+                                android:layout_height="28dp" />
+
+                            <com.answufeng.ui.widget.AwCountDownView
+                                android:id="@+id/countDownView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="24dp"
+                                android:textColor="@color/error"
+                                app:countdown_seconds="10" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnStartCountDown"
+                                style="@style/MaterialButton.AwUi.Outlined"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:text="开始倒计时" />
+                        </LinearLayout>
+
+                        <com.answufeng.ui.widget.AwMarqueeTextView
+                            android:id="@+id/marqueeTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="这是一条跑马灯文本，当文字内容超出视图宽度时会自动滚动显示"
+                            android:textSize="14sp"
+                            android:textColor="@color/on_surface_variant"
+                            app:marquee_speed="1"
+                            app:marquee_pauseDuration="1000" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 特殊效果卡片 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    style="@style/Card.AwUi">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="特殊效果"
+                            style="@style/Text.AwUi.Subtitle"
+                            android:layout_marginBottom="12dp" />
+
+                        <com.answufeng.ui.widget.AwRoundImageView
+                            android:id="@+id/roundImageView"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:layout_gravity="center_horizontal"
+                            android:src="@android:drawable/ic_menu_camera"
+                            app:roundImg_isCircle="true"
+                            app:roundImg_borderWidth="2dp"
+                            app:roundImg_borderColor="#FFFFFF" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnToggleExpand"
+                            style="@style/MaterialButton.AwUi.Outlined"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="展开/收起" />
+
+                        <com.answufeng.ui.widget.AwExpandableLayout
+                            android:id="@+id/expandableLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            app:expandable_expanded="false">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@color/surface_variant"
+                                android:padding="16dp"
+                                android:text="这是可展开/收起的内容区域。点击上方的按钮可以切换展开状态，展开和收起都有平滑的高度动画效果。"
+                                style="@style/Text.AwUi.Body" />
+                        </com.answufeng.ui.widget.AwExpandableLayout>
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 对话框卡片 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    style="@style/Card.AwUi">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="对话框"
+                            style="@style/Text.AwUi.Subtitle"
+                            android:layout_marginBottom="12dp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnAlertDialog"
+                                style="@style/MaterialButton.AwUi.Outlined"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Alert"
+                                android:layout_marginEnd="4dp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnActionSheet"
+                                style="@style/MaterialButton.AwUi.Outlined"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Sheet"
+                                android:layout_marginHorizontal="4dp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnLoading"
+                                style="@style/MaterialButton.AwUi.Outlined"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Loading"
+                                android:layout_marginStart="4dp" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 表单验证卡片 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    style="@style/Card.AwUi">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="表单验证"
+                            style="@style/Text.AwUi.Subtitle"
+                            android:layout_marginBottom="12dp" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="用户名（至少3个字符）">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etUsername"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:hint="邮箱">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etEmail"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="textEmailAddress" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnValidate"
+                            style="@style/MaterialButton.AwUi"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="验证表单" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 布局组件卡片 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    style="@style/Card.AwUi">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="布局组件"
+                            style="@style/Text.AwUi.Subtitle"
+                            android:layout_marginBottom="12dp" />
+
+                        <com.answufeng.ui.widget.AwFlowLayout
+                            android:id="@+id/flowLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:flow_horizontalSpacing="8dp"
+                            app:flow_verticalSpacing="8dp" />
+
+                        <com.answufeng.ui.widget.AwBadgeView
+                            android:id="@+id/badgeView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 日志显示区域 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Card.AwUi">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="操作日志"
+                            style="@style/Text.AwUi.Subtitle"
+                            android:layout_marginBottom="8dp" />
+
+                        <TextView
+                            android:id="@+id/tvLog"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="80dp"
+                            android:text="操作日志将显示在这里..."
+                            style="@style/Text.AwUi.Body"
+                            android:lineSpacingExtra="4dp"
+                            android:background="@color/surface_variant"
+                            android:padding="12dp" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+        </ScrollView>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
