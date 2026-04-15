@@ -67,12 +67,15 @@ class AwSimpleAdapter<VB : ViewBinding, T>(
     private val diffCallback: DiffUtil.ItemCallback<T>,
     private val bind: (VB, T, Int) -> Unit,
     private val bindWithPayload: ((VB, T, Int, List<Any>) -> Unit)? = null
-) : ListAdapter<T, AwSimpleAdapter<VB, T>.ViewHolder>(diffCallback) {
+) : ListAdapter<T, RecyclerView.ViewHolder>(diffCallback) {
 
     private var onItemClick: ((T, Int) -> Unit)? = null
     private var onItemLongClick: ((T, Int) -> Boolean)? = null
     private var emptyView: View? = null
     private var recyclerView: RecyclerView? = null
+
+    /** ViewBinding 持有的 ViewHolder */
+    private class BindingViewHolder<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(binding.root)
 
     private val dataObserver = object : RecyclerView.AdapterDataObserver() {
         override fun onChanged() = toggleEmptyView()
@@ -80,10 +83,7 @@ class AwSimpleAdapter<VB : ViewBinding, T>(
         override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) = toggleEmptyView()
     }
 
-    /** ViewBinding 持有的 ViewHolder */
-    class BindingViewHolder<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(binding.root)
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindingViewHolder<VB> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val binding = inflate(LayoutInflater.from(parent.context), parent, false)
         val holder = BindingViewHolder(binding)
         holder.itemView.setOnClickListener {
@@ -103,14 +103,16 @@ class AwSimpleAdapter<VB : ViewBinding, T>(
         return holder
     }
 
-    override fun onBindViewHolder(holder: BindingViewHolder<VB>, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val binding = (holder as BindingViewHolder<VB>).binding
         val item = getItem(position)
-        bind(holder.binding, item, position)
+        bind(binding, item, position)
     }
 
-    override fun onBindViewHolder(holder: BindingViewHolder<VB>, position: Int, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any>) {
         if (payloads.isNotEmpty() && bindWithPayload != null) {
-            bindWithPayload(holder.binding, getItem(position), position, payloads)
+            val binding = (holder as BindingViewHolder<VB>).binding
+            bindWithPayload?.invoke(binding, getItem(position), position, payloads)
         } else {
             super.onBindViewHolder(holder, position, payloads)
         }

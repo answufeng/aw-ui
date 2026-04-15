@@ -1,20 +1,20 @@
 [versions]
-agp = "8.7.3"
-kotlin = "2.0.21"
+agp = "7.4.2"
+kotlin = "1.9.22"
 
-core-ktx = "1.15.0"
-appcompat = "1.7.0"
-activity = "1.9.3"
-lifecycle = "2.8.7"
+core-ktx = "1.12.0"
+appcompat = "1.6.1"
+activity = "1.8.0"
+lifecycle = "2.6.2"
 recyclerview = "1.3.2"
-annotation = "1.9.1"
-material = "1.12.0"
+annotation = "1.7.0"
+material = "1.11.0"
 
 junit = "4.13.2"
 robolectric = "4.14.1"
-androidx-test-core = "1.6.1"
-androidx-test-runner = "1.6.2"
-androidx-test-ext-junit = "1.2.1"
+androidx-test-core = "1.5.0"
+androidx-test-runner = "1.5.2"
+androidx-test-ext-junit = "1.1.5"
 arch-core-testing = "2.2.0"
 
 [libraries]

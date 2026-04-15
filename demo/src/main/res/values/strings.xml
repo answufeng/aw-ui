@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">aw-ui Demo</string>
+    <string-array name="segment_items">
+        <item>选项一</item>
+        <item>选项二</item>
+        <item>选项三</item>
+    </string-array>
 </resources>

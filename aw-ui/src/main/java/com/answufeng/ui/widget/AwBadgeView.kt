@@ -10,9 +10,11 @@ import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.View
 import android.view.accessibility.AccessibilityEvent
+import androidx.appcompat.widget.AppCompatTextView
 import com.answufeng.ui.R
 import com.google.android.material.color.MaterialColors
 import kotlin.math.min
+import kotlin.math.max
 
 /**
  * 角标视图（红点 / 数字 Badge）。
@@ -73,7 +75,7 @@ class AwBadgeView @JvmOverloads constructor(
     var count: Int = 0
         set(value) {
             field = value
-            visibility = if (value < 0) GONE else VISIBLE
+            visibility = if (value < 0) View.GONE else View.VISIBLE
             updateAccessibility(value)
             requestLayout()
             invalidate()
@@ -90,7 +92,7 @@ class AwBadgeView @JvmOverloads constructor(
         ta.recycle()
 
         textPaint.textAlign = Paint.Align.CENTER
-        importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
+        importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
         updateAccessibility(count)
     }
 
@@ -114,7 +116,7 @@ class AwBadgeView @JvmOverloads constructor(
             val text = if (count > 99) "99+" else count.toString()
             textPaint.getTextBounds(text, 0, text.length, textBounds)
             val h = (16 * density).toInt()
-            val w = maxOf(h, textBounds.width() + (10 * density).toInt())
+            val w = max(h, textBounds.width() + (10 * density).toInt())
             setMeasuredDimension(w, h)
         }
     }

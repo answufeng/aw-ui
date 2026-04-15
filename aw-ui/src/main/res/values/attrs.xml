@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- AwStateLayout 自定义属性 -->
     <declare-styleable name="AwStateLayout">
         <attr name="loadingLayout" format="reference" />
         <attr name="emptyLayout" format="reference" />
@@ -8,17 +9,7 @@
         <attr name="animationDuration" format="integer" />
     </declare-styleable>
 
-    <declare-styleable name="AwTitleBar">
-        <attr name="titleBar_title" format="string" />
-        <attr name="titleBar_leftIcon" format="reference" />
-        <attr name="titleBar_rightText" format="string" />
-        <attr name="titleBar_rightIcon" format="reference" />
-        <attr name="titleBar_showBack" format="boolean" />
-        <attr name="titleBar_titleColor" format="color" />
-        <attr name="titleBar_bgColor" format="color" />
-        <attr name="titleBar_immersive" format="boolean" />
-    </declare-styleable>
-
+    <!-- AwBadgeView 自定义属性 -->
     <declare-styleable name="AwBadgeView">
         <attr name="badge_count" format="integer" />
         <attr name="badge_bgColor" format="color" />
@@ -26,6 +17,31 @@
         <attr name="badge_textSize" format="dimension" />
     </declare-styleable>
 
+    <!-- AwTitleBar 自定义属性 -->
+    <declare-styleable name="AwTitleBar">
+        <attr name="titleBar_title" format="string" />
+        <attr name="titleBar_showBack" format="boolean" />
+        <attr name="titleBar_leftIcon" format="reference" />
+        <attr name="titleBar_rightText" format="string" />
+        <attr name="titleBar_rightIcon" format="reference" />
+        <attr name="titleBar_titleColor" format="color" />
+        <attr name="titleBar_bgColor" format="color" />
+        <attr name="titleBar_immersive" format="boolean" />
+    </declare-styleable>
+
+    <!-- AwFlowLayout 自定义属性 -->
+    <declare-styleable name="AwFlowLayout">
+        <attr name="flow_horizontalSpacing" format="dimension" />
+        <attr name="flow_verticalSpacing" format="dimension" />
+        <attr name="flow_maxLines" format="integer" />
+        <attr name="flow_gravity" format="enum">
+            <enum name="left" value="0" />
+            <enum name="center" value="1" />
+            <enum name="right" value="2" />
+        </attr>
+    </declare-styleable>
+
+    <!-- AwRoundLayout 自定义属性 -->
     <declare-styleable name="AwRoundLayout">
         <attr name="round_radius" format="dimension" />
         <attr name="round_topLeftRadius" format="dimension" />
@@ -36,14 +52,115 @@
         <attr name="round_strokeWidth" format="dimension" />
     </declare-styleable>
 
-    <declare-styleable name="AwFlowLayout">
-        <attr name="flow_horizontalSpacing" format="dimension" />
-        <attr name="flow_verticalSpacing" format="dimension" />
-        <attr name="flow_maxLines" format="integer" />
-        <attr name="flow_gravity" format="enum">
-            <enum name="start" value="8388611" />
-            <enum name="center" value="17" />
-            <enum name="end" value="8388613" />
+    <!-- AwSmartEditText 自定义属性 -->
+    <declare-styleable name="AwSmartEditText">
+        <attr name="smart_maxLength" format="integer" />
+        <attr name="smart_errorColor" format="color" />
+    </declare-styleable>
+
+    <!-- AwCodeInputView 自定义属性 -->
+    <declare-styleable name="AwCodeInputView">
+        <attr name="code_length" format="integer" />
+        <attr name="code_boxSize" format="dimension" />
+        <attr name="code_boxSpacing" format="dimension" />
+        <attr name="code_boxStrokeColor" format="color" />
+        <attr name="code_boxStrokeWidth" format="dimension" />
+        <attr name="code_textColor" format="color" />
+        <attr name="code_textSize" format="dimension" />
+    </declare-styleable>
+
+    <!-- AwPasswordInputView 自定义属性 -->
+    <declare-styleable name="AwPasswordInputView">
+        <attr name="password_hint" format="string" />
+        <attr name="password_showToggle" format="boolean" />
+        <attr name="password_showStrength" format="boolean" />
+    </declare-styleable>
+
+    <!-- AwSegmentedControl 自定义属性 -->
+    <declare-styleable name="AwSegmentedControl">
+        <attr name="seg_items" format="reference" />
+        <attr name="seg_selectedIndex" format="integer" />
+        <attr name="seg_selectedColor" format="color" />
+        <attr name="seg_textColor" format="color" />
+        <attr name="seg_selectedTextColor" format="color" />
+    </declare-styleable>
+
+    <!-- AwExpandableLayout 自定义属性 -->
+    <declare-styleable name="AwExpandableLayout">
+        <attr name="expandable_expanded" format="boolean" />
+        <attr name="expandable_duration" format="integer" />
+    </declare-styleable>
+
+    <!-- AwMarqueeTextView 自定义属性 -->
+    <declare-styleable name="AwMarqueeTextView">
+        <attr name="marquee_speed" format="float" />
+        <attr name="marquee_pauseDuration" format="integer" />
+        <attr name="marquee_direction" format="enum">
+            <enum name="left_to_right" value="0" />
+            <enum name="right_to_left" value="1" />
         </attr>
     </declare-styleable>
+
+    <!-- AwSwitchButton 自定义属性 -->
+    <declare-styleable name="AwSwitchButton">
+        <attr name="switch_checked" format="boolean" />
+        <attr name="switch_trackColor" format="color" />
+        <attr name="switch_trackCheckedColor" format="color" />
+        <attr name="switch_thumbColor" format="color" />
+        <attr name="switch_thumbCheckedColor" format="color" />
+    </declare-styleable>
+
+    <!-- AwCountDownView 自定义属性 -->
+    <declare-styleable name="AwCountDownView">
+        <attr name="countdown_seconds" format="integer" />
+        <attr name="countdown_textColor" format="color" />
+        <attr name="countdown_textSize" format="dimension" />
+    </declare-styleable>
+
+    <!-- AwCircleProgressBar 自定义属性 -->
+    <declare-styleable name="AwCircleProgressBar">
+        <attr name="circleProgress_progress" format="float" />
+        <attr name="circleProgress_max" format="float" />
+        <attr name="circleProgress_strokeWidth" format="dimension" />
+        <attr name="circleProgress_progressColor" format="color" />
+        <attr name="circleProgress_bgColor" format="color" />
+        <attr name="circleProgress_showText" format="boolean" />
+    </declare-styleable>
+
+    <!-- AwSkeletonView 自定义属性 -->
+    <declare-styleable name="AwSkeletonView">
+        <attr name="skeleton_baseColor" format="color" />
+        <attr name="skeleton_highlightColor" format="color" />
+        <attr name="skeleton_cornerRadius" format="dimension" />
+        <attr name="skeleton_duration" format="integer" />
+    </declare-styleable>
+
+    <!-- AwBannerView 自定义属性 -->
+    <declare-styleable name="AwBannerView">
+        <attr name="banner_interval" format="integer" />
+        <attr name="banner_indicatorColor" format="color" />
+        <attr name="banner_indicatorSelectedColor" format="color" />
+    </declare-styleable>
+
+    <!-- AwRoundImageView 自定义属性 -->
+    <declare-styleable name="AwRoundImageView">
+        <attr name="roundImg_radius" format="dimension" />
+        <attr name="roundImg_isCircle" format="boolean" />
+        <attr name="roundImg_borderWidth" format="dimension" />
+        <attr name="roundImg_borderColor" format="color" />
+    </declare-styleable>
+
+    <!-- AwTooltipView 自定义属性 -->
+    <declare-styleable name="AwTooltipView">
+        <attr name="tooltip_text" format="string" />
+        <attr name="tooltip_arrowPosition" format="enum">
+            <enum name="left" value="0" />
+            <enum name="top" value="1" />
+            <enum name="right" value="2" />
+            <enum name="bottom" value="3" />
+        </attr>
+        <attr name="tooltip_bgColor" format="color" />
+        <attr name="tooltip_textColor" format="color" />
+    </declare-styleable>
+
 </resources>
