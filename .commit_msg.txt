@@ -1,0 +1,15 @@
+feat: 新增 AwBottomTabBar 底部导航组件
+
+功能特性:
+- 多模式支持: 图标+文字(默认)、纯图标、纯文字
+- 状态驱动样式: 选中/未选中/按下态，自动 tint 图标
+- 指示器系统: 下划线/圆点/背景块/无指示器
+- 指示器动画: 平滑滑动过渡，支持 ValueAnimator
+- 选中缩放动画: OvershootInterpolator 弹性效果
+- ViewPager 双向联动: Tab点击切换 / 滑动时指示器跟随
+- Badge 消息提醒: 红点/数字(99+)/自定义文本
+- 动态增删: addItem/removeItem/clearItems
+- 事件回调: onTabSelected/onTabReselected/onTabLongClick
+- 生命周期管理: onDetachedFromWindow 释放动画
+- 状态保存: onSaveInstanceState 恢复选中状态
+- 无障碍支持: AccessibilityEvent 广播

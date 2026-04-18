@@ -8,6 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import kotlin.reflect.KClass
 
+@DslMarker
+annotation class AwUiDsl
+
 @PublishedApi
 internal data class TypeRegistration(
     val clazz: KClass<*>,
@@ -198,6 +201,7 @@ class AwMultiTypeAdapter(
  * }
  * ```
  */
+@AwUiDsl
 class AwMultiTypeAdapterBuilder {
     private var itemDiff: ((Any, Any) -> Boolean)? = null
     private var contentDiff: ((Any, Any) -> Boolean)? = null
