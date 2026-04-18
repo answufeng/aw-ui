@@ -128,11 +128,15 @@ class AwMarqueeTextView @JvmOverloads constructor(
 
         postDelayed({
             if (!isScrolling || !isAttachedToWindow) return@postDelayed
+            scrollAnimator?.cancel()
+            scrollAnimator = null
             currentOffset = 0f
             invalidate()
             postDelayed({
-                startScrollCycle()
+                if (isScrolling && isAttachedToWindow) {
+                    startScrollCycle()
+                }
             }, pauseDuration)
-        }, scrollDuration + pauseDuration)
+        }, scrollDuration)
     }
 }

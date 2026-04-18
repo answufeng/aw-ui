@@ -145,8 +145,8 @@ class AwStateLayout @JvmOverloads constructor(
     var currentState: State = State.CONTENT
         private set
 
-    /** 支持的四种页面状态 */
-    enum class State { CONTENT, LOADING, EMPTY, ERROR }
+    /** 支持的四种页面状态 + 自定义状态 */
+    enum class State { CONTENT, LOADING, EMPTY, ERROR, CUSTOM }
 
     /** 状态变更监听器 */
     fun interface OnStateChangeListener {
@@ -306,8 +306,8 @@ class AwStateLayout @JvmOverloads constructor(
         view.visibility = VISIBLE
         if (enableAnimation) transition.transition(view, animationDuration)
         val oldState = currentState
-        currentState = State.CONTENT
-        stateChangeListener?.onStateChanged(oldState, State.CONTENT)
+        currentState = State.CUSTOM
+        stateChangeListener?.onStateChanged(oldState, State.CUSTOM)
     }
 
     private fun hideAllStateViews() {

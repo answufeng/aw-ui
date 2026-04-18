@@ -211,6 +211,7 @@ class AwBannerView @JvmOverloads constructor(
         super.onAttachedToWindow()
         bindLifecycle()
         if (isAutoScrolling) {
+            handler.removeCallbacks(autoScrollRunnable)
             handler.postDelayed(autoScrollRunnable, interval)
         }
     }

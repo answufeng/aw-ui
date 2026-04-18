@@ -345,7 +345,7 @@ class AwCodeInputView @JvmOverloads constructor(
             override fun afterTextChanged(s: Editable?) {
                 val text = s.toString()
                 if (text.length > 1) {
-                    val pasted = text.filter { it.isDigit() }
+                    val pasted = text.filter { it.isLetterOrDigit() }
                     if (pasted.length > 1) {
                         removeTextChangedListener(this)
                         setText("")
