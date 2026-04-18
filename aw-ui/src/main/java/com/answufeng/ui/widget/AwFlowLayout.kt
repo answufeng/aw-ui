@@ -35,7 +35,7 @@ import kotlin.math.max
  * | `flow_maxLines` | 最大行数（0 = 不限制） | 0 |
  * | `flow_gravity` | 行内对齐方式（start/center/end） | start |
  */
-class AwFlowLayout @JvmOverloads constructor(
+open class AwFlowLayout @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

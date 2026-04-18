@@ -3,6 +3,7 @@ package com.answufeng.ui.recyclerview
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
+import android.graphics.RectF
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.GridLayoutManager
@@ -43,6 +44,8 @@ class AwDividerDecoration(
         style = Paint.Style.FILL
     }
 
+    private val tempRect = RectF()
+
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
         val position = parent.getChildAdapterPosition(view)
         // NO_POSITION 表示 ViewHolder 正在被移除或无效，跳过
@@ -53,13 +56,11 @@ class AwDividerDecoration(
             is GridLayoutManager -> {
                 val spanCount = lm.spanCount
                 val column = position % spanCount
-                // 水平方向：均分间距
                 outRect.left = height * column / spanCount
                 outRect.right = height * (spanCount - 1 - column) / spanCount
-                // 垂直方向：除最后一行外添加底部间距
-                if (position < itemCount - spanCount + (itemCount % spanCount).let { if (it == 0) spanCount else it }) {
-                    outRect.bottom = height
-                }
+                val lastRowStart = ((itemCount - 1) / spanCount) * spanCount
+                if (position >= lastRowStart) return
+                outRect.bottom = height
             }
             is StaggeredGridLayoutManager -> {
                 val lp = view.layoutParams as? StaggeredGridLayoutManager.LayoutParams
@@ -99,7 +100,8 @@ class AwDividerDecoration(
             if (position == RecyclerView.NO_POSITION) continue
             val params = child.layoutParams as RecyclerView.LayoutParams
             val top = child.bottom + params.bottomMargin
-            c.drawRect(left.toFloat(), top.toFloat(), right.toFloat(), (top + height).toFloat(), paint)
+            tempRect.set(left.toFloat(), top.toFloat(), right.toFloat(), (top + height).toFloat())
+            c.drawRect(tempRect, paint)
         }
     }
 
@@ -110,18 +112,12 @@ class AwDividerDecoration(
             val position = parent.getChildAdapterPosition(child)
             if (position == RecyclerView.NO_POSITION) continue
             val params = child.layoutParams as RecyclerView.LayoutParams
-            // 绘制底部
             val bottom = child.bottom + params.bottomMargin
-            c.drawRect(
-                child.left.toFloat(), bottom.toFloat(),
-                child.right.toFloat(), (bottom + height).toFloat(), paint
-            )
-            // 绘制右侧
+            tempRect.set(child.left.toFloat(), bottom.toFloat(), child.right.toFloat(), (bottom + height).toFloat())
+            c.drawRect(tempRect, paint)
             val right = child.right + params.rightMargin
-            c.drawRect(
-                right.toFloat(), child.top.toFloat(),
-                (right + height).toFloat(), child.bottom.toFloat(), paint
-            )
+            tempRect.set(right.toFloat(), child.top.toFloat(), (right + height).toFloat(), child.bottom.toFloat())
+            c.drawRect(tempRect, paint)
         }
     }
 
@@ -132,18 +128,12 @@ class AwDividerDecoration(
             val position = parent.getChildAdapterPosition(child)
             if (position == RecyclerView.NO_POSITION) continue
             val params = child.layoutParams as RecyclerView.LayoutParams
-            // 绘制底部
             val bottom = child.bottom + params.bottomMargin
-            c.drawRect(
-                child.left.toFloat(), bottom.toFloat(),
-                child.right.toFloat(), (bottom + height).toFloat(), paint
-            )
-            // 绘制右侧
+            tempRect.set(child.left.toFloat(), bottom.toFloat(), child.right.toFloat(), (bottom + height).toFloat())
+            c.drawRect(tempRect, paint)
             val right = child.right + params.rightMargin
-            c.drawRect(
-                right.toFloat(), child.top.toFloat(),
-                (right + height).toFloat(), child.bottom.toFloat(), paint
-            )
+            tempRect.set(right.toFloat(), child.top.toFloat(), (right + height).toFloat(), child.bottom.toFloat())
+            c.drawRect(tempRect, paint)
         }
     }
 }

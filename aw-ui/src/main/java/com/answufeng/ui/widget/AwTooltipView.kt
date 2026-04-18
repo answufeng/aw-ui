@@ -129,6 +129,10 @@ class AwTooltipView @JvmOverloads constructor(
 
     private var anchorView: View? = null
     private var parentOverlay: FrameLayout? = null
+    private var autoDismissRunnable: Runnable? = null
+    private val handler = android.os.Handler(android.os.Looper.getMainLooper())
+
+    var autoDismissDelay: Long = 0L
 
     init {
         val density = resources.displayMetrics.density
@@ -172,6 +176,10 @@ class AwTooltipView @JvmOverloads constructor(
                 positionRelativeToAnchor(anchor)
                 visibility = View.VISIBLE
                 animate().alpha(1f).setDuration(200).start()
+                if (autoDismissDelay > 0) {
+                    autoDismissRunnable = Runnable { dismiss() }
+                    handler.postDelayed(autoDismissRunnable!!, autoDismissDelay)
+                }
             }
         })
     }
@@ -180,6 +188,8 @@ class AwTooltipView @JvmOverloads constructor(
      * Dismisses the tooltip with a fade-out animation.
      */
     fun dismiss() {
+        autoDismissRunnable?.let { handler.removeCallbacks(it) }
+        autoDismissRunnable = null
         animate()
             .alpha(0f)
             .setDuration(200)
@@ -196,8 +206,8 @@ class AwTooltipView @JvmOverloads constructor(
         val parent = parentOverlay ?: return
         val parentLocation = IntArray(2)
         val anchorLocation = IntArray(2)
-        parent.getLocationOnScreen(parentLocation)
-        anchor.getLocationOnScreen(anchorLocation)
+        parent.getLocationInWindow(parentLocation)
+        anchor.getLocationInWindow(anchorLocation)
 
         val offsetX = anchorLocation[0] - parentLocation[0]
         val offsetY = anchorLocation[1] - parentLocation[1]

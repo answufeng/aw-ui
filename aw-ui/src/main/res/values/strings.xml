@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="aw_state_loading">Loading</string>
+    <string name="aw_state_empty">No data</string>
+    <string name="aw_state_error">Load failed</string>
+</resources>

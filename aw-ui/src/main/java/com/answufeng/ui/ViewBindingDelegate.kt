@@ -13,11 +13,11 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 inline fun <reified T : ViewBinding> Activity.viewBinding(
-    crossinline bind: (View) -> T
+    noinline bind: (View) -> T
 ): ReadOnlyProperty<Activity, T> = ActivityViewBindingDelegate(bind)
 
 inline fun <reified T : ViewBinding> Fragment.viewBinding(
-    crossinline bind: (View) -> T
+    noinline bind: (View) -> T
 ): ReadOnlyProperty<Fragment, T> = FragmentViewBindingDelegate(bind)
 
 @PublishedApi

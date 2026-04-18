@@ -33,6 +33,8 @@ class AwTagView @JvmOverloads constructor(
             rebuildTags()
         }
 
+    var maxSelectCount: Int = Int.MAX_VALUE
+
     var onTagClick: ((String, Boolean) -> Unit)? = null
     var onSelectionChange: ((Set<String>) -> Unit)? = null
 
@@ -116,6 +118,11 @@ class AwTagView @JvmOverloads constructor(
                 selectedTags = if (wasSelected) {
                     selectedTags - tag
                 } else {
+                    if (selectedTags.size >= maxSelectCount) {
+                        onTagClick?.invoke(tag, false)
+                        onSelectionChange?.invoke(selectedTags)
+                        return
+                    }
                     selectedTags + tag
                 }
             }

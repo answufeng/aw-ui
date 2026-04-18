@@ -5,26 +5,19 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <com.answufeng.ui.titlebar.AwTitleBar
+        android:id="@+id/titleBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:theme="@style/Toolbar.AwUi"
-            app:title="UI 组件演示"
-            app:titleTextColor="@color/on_primary" />
-
-    </com.google.android.material.appbar.AppBarLayout>
+        app:titleBar_title="UI 组件演示"
+        app:titleBar_showBack="false"
+        app:titleBar_immersive="true" />
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="16dp"
-        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginTop="56dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         style="@style/Card.AwUi">
 
@@ -38,7 +31,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- 输入组件卡片 -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -86,7 +78,6 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- 选择和进度卡片 -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -153,10 +144,17 @@
                             </LinearLayout>
                         </LinearLayout>
 
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnAnimateProgress"
+                            style="@style/MaterialButton.AwUi.Outlined"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="进度动画 0→100" />
+
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- 工具组件卡片 -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -218,7 +216,6 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- 特殊效果卡片 -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -275,7 +272,6 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- 对话框卡片 -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -328,10 +324,17 @@
                                 android:layout_marginStart="4dp" />
                         </LinearLayout>
 
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnBottomSheet"
+                            style="@style/MaterialButton.AwUi.Outlined"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="BottomSheet" />
+
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- 表单验证卡片 -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -386,7 +389,6 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- 布局组件卡片 -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -413,16 +415,73 @@
                             app:flow_horizontalSpacing="8dp"
                             app:flow_verticalSpacing="8dp" />
 
-                        <com.answufeng.ui.widget.AwBadgeView
-                            android:id="@+id/badgeView"
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="12dp">
+
+                            <com.answufeng.ui.widget.AwBadgeView
+                                android:id="@+id/badgeView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnIncrementBadge"
+                                style="@style/MaterialButton.AwUi.Outlined"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:text="Badge+1" />
+                        </LinearLayout>
+
+                        <com.answufeng.ui.widget.AwTagView
+                            android:id="@+id/tagView"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp" />
 
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- 日志显示区域 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    style="@style/Card.AwUi">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Tooltip"
+                            style="@style/Text.AwUi.Subtitle"
+                            android:layout_marginBottom="12dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnShowTooltip"
+                            style="@style/MaterialButton.AwUi.Outlined"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="显示Tooltip" />
+
+                        <com.answufeng.ui.widget.AwTooltipView
+                            android:id="@+id/tooltipView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:tooltip_arrowPosition="bottom"
+                            app:tooltip_bgColor="#FF333333"
+                            app:tooltip_textColor="#FFFFFF" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

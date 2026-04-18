@@ -1,5 +1,6 @@
 package com.answufeng.ui.widget
 
+
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
@@ -60,6 +61,7 @@ class AwSkeletonView @JvmOverloads constructor(
     private val shimmerPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val path = Path()
     private val rectF = RectF()
+    private val cachedMatrix = android.graphics.Matrix()
 
     /**
      * Base color of the skeleton.
@@ -175,7 +177,7 @@ class AwSkeletonView @JvmOverloads constructor(
                 floatArrayOf(0f, 0.5f, 1f),
                 Shader.TileMode.CLAMP
             ).also { cachedShader = it }
-            shader.setLocalMatrix(android.graphics.Matrix().apply {
+            shader.setLocalMatrix(cachedMatrix.apply {
                 setTranslate(translateX, 0f)
             })
             shimmerPaint.shader = shader
@@ -186,6 +188,15 @@ class AwSkeletonView @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         cachedShader = null
+        if (isShimmering) {
+            val gradientWidth = w.toFloat()
+            cachedShader = LinearGradient(
+                -gradientWidth, 0f, 0f, 0f,
+                intArrayOf(baseColor, highlightColor, baseColor),
+                floatArrayOf(0f, 0.5f, 1f),
+                Shader.TileMode.CLAMP
+            )
+        }
     }
 
     override fun onAttachedToWindow() {

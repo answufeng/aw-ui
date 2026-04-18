@@ -165,6 +165,14 @@ class AwSegmentedControl @JvmOverloads constructor(
         }
     }
 
+    override fun setEnabled(enabled: Boolean) {
+        super.setEnabled(enabled)
+        alpha = if (enabled) 1f else 0.4f
+        for (tv in segmentViews) {
+            tv.isEnabled = enabled
+        }
+    }
+
     private fun rebuildSegments() {
         segmentViews.clear()
         container.removeAllViews()

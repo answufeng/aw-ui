@@ -1,65 +1,27 @@
 package com.answufeng.ui.widget
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import com.answufeng.ui.R
 
-/**
- * Auto-scrolling marquee text view.
- *
- * When the text content overflows the view width, the text scrolls
- * automatically in the configured [direction]. The animation pauses
- * at each end for [pauseDuration] milliseconds before restarting.
- *
- * Starts automatically when attached to a window and stops when detached.
- * Uses [postInvalidateDelayed] for the animation loop.
- *
- * ### XML usage
- * ```xml
- * <com.answufeng.ui.widget.AwMarqueeTextView
- *     android:layout_width="200dp"
- *     android:layout_height="wrap_content"
- *     android:text="This is a very long text that will scroll"
- *     app:marquee_speed="1"
- *     app:marquee_pauseDuration="1000"
- *     app:marquee_direction="right_to_left" />
- * ```
- *
- * ### Programmatic usage
- * ```kotlin
- * marqueeView.speed = 2f
- * marqueeView.direction = AwMarqueeTextView.Direction.RIGHT_TO_LEFT
- * ```
- *
- * | XML attribute | Description | Default |
- * |---|---|---|
- * | `marquee_speed` | Scroll speed in pixels per frame | 1 |
- * | `marquee_pauseDuration` | Pause at end before restarting (ms) | 1000 |
- * | `marquee_direction` | Scroll direction enum (left_to_right / right_to_left) | right_to_left |
- */
 class AwMarqueeTextView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : AppCompatTextView(context, attrs, defStyleAttr) {
 
-    /**
-     * Scroll direction.
-     */
     enum class Direction {
         LEFT_TO_RIGHT,
         RIGHT_TO_LEFT
     }
 
-    /** Scroll speed in pixels per frame. */
     var speed: Float = 1f
 
-    /** Pause duration at each end before restarting, in milliseconds. */
     var pauseDuration: Long = 1000L
 
-    /** Scroll direction. */
     var direction: Direction = Direction.RIGHT_TO_LEFT
         set(value) {
             field = value
@@ -67,16 +29,9 @@ class AwMarqueeTextView @JvmOverloads constructor(
         }
 
     private var textWidth: Float = 0f
-
     private var currentOffset: Float = 0f
-
     private var isScrolling: Boolean = false
-
-    private var isPaused: Boolean = false
-
-    private val frameDelay = 16L
-
-    private val scrollRunnable = Runnable { advanceScroll() }
+    private var scrollAnimator: ValueAnimator? = null
 
     init {
         val ta = context.obtainStyledAttributes(attrs, R.styleable.AwMarqueeTextView)
@@ -134,48 +89,50 @@ class AwMarqueeTextView @JvmOverloads constructor(
     }
 
     private fun resetScroll() {
+        scrollAnimator?.cancel()
+        scrollAnimator = null
         currentOffset = 0f
-        isPaused = false
         invalidate()
     }
 
     private fun startScrolling() {
         if (textWidth <= width) return
         isScrolling = true
-        isPaused = false
-        postDelayed(scrollRunnable, frameDelay)
+        startScrollCycle()
     }
 
     private fun stopScrolling() {
         isScrolling = false
-        isPaused = false
-        removeCallbacks(scrollRunnable)
+        scrollAnimator?.cancel()
+        scrollAnimator = null
     }
 
-    private fun advanceScroll() {
+    private fun startScrollCycle() {
         if (!isScrolling || !isAttachedToWindow) return
-
-        if (isPaused) return
 
         val overflow = textWidth - width
         if (overflow <= 0f) return
 
-        currentOffset += speed
+        val durationPerPx = 16L / speed.coerceAtLeast(0.1f)
+        val scrollDuration = (overflow * durationPerPx).toLong()
 
-        if (currentOffset >= overflow) {
-            currentOffset = overflow
-            isPaused = true
-            postDelayed({
-                currentOffset = 0f
-                isPaused = false
-                postInvalidateDelayed(frameDelay)
-                postDelayed(scrollRunnable, frameDelay)
-            }, pauseDuration)
-            invalidate()
-            return
+        scrollAnimator?.cancel()
+        scrollAnimator = ValueAnimator.ofFloat(0f, overflow).apply {
+            duration = scrollDuration
+            addUpdateListener { animator ->
+                currentOffset = animator.animatedValue as Float
+                invalidate()
+            }
+            start()
         }
 
-        invalidate()
-        postInvalidateDelayed(frameDelay)
+        postDelayed({
+            if (!isScrolling || !isAttachedToWindow) return@postDelayed
+            currentOffset = 0f
+            invalidate()
+            postDelayed({
+                startScrollCycle()
+            }, pauseDuration)
+        }, scrollDuration + pauseDuration)
     }
 }

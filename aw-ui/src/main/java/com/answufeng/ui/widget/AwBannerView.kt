@@ -6,7 +6,6 @@ import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
 import android.view.Gravity
-import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -18,38 +17,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.answufeng.ui.R
 
-/**
- * Banner/carousel view with auto-scroll and indicator dots.
- *
- * Wraps a [ViewPager2] internally and provides auto-scrolling, indicator dots,
- * and page click handling. The indicator dots are displayed at the bottom center.
- *
- * ### XML usage
- * ```xml
- * <com.answufeng.ui.widget.AwBannerView
- *     android:layout_width="match_parent"
- *     android:layout_height="200dp"
- *     app:banner_interval="3000"
- *     app:banner_indicatorColor="#80FFFFFF"
- *     app:banner_indicatorSelectedColor="#FFFFFF" />
- * ```
- *
- * ### Programmatic usage
- * ```kotlin
- * bannerView.setAdapter(myAdapter)
- * bannerView.setOnPageClickListener { position -> ... }
- * bannerView.startAutoScroll()
- * ```
- *
- * @property interval Auto-scroll interval in milliseconds. Default 3000.
- * @property isAutoScrolling Whether auto-scroll is currently active.
- *
- * | XML Attribute | Description | Default |
- * |---|---|---|
- * | `banner_interval` | Auto-scroll interval (ms) | 3000 |
- * | `banner_indicatorColor` | Dot color (unselected) | #80FFFFFF |
- * | `banner_indicatorSelectedColor` | Dot color (selected) | #FFFFFF |
- */
 class AwBannerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -59,9 +26,6 @@ class AwBannerView @JvmOverloads constructor(
     private lateinit var viewPager: ViewPager2
     private val indicatorContainer: LinearLayout
 
-    /**
-     * Auto-scroll interval in milliseconds.
-     */
     var interval: Long = 3000L
         set(value) {
             field = value
@@ -71,40 +35,34 @@ class AwBannerView @JvmOverloads constructor(
             }
         }
 
-    /**
-     * Whether auto-scroll is currently active.
-     */
     var isAutoScrolling: Boolean = false
         private set
 
-    /**
-     * Color for unselected indicator dots.
-     */
     var indicatorColor: Int = Color.parseColor("#80FFFFFF")
         set(value) {
             field = value
             updateIndicatorDots()
         }
 
-    /**
-     * Color for the selected indicator dot.
-     */
     var indicatorSelectedColor: Int = Color.parseColor("#FFFFFF")
         set(value) {
             field = value
             updateIndicatorDots()
         }
 
+    var isInfiniteLoop: Boolean = true
+
     private val handler = Handler(Looper.getMainLooper())
-    private var itemCount: Int = 0
+    private var realItemCount: Int = 0
     private var pageClickListener: ((Int) -> Unit)? = null
+    private var indicatorClickListener: ((Int) -> Unit)? = null
     private var lifecycleObserver: LifecycleEventObserver? = null
     private var wasAutoScrollingBeforePause: Boolean = false
 
     private val autoScrollRunnable = object : Runnable {
         override fun run() {
-            if (isAutoScrolling && itemCount > 1) {
-                val next = (viewPager.currentItem + 1) % itemCount
+            if (isAutoScrolling && realItemCount > 1) {
+                val next = viewPager.currentItem + 1
                 viewPager.setCurrentItem(next, true)
             }
             handler.postDelayed(this, interval)
@@ -113,7 +71,7 @@ class AwBannerView @JvmOverloads constructor(
 
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
-            updateIndicatorDots(position)
+            updateIndicatorDots(toRealPosition(position))
         }
     }
 
@@ -142,20 +100,20 @@ class AwBannerView @JvmOverloads constructor(
         addView(indicatorContainer)
     }
 
-    /**
-     * Sets the adapter for the internal [ViewPager2].
-     *
-     * @param adapter The [RecyclerView.Adapter] to supply pages.
-     */
     fun setAdapter(adapter: RecyclerView.Adapter<*>) {
         viewPager.adapter = adapter
-        itemCount = adapter.itemCount
+        realItemCount = adapter.itemCount
         createIndicatorDots()
+        if (isInfiniteLoop && realItemCount > 1) {
+            val mid = Int.MAX_VALUE / 2
+            val startPos = mid - (mid % realItemCount)
+            viewPager.setCurrentItem(startPos, false)
+        }
     }
 
     fun <T> setData(
         items: List<T>,
-        bind: (View, T, Int) -> Unit
+        bind: (android.view.View, T, Int) -> Unit
     ) {
         val adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             override fun onCreateViewHolder(parent: android.view.ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -171,38 +129,39 @@ class AwBannerView @JvmOverloads constructor(
             override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
                 val container = holder.itemView as android.widget.FrameLayout
                 container.removeAllViews()
-                bind(container, items[position], position)
+                val realPos = toRealPosition(position)
+                bind(container, items[realPos], realPos)
             }
 
-            override fun getItemCount(): Int = items.size
+            override fun getItemCount(): Int {
+                return if (isInfiniteLoop && items.size > 1) Int.MAX_VALUE else items.size
+            }
         }
         setAdapter(adapter)
     }
 
-    /**
-     * Sets a click listener for banner pages.
-     *
-     * @param listener Lambda receiving the clicked page position.
-     */
     fun setOnPageClickListener(listener: (Int) -> Unit) {
         pageClickListener = listener
     }
 
-    /**
-     * Starts auto-scrolling to the next page at the configured [interval].
-     */
+    fun setOnIndicatorClickListener(listener: (Int) -> Unit) {
+        indicatorClickListener = listener
+    }
+
     fun startAutoScroll() {
         if (isAutoScrolling) return
         isAutoScrolling = true
         handler.postDelayed(autoScrollRunnable, interval)
     }
 
-    /**
-     * Stops auto-scrolling.
-     */
     fun stopAutoScroll() {
         isAutoScrolling = false
         handler.removeCallbacks(autoScrollRunnable)
+    }
+
+    fun toRealPosition(position: Int): Int {
+        if (realItemCount == 0) return 0
+        return if (isInfiniteLoop) position % realItemCount else position
     }
 
     private fun createIndicatorDots() {
@@ -210,7 +169,7 @@ class AwBannerView @JvmOverloads constructor(
         val dotSize = (6 * resources.displayMetrics.density).toInt()
         val dotMargin = (4 * resources.displayMetrics.density).toInt()
 
-        for (i in 0 until itemCount) {
+        for (i in 0 until realItemCount) {
             val dot = ImageView(context).apply {
                 layoutParams = LinearLayout.LayoutParams(dotSize, dotSize).apply {
                     leftMargin = dotMargin
@@ -218,15 +177,20 @@ class AwBannerView @JvmOverloads constructor(
                 }
                 setImageDrawable(createDotDrawable(i == 0))
                 setOnClickListener {
-                    viewPager.setCurrentItem(i, true)
-                    pageClickListener?.invoke(i)
+                    val target = if (isInfiniteLoop) {
+                        viewPager.currentItem - (viewPager.currentItem % realItemCount) + i
+                    } else {
+                        i
+                    }
+                    viewPager.setCurrentItem(target, true)
+                    indicatorClickListener?.invoke(i)
                 }
             }
             indicatorContainer.addView(dot)
         }
     }
 
-    private fun updateIndicatorDots(selectedPosition: Int = viewPager.currentItem) {
+    private fun updateIndicatorDots(selectedPosition: Int = toRealPosition(viewPager.currentItem)) {
         for (i in 0 until indicatorContainer.childCount) {
             val dot = indicatorContainer.getChildAt(i) as? ImageView ?: continue
             dot.setImageDrawable(createDotDrawable(i == selectedPosition))

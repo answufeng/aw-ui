@@ -134,8 +134,10 @@ class AwSmartEditText @JvmOverloads constructor(
                 if (raw != formatted) {
                     isFormatting = true
                     val selEnd = selectionEnd
+                    val diff = formatted.length - raw.length
                     setText(formatted)
-                    setSelection(formatted.length.coerceAtMost(selEnd.coerceAtLeast(0)))
+                    val newSel = (selEnd + diff).coerceIn(0, formatted.length)
+                    setSelection(newSel)
                     isFormatting = false
                 }
             }

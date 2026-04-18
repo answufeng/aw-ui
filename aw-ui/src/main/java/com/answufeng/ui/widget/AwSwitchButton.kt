@@ -60,6 +60,9 @@ class AwSwitchButton @JvmOverloads constructor(
                 field = value
                 animateThumb()
                 invalidate()
+                announceForAccessibility(
+                    if (value) "Switch on" else "Switch off"
+                )
             }
         }
 

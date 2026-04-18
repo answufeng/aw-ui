@@ -165,10 +165,10 @@ class AwSimpleAdapter<VB : ViewBinding, T>(
     }
 }
 
-inline fun <reified VB : ViewBinding, T> awSimpleAdapter(
+fun <VB : ViewBinding, T> awSimpleAdapter(
     diffCallback: DiffUtil.ItemCallback<T>,
-    crossinline inflate: (LayoutInflater, ViewGroup?, Boolean) -> VB,
-    crossinline bind: (VB, T, Int) -> Unit
+    inflate: (LayoutInflater, ViewGroup?, Boolean) -> VB,
+    bind: (VB, T, Int) -> Unit
 ): AwSimpleAdapter<VB, T> {
     return AwSimpleAdapter(inflate, diffCallback, bind)
 }

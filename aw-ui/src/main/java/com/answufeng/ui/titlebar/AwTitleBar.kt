@@ -1,6 +1,7 @@
 package com.answufeng.ui.titlebar
 
 import android.app.Activity
+import androidx.activity.ComponentActivity
 import android.content.Context
 import android.content.ContextWrapper
 import android.graphics.Color
@@ -65,6 +66,7 @@ class AwTitleBar @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     private val tvTitle: TextView
+    private val tvSubtitle: TextView
     private val ivBack: ImageView
     private val tvRight: TextView
     private val ivRight: ImageView
@@ -75,6 +77,13 @@ class AwTitleBar @JvmOverloads constructor(
     var title: CharSequence
         get() = tvTitle.text
         set(value) { tvTitle.text = value }
+
+    var subtitle: CharSequence
+        get() = tvSubtitle.text
+        set(value) {
+            tvSubtitle.text = value
+            tvSubtitle.visibility = if (value.isEmpty()) GONE else VISIBLE
+        }
 
     init {
         val density = resources.displayMetrics.density
@@ -103,6 +112,19 @@ class AwTitleBar @JvmOverloads constructor(
             ViewCompat.setAccessibilityHeading(this, true)
         }
         addView(tvTitle)
+
+        tvSubtitle = TextView(context).apply {
+            layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT).apply {
+                gravity = Gravity.CENTER
+                topMargin = (24 * density).toInt()
+            }
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+            setTextColor(Color.parseColor("#99000000"))
+            maxLines = 1
+            ellipsize = TextUtils.TruncateAt.END
+            visibility = GONE
+        }
+        addView(tvSubtitle)
 
         // 右侧容器（包含文字按钮和图标按钮）
         rightContainer = LinearLayout(context).apply {
@@ -165,9 +187,13 @@ class AwTitleBar @JvmOverloads constructor(
 
         if (immersive) applyImmersivePadding()
 
-        // 默认点击返回按钮关闭 Activity，可通过 setOnBackClickListener 覆盖
         ivBack.setOnClickListener {
-            findActivity(context)?.finish()
+            val activity = findActivity(context)
+            if (activity is ComponentActivity) {
+                activity.onBackPressedDispatcher.onBackPressed()
+            } else {
+                activity?.finish()
+            }
         }
     }
 

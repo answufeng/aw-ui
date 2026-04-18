@@ -104,9 +104,15 @@ class AwExpandableLayout @JvmOverloads constructor(
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         if (childCount > 0) {
-            val child = getChildAt(0)
-            measureChildWithMargins(child, widthMeasureSpec, 0, MeasureSpec.UNSPECIFIED, 0)
-            measuredChildHeight = child.measuredHeight + (child.layoutParams as MarginLayoutParams).topMargin + (child.layoutParams as MarginLayoutParams).bottomMargin
+            var totalHeight = 0
+            for (i in 0 until childCount) {
+                val child = getChildAt(i)
+                if (child.visibility == GONE) continue
+                measureChildWithMargins(child, widthMeasureSpec, 0, MeasureSpec.UNSPECIFIED, 0)
+                val lp = child.layoutParams as MarginLayoutParams
+                totalHeight += child.measuredHeight + lp.topMargin + lp.bottomMargin
+            }
+            measuredChildHeight = totalHeight
         }
 
         if (!expanded && !isAnimating) {

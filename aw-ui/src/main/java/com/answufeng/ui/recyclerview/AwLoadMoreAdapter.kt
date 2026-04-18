@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import com.answufeng.ui.R
 import com.google.android.material.color.MaterialColors
 
 /**
@@ -177,6 +178,17 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
         super.submitList(list)
     }
 
+    fun appendList(list: List<T>, commitCallback: Runnable? = null) {
+        val combined = currentList.toMutableList().apply { addAll(list) }
+        loadState = LoadState.IDLE
+        super.submitList(combined, commitCallback)
+    }
+
+    fun refreshAll(list: List<T>, commitCallback: Runnable? = null) {
+        loadState = LoadState.IDLE
+        super.submitList(list, commitCallback)
+    }
+
     /**
      * 追加下一页数据（加载更多成功时调用）。
      *
@@ -326,10 +338,10 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
     }
 }
 
-inline fun <reified VB : ViewBinding, T> awLoadMoreAdapter(
+fun <VB : ViewBinding, T> awLoadMoreAdapter(
     diffCallback: DiffUtil.ItemCallback<T>,
-    crossinline inflate: (LayoutInflater, ViewGroup, Boolean) -> VB,
-    crossinline bind: (VB, T, Int) -> Unit
+    inflate: (LayoutInflater, ViewGroup, Boolean) -> VB,
+    bind: (VB, T, Int) -> Unit
 ): AwLoadMoreAdapter<VB, T> {
     return AwLoadMoreAdapter(inflate, diffCallback, bind)
 }

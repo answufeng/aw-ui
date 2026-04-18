@@ -291,6 +291,35 @@ class AwStateLayout @JvmOverloads constructor(
         errorView = view
     }
 
+    private val customStates = mutableMapOf<String, View>()
+
+    fun registerState(stateName: String, viewProvider: (Context) -> View) {
+        if (!customStates.containsKey(stateName)) {
+            customStates[stateName] = viewProvider(context)
+        }
+    }
+
+    fun showCustomState(stateName: String) {
+        val view = customStates[stateName] ?: return
+        hideAllStateViews()
+        if (view.parent == null) addView(view)
+        view.visibility = VISIBLE
+        if (enableAnimation) transition.transition(view, animationDuration)
+        val oldState = currentState
+        currentState = State.CONTENT
+        stateChangeListener?.onStateChanged(oldState, State.CONTENT)
+    }
+
+    private fun hideAllStateViews() {
+        contentView?.visibility = GONE
+        loadingView?.visibility = GONE
+        emptyView?.visibility = GONE
+        errorView?.visibility = GONE
+        for (view in customStates.values) {
+            view.visibility = GONE
+        }
+    }
+
     /** 直接设置内容视图实例 */
     fun setContentView(view: View) {
         contentView?.let { removeView(it) }
@@ -361,10 +390,10 @@ class AwStateLayout @JvmOverloads constructor(
 
     private fun announceStateForAccessibility(state: State) {
         val message = when (state) {
-            State.CONTENT -> "内容已加载"
-            State.LOADING -> "加载中"
-            State.EMPTY -> "暂无数据"
-            State.ERROR -> "加载失败"
+            State.CONTENT -> context.getString(android.R.string.ok)
+            State.LOADING -> context.getString(R.string.aw_state_loading)
+            State.EMPTY -> context.getString(R.string.aw_state_empty)
+            State.ERROR -> context.getString(R.string.aw_state_error)
         }
         announceForAccessibility(message)
     }

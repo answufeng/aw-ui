@@ -267,7 +267,6 @@ class AwPasswordInputView @JvmOverloads constructor(
     override fun onSaveInstanceState(): Parcelable {
         return Bundle().apply {
             putParcelable("superState", super.onSaveInstanceState())
-            putString("password", password)
             putBoolean("isPasswordVisible", isPasswordVisible)
             putString("strength", lastStrength.name)
         }
@@ -282,7 +281,6 @@ class AwPasswordInputView @JvmOverloads constructor(
                 state.getParcelable("superState")
             }
             super.onRestoreInstanceState(superState)
-            val savedPassword = state.getString("password") ?: ""
             val savedVisible = state.getBoolean("isPasswordVisible", false)
             val savedStrength = try {
                 Strength.valueOf(state.getString("strength") ?: "WEAK")
@@ -290,8 +288,6 @@ class AwPasswordInputView @JvmOverloads constructor(
                 Strength.WEAK
             }
             editText.removeTextChangedListener(textWatcher)
-            editText.setText(savedPassword)
-            editText.addTextChangedListener(textWatcher)
             isPasswordVisible = savedVisible
             if (isPasswordVisible) {
                 editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD

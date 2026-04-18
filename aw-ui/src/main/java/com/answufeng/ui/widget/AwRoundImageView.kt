@@ -204,6 +204,18 @@ class AwRoundImageView @JvmOverloads constructor(
             cachedBitmap = null
             return drawable.bitmap
         }
+        if (drawable is android.graphics.drawable.VectorDrawable) {
+            cachedBitmap?.recycle()
+            val w = drawable.intrinsicWidth.coerceAtLeast(1)
+            val h = drawable.intrinsicHeight.coerceAtLeast(1)
+            val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bitmap)
+            drawable.setBounds(0, 0, w, h)
+            drawable.draw(canvas)
+            cachedDrawable = drawable.constantState?.newDrawable() ?: drawable
+            cachedBitmap = bitmap
+            return bitmap
+        }
         if (drawable === cachedDrawable && cachedBitmap != null) {
             return cachedBitmap
         }
@@ -219,5 +231,12 @@ class AwRoundImageView @JvmOverloads constructor(
         } ?: drawable
         cachedBitmap = bitmap
         return bitmap
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        cachedBitmap?.recycle()
+        cachedBitmap = null
+        cachedDrawable = null
     }
 }

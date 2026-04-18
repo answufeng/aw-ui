@@ -138,6 +138,8 @@ class AwCodeInputView @JvmOverloads constructor(
      */
     var onCodeComplete: ((String) -> Unit)? = null
 
+    var codeInputType: Int = InputType.TYPE_CLASS_NUMBER
+
     /**
      * The full code entered so far. Setting this property fills the boxes programmatically.
      */
@@ -195,7 +197,7 @@ class AwCodeInputView @JvmOverloads constructor(
         removeAllViews()
         for (i in 0 until codeLength) {
             val et = CodeEditText(context, this, i).apply {
-                inputType = InputType.TYPE_CLASS_NUMBER
+                inputType = codeInputType
                 isCursorVisible = false
                 setTextColor(codeTextColor)
                 textSize = codeTextSize / density
@@ -243,7 +245,9 @@ class AwCodeInputView @JvmOverloads constructor(
 
     internal fun onDigitCleared(index: Int) {
         if (index > 0) {
-            getChildAt(index - 1)?.requestFocus()
+            val prevEt = getChildAt(index - 1) as? CodeEditText ?: return
+            prevEt.setText("")
+            prevEt.requestFocus()
         }
     }
 

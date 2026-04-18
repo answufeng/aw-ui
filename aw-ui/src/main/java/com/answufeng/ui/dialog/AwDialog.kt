@@ -11,14 +11,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class AwDialog private constructor(
     private val builder: Builder
-) : Dialog(builder.context) {
+) {
 
-    override fun onCreate(savedInstanceState: android.os.Bundle?) {
-        super.onCreate(savedInstanceState)
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-    }
+    private var dialog: Dialog? = null
 
     fun show() {
+        dismiss()
         val dialogBuilder = MaterialAlertDialogBuilder(builder.context)
         builder.title?.let { dialogBuilder.setTitle(it) }
         builder.message?.let { dialogBuilder.setMessage(it) }
@@ -36,8 +34,15 @@ class AwDialog private constructor(
         builder.onCancel?.let { dialogBuilder.setOnCancelListener(it) }
         builder.onDismiss?.let { dialogBuilder.setOnDismissListener(it) }
 
-        dialogBuilder.show()
+        dialog = dialogBuilder.show()
     }
+
+    fun dismiss() {
+        dialog?.dismiss()
+        dialog = null
+    }
+
+    fun isShowing(): Boolean = dialog?.isShowing == true
 
     class Builder(val context: Context) {
 
@@ -114,8 +119,6 @@ class AwDialog private constructor(
     }
 
     companion object {
-        @Deprecated("Use AwDialog.Builder(context) instead", ReplaceWith("AwDialog.Builder(context)"))
-        fun alert(context: Context): Builder = Builder(context)
 
         fun showMessage(context: Context, title: String, message: String) {
             Builder(context)

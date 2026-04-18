@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="aw_state_loading">加载中</string>
+    <string name="aw_state_empty">暂无数据</string>
+    <string name="aw_state_error">加载失败</string>
+</resources>
