@@ -70,7 +70,7 @@ class AwBadgeView @JvmOverloads constructor(
      *
      * - 负数：隐藏（GONE）
      * - 0：显示红点
-     * - 正数：显示数字，>99 显示 "99+"
+     * - 正数：显示数字，超过 [maxCount] 显示 "${maxCount}+"
      */
     var count: Int = 0
         set(value) {
@@ -80,6 +80,41 @@ class AwBadgeView @JvmOverloads constructor(
             requestLayout()
             invalidate()
         }
+
+    /**
+     * 数字角标显示的最大值，超过后显示 "${maxCount}+"。默认 99。
+     */
+    var maxCount: Int = 99
+        set(value) {
+            field = value
+            requestLayout()
+            invalidate()
+        }
+
+    /**
+     * 增加角标数量。
+     *
+     * @param delta 增加值，默认 1
+     */
+    fun increment(delta: Int = 1) {
+        count += delta
+    }
+
+    /**
+     * 减少角标数量。
+     *
+     * @param delta 减少值，默认 1
+     */
+    fun decrement(delta: Int = 1) {
+        count = (count - delta).coerceAtLeast(-1)
+    }
+
+    /**
+     * 清除角标（隐藏）。
+     */
+    fun clear() {
+        count = -1
+    }
 
     init {
         val ta = context.obtainStyledAttributes(attrs, R.styleable.AwBadgeView)
@@ -113,7 +148,7 @@ class AwBadgeView @JvmOverloads constructor(
             val size = (8 * density).toInt()
             setMeasuredDimension(size, size)
         } else {
-            val text = if (count > 99) "99+" else count.toString()
+            val text = if (count > maxCount) "${maxCount}+" else count.toString()
             textPaint.getTextBounds(text, 0, text.length, textBounds)
             val h = (16 * density).toInt()
             val w = max(h, textBounds.width() + (10 * density).toInt())
@@ -148,7 +183,7 @@ class AwBadgeView @JvmOverloads constructor(
         if (count == 0) {
             canvas.drawCircle(width / 2f, height / 2f, min(width, height) / 2f, bgPaint)
         } else {
-            val text = if (count > 99) "99+" else count.toString()
+            val text = if (count > maxCount) "${maxCount}+" else count.toString()
             val radius = height / 2f
             canvas.drawRoundRect(0f, 0f, width.toFloat(), height.toFloat(), radius, radius, bgPaint)
             val y = height / 2f - (textPaint.descent() + textPaint.ascent()) / 2f

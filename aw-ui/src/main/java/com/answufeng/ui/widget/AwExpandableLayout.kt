@@ -135,7 +135,7 @@ class AwExpandableLayout @JvmOverloads constructor(
     fun expand() {
         if (expanded && !isAnimating) return
         expanded = true
-        animateHeight(0, measuredChildHeight)
+        animateHeight(layoutParams?.height ?: 0, measuredChildHeight)
         onExpandChange?.invoke(true)
     }
 
@@ -153,11 +153,11 @@ class AwExpandableLayout @JvmOverloads constructor(
         animator?.cancel()
         isAnimating = true
 
-        if (from == 0 && !expanded) {
+        if (from == 0) {
             layoutParams?.height = 0
         }
 
-        animator = ValueAnimator.ofInt(from, to).apply {
+        animator = ValueAnimator.ofInt(from.coerceAtLeast(0), to).apply {
             duration = this@AwExpandableLayout.duration
             interpolator = AccelerateDecelerateInterpolator()
             addUpdateListener { animation ->
@@ -165,12 +165,13 @@ class AwExpandableLayout @JvmOverloads constructor(
                 layoutParams = layoutParams?.apply { height = value }
                 requestLayout()
             }
+            addListener(object : android.animation.AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: android.animation.Animator) {
+                    isAnimating = false
+                    requestLayout()
+                }
+            })
             start()
         }
-
-        postDelayed({
-            isAnimating = false
-            requestLayout()
-        }, this@AwExpandableLayout.duration)
     }
 }

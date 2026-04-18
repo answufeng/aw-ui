@@ -78,6 +78,9 @@ class AwPasswordInputView @JvmOverloads constructor(
 
     private var isPasswordVisible = false
 
+    private var eyeOpenDrawable: android.graphics.drawable.Drawable? = null
+    private var eyeClosedDrawable: android.graphics.drawable.Drawable? = null
+
     /**
      * Hint text displayed in the password EditText.
      */
@@ -169,7 +172,7 @@ class AwPasswordInputView @JvmOverloads constructor(
                 gravity = Gravity.END or Gravity.CENTER_VERTICAL
                 marginEnd = (8 * density).toInt()
             }
-            setImageDrawable(createEyeDrawable(false))
+            setImageDrawable(getEyeDrawable(false))
             setOnClickListener { togglePasswordVisibility() }
         }
 
@@ -205,7 +208,14 @@ class AwPasswordInputView @JvmOverloads constructor(
             editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
         }
         editText.setSelection(selection.coerceIn(0, editText.text.length))
-        toggleButton.setImageDrawable(createEyeDrawable(isPasswordVisible))
+        toggleButton.setImageDrawable(getEyeDrawable(isPasswordVisible))
+    }
+
+    private fun getEyeDrawable(visible: Boolean): android.graphics.drawable.Drawable {
+        if (visible) {
+            return eyeOpenDrawable ?: createEyeDrawable(true).also { eyeOpenDrawable = it }
+        }
+        return eyeClosedDrawable ?: createEyeDrawable(false).also { eyeClosedDrawable = it }
     }
 
     private fun createEyeDrawable(visible: Boolean): android.graphics.drawable.Drawable {
@@ -290,7 +300,7 @@ class AwPasswordInputView @JvmOverloads constructor(
             }
             lastStrength = savedStrength
             strengthBarView.currentStrength = savedStrength
-            toggleButton.setImageDrawable(createEyeDrawable(isPasswordVisible))
+            toggleButton.setImageDrawable(getEyeDrawable(isPasswordVisible))
         } else {
             super.onRestoreInstanceState(state)
         }

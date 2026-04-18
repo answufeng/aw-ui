@@ -53,6 +53,9 @@ class AwCountDownView @JvmOverloads constructor(
     /** Custom time format function. Receives remaining seconds, returns display string. */
     var formatTime: ((Int) -> String)? = null
 
+    /** Whether to auto-disable this view during countdown and re-enable on finish. Default true. */
+    var autoDisable: Boolean = true
+
     /** Initial countdown duration in seconds, used by [reset]. */
     var initialSeconds: Int = 60
         private set
@@ -84,6 +87,7 @@ class AwCountDownView @JvmOverloads constructor(
         initialSeconds = seconds
         remainingSeconds = seconds
         updateDisplay()
+        if (autoDisable) isEnabled = false
 
         timer = object : CountDownTimer(seconds * 1000L, 1000L) {
             override fun onTick(millisUntilFinished: Long) {
@@ -95,6 +99,7 @@ class AwCountDownView @JvmOverloads constructor(
             override fun onFinish() {
                 remainingSeconds = 0
                 updateDisplay()
+                if (autoDisable) isEnabled = true
                 onFinish?.invoke()
             }
         }.start()
@@ -116,6 +121,7 @@ class AwCountDownView @JvmOverloads constructor(
         stop()
         remainingSeconds = initialSeconds
         updateDisplay()
+        if (autoDisable) isEnabled = true
     }
 
     private fun updateDisplay() {

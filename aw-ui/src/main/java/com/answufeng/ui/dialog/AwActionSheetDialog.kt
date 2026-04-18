@@ -15,6 +15,7 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import com.answufeng.ui.R
+import com.google.android.material.color.MaterialColors
 
 /**
  * iOS-style action sheet dialog displayed from the bottom of the screen.
@@ -75,6 +76,29 @@ class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSh
 
     private val density = context.resources.displayMetrics.density
 
+    private val surfaceColor: Int by lazy {
+        MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurface, Color.WHITE)
+    }
+    private val onSurfaceColor: Int by lazy {
+        MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurface, Color.BLACK)
+    }
+    private val secondaryColor: Int by lazy {
+        MaterialColors.getColor(context, android.R.attr.textColorSecondary, Color.parseColor("#8E8E93"))
+    }
+    private val primaryColor: Int by lazy {
+        MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimary, Color.parseColor("#007AFF"))
+    }
+    private val separatorColor: Int by lazy {
+        val ta = context.obtainStyledAttributes(intArrayOf(android.R.attr.listDivider))
+        val color = try {
+            (ta.getDrawable(0) as? android.graphics.drawable.ColorDrawable)?.color
+                ?: Color.parseColor("#C6C6C8")
+        } finally {
+            ta.recycle()
+        }
+        color
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -93,7 +117,7 @@ class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSh
 
         val sheetLayout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            background = createRoundedBackground(12f * density, Color.WHITE)
+            background = createRoundedBackground(12f * density, surfaceColor)
         }
 
         title?.let {
@@ -207,7 +231,7 @@ class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSh
     private fun createTitleView(titleText: String): TextView {
         return TextView(context).apply {
             text = titleText
-            setTextColor(Color.parseColor("#8E8E93"))
+            setTextColor(secondaryColor)
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
             gravity = Gravity.CENTER
             val padV = (14 * density).toInt()
@@ -224,7 +248,7 @@ class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSh
         val isDestructive = index == destructiveIndex
         return TextView(context).apply {
             text = label
-            setTextColor(if (isDestructive) Color.parseColor("#FF3B30") else Color.parseColor("#007AFF"))
+            setTextColor(if (isDestructive) Color.parseColor("#FF3B30") else primaryColor)
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
             gravity = Gravity.CENTER
             val padV = (14 * density).toInt()
@@ -244,13 +268,13 @@ class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSh
     private fun createCancelView(text: String): TextView {
         return TextView(context).apply {
             this.text = text
-            setTextColor(Color.parseColor("#007AFF"))
+            setTextColor(primaryColor)
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
             gravity = Gravity.CENTER
             val padV = (14 * density).toInt()
             val padH = (16 * density).toInt()
             setPadding(padH, padV, padH, padV)
-            background = createRoundedBackground(12f * density, Color.WHITE)
+            background = createRoundedBackground(12f * density, surfaceColor)
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -264,7 +288,7 @@ class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSh
 
     private fun createSeparator(): View {
         return View(context).apply {
-            setBackgroundColor(Color.parseColor("#C6C6C8"))
+            setBackgroundColor(separatorColor)
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 (0.5 * density).toInt()

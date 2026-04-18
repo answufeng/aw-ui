@@ -107,8 +107,11 @@ class AwSkeletonView @JvmOverloads constructor(
     var isShimmering: Boolean = false
         private set
 
+    var autoStart: Boolean = true
+
     private var shimmerOffset: Float = 0f
     private var animator: ValueAnimator? = null
+    private var cachedShader: LinearGradient? = null
 
     init {
         val density = resources.displayMetrics.density
@@ -163,23 +166,31 @@ class AwSkeletonView @JvmOverloads constructor(
         if (isShimmering && shimmerOffset > -1f) {
             val gradientWidth = width.toFloat()
             val translateX = shimmerOffset * gradientWidth * 2
-            val shader = LinearGradient(
-                translateX - gradientWidth,
+            val shader = cachedShader ?: LinearGradient(
+                -gradientWidth,
                 0f,
-                translateX,
+                0f,
                 0f,
                 intArrayOf(baseColor, highlightColor, baseColor),
                 floatArrayOf(0f, 0.5f, 1f),
                 Shader.TileMode.CLAMP
-            )
+            ).also { cachedShader = it }
+            shader.setLocalMatrix(android.graphics.Matrix().apply {
+                setTranslate(translateX, 0f)
+            })
             shimmerPaint.shader = shader
             canvas.drawPath(path, shimmerPaint)
         }
     }
 
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        cachedShader = null
+    }
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        startShimmer()
+        if (autoStart) startShimmer()
     }
 
     override fun onDetachedFromWindow() {

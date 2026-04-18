@@ -87,7 +87,7 @@ class AwTitleBar @JvmOverloads constructor(
             }
             scaleType = ImageView.ScaleType.CENTER
             setPadding((12 * density).toInt(), 0, (12 * density).toInt(), 0)
-            setImageResource(android.R.drawable.ic_menu_revert)
+            setImageResource(R.drawable.aw_ic_back)
             contentDescription = "Back"
         }
         addView(ivBack)

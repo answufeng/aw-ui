@@ -1,0 +1,137 @@
+package com.answufeng.ui.widget
+
+import android.content.Context
+import android.graphics.Color
+import android.util.AttributeSet
+import android.view.Gravity
+import android.view.View
+import android.widget.TextView
+import com.answufeng.ui.R
+import com.google.android.material.color.MaterialColors
+
+class AwTagView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : AwFlowLayout(context, attrs, defStyleAttr) {
+
+    var tags: List<String> = emptyList()
+        set(value) {
+            field = value
+            rebuildTags()
+        }
+
+    var selectedTags: Set<String> = emptySet()
+        private set
+
+    var selectionMode: SelectionMode = SelectionMode.SINGLE
+        set(value) {
+            field = value
+            if (value == SelectionMode.NONE) {
+                selectedTags = emptySet()
+            }
+            rebuildTags()
+        }
+
+    var onTagClick: ((String, Boolean) -> Unit)? = null
+    var onSelectionChange: ((Set<String>) -> Unit)? = null
+
+    var tagTextColor: Int = MaterialColors.getColor(context, android.R.attr.textColorPrimary, Color.BLACK)
+    var tagSelectedTextColor: Int = Color.WHITE
+    var tagBgColor: Int = MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurfaceVariant, Color.parseColor("#F0F0F0"))
+    var tagSelectedBgColor: Int = MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimary, Color.BLUE)
+    var tagTextSize: Float = 14f
+    var tagPaddingH: Int = (12 * resources.displayMetrics.density).toInt()
+    var tagPaddingV: Int = (6 * resources.displayMetrics.density).toInt()
+    var tagCornerRadius: Float = 4f * resources.displayMetrics.density
+
+    enum class SelectionMode { NONE, SINGLE, MULTI }
+
+    init {
+        flowGravity = Gravity.START
+    }
+
+    fun setTagSelected(tag: String, selected: Boolean) {
+        if (selected) {
+            selectedTags = when (selectionMode) {
+                SelectionMode.SINGLE -> setOf(tag)
+                SelectionMode.MULTI -> selectedTags + tag
+                SelectionMode.NONE -> return
+            }
+        } else {
+            selectedTags = selectedTags - tag
+        }
+        updateTagStyles()
+        onSelectionChange?.invoke(selectedTags)
+    }
+
+    fun clearSelection() {
+        selectedTags = emptySet()
+        updateTagStyles()
+        onSelectionChange?.invoke(selectedTags)
+    }
+
+    private fun rebuildTags() {
+        removeAllViews()
+        for (tag in tags) {
+            val textView = createTagView(tag)
+            addView(textView)
+        }
+    }
+
+    private fun createTagView(tag: String): TextView {
+        val isSelected = selectedTags.contains(tag)
+        return TextView(context).apply {
+            text = tag
+            textSize = tagTextSize
+            setTextColor(if (isSelected) tagSelectedTextColor else tagTextColor)
+            setPadding(tagPaddingH, tagPaddingV, tagPaddingH, tagPaddingV)
+            background = createTagBackground(isSelected)
+            setOnClickListener { handleTagClick(tag) }
+            layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        }
+    }
+
+    private fun createTagBackground(isSelected: Boolean): android.graphics.drawable.GradientDrawable {
+        return android.graphics.drawable.GradientDrawable().apply {
+            cornerRadius = tagCornerRadius
+            setColor(if (isSelected) tagSelectedBgColor else tagBgColor)
+        }
+    }
+
+    private fun handleTagClick(tag: String) {
+        val wasSelected = selectedTags.contains(tag)
+        when (selectionMode) {
+            SelectionMode.NONE -> {
+                onTagClick?.invoke(tag, false)
+            }
+            SelectionMode.SINGLE -> {
+                if (wasSelected) {
+                    selectedTags = emptySet()
+                } else {
+                    selectedTags = setOf(tag)
+                }
+            }
+            SelectionMode.MULTI -> {
+                selectedTags = if (wasSelected) {
+                    selectedTags - tag
+                } else {
+                    selectedTags + tag
+                }
+            }
+        }
+        updateTagStyles()
+        onTagClick?.invoke(tag, selectedTags.contains(tag))
+        onSelectionChange?.invoke(selectedTags)
+    }
+
+    private fun updateTagStyles() {
+        for (i in 0 until childCount) {
+            val child = getChildAt(i) as? TextView ?: continue
+            val tag = child.text.toString()
+            val isSelected = selectedTags.contains(tag)
+            child.setTextColor(if (isSelected) tagSelectedTextColor else tagTextColor)
+            child.background = createTagBackground(isSelected)
+        }
+    }
+}

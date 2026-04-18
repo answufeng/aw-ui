@@ -67,6 +67,8 @@ class AwRoundImageView @JvmOverloads constructor(
     private var bitmapShader: BitmapShader? = null
     private var bitmapWidth: Int = 0
     private var bitmapHeight: Int = 0
+    private var cachedBitmap: Bitmap? = null
+    private var cachedDrawable: android.graphics.drawable.Drawable? = null
 
     /**
      * Corner radius in pixels. Ignored when [isCircle] is true.
@@ -197,14 +199,25 @@ class AwRoundImageView @JvmOverloads constructor(
 
     private fun drawableToBitmap(drawable: android.graphics.drawable.Drawable): Bitmap? {
         if (drawable is android.graphics.drawable.BitmapDrawable) {
+            cachedDrawable = null
+            cachedBitmap?.recycle()
+            cachedBitmap = null
             return drawable.bitmap
         }
+        if (drawable === cachedDrawable && cachedBitmap != null) {
+            return cachedBitmap
+        }
+        cachedBitmap?.recycle()
         val w = drawable.intrinsicWidth.coerceAtLeast(1)
         val h = drawable.intrinsicHeight.coerceAtLeast(1)
         val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         drawable.setBounds(0, 0, w, h)
         drawable.draw(canvas)
+        cachedDrawable = drawable.constantState?.newDrawable()?.also {
+            it.bounds = drawable.bounds
+        } ?: drawable
+        cachedBitmap = bitmap
         return bitmap
     }
 }

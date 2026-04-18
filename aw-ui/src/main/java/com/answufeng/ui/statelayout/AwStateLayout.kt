@@ -291,6 +291,16 @@ class AwStateLayout @JvmOverloads constructor(
         errorView = view
     }
 
+    /** 直接设置内容视图实例 */
+    fun setContentView(view: View) {
+        contentView?.let { removeView(it) }
+        contentView = view
+        if (currentState == State.CONTENT) {
+            if (view.parent == null) addView(view)
+            view.visibility = VISIBLE
+        }
+    }
+
     /**
      * 设置状态变更监听器。
      *

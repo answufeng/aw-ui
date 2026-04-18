@@ -164,3 +164,11 @@ class AwSimpleAdapter<VB : ViewBinding, T>(
         onItemLongClick = listener
     }
 }
+
+inline fun <reified VB : ViewBinding, T> awSimpleAdapter(
+    diffCallback: DiffUtil.ItemCallback<T>,
+    crossinline inflate: (LayoutInflater, ViewGroup?, Boolean) -> VB,
+    crossinline bind: (VB, T, Int) -> Unit
+): AwSimpleAdapter<VB, T> {
+    return AwSimpleAdapter(inflate, diffCallback, bind)
+}

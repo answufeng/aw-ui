@@ -249,8 +249,8 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
     private class ItemViewHolder<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(binding.root)
 
     private class FooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val progressBar: ProgressBar = itemView.findViewWithTag("loadMoreProgress")
-        private val textView: TextView = itemView.findViewWithTag("loadMoreText")
+        private val progressBar: ProgressBar = itemView.findViewById(R.id.loadMoreProgress)
+        private val textView: TextView = itemView.findViewById(R.id.loadMoreText)
 
         fun bind(
             state: LoadState,
@@ -305,7 +305,7 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
                 }
 
                 val progress = ProgressBar(context).apply {
-                    tag = "loadMoreProgress"
+                    id = R.id.loadMoreProgress
                     val size = (24 * density).toInt()
                     layoutParams = android.widget.LinearLayout.LayoutParams(size, size).apply {
                         marginEnd = (8 * density).toInt()
@@ -313,7 +313,7 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
                 }
 
                 val text = TextView(context).apply {
-                    tag = "loadMoreText"
+                    id = R.id.loadMoreText
                     textSize = 14f
                     setTextColor(textColor)
                 }
@@ -324,4 +324,12 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
             }
         }
     }
+}
+
+inline fun <reified VB : ViewBinding, T> awLoadMoreAdapter(
+    diffCallback: DiffUtil.ItemCallback<T>,
+    crossinline inflate: (LayoutInflater, ViewGroup, Boolean) -> VB,
+    crossinline bind: (VB, T, Int) -> Unit
+): AwLoadMoreAdapter<VB, T> {
+    return AwLoadMoreAdapter(inflate, diffCallback, bind)
 }

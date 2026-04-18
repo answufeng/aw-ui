@@ -151,7 +151,6 @@ class AwSmartEditText @JvmOverloads constructor(
 
         addTextChangedListener(textWatcher)
         updateCharFilter()
-        ensureErrorView()
     }
 
     /**

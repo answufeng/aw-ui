@@ -10,6 +10,10 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.answufeng.ui.R
@@ -94,6 +98,8 @@ class AwBannerView @JvmOverloads constructor(
     private val handler = Handler(Looper.getMainLooper())
     private var itemCount: Int = 0
     private var pageClickListener: ((Int) -> Unit)? = null
+    private var lifecycleObserver: LifecycleEventObserver? = null
+    private var wasAutoScrollingBeforePause: Boolean = false
 
     private val autoScrollRunnable = object : Runnable {
         override fun run() {
@@ -145,6 +151,32 @@ class AwBannerView @JvmOverloads constructor(
         viewPager.adapter = adapter
         itemCount = adapter.itemCount
         createIndicatorDots()
+    }
+
+    fun <T> setData(
+        items: List<T>,
+        bind: (View, T, Int) -> Unit
+    ) {
+        val adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+            override fun onCreateViewHolder(parent: android.view.ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+                val frameLayout = android.widget.FrameLayout(parent.context).apply {
+                    layoutParams = android.view.ViewGroup.LayoutParams(
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                        android.view.ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                }
+                return object : RecyclerView.ViewHolder(frameLayout) {}
+            }
+
+            override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+                val container = holder.itemView as android.widget.FrameLayout
+                container.removeAllViews()
+                bind(container, items[position], position)
+            }
+
+            override fun getItemCount(): Int = items.size
+        }
+        setAdapter(adapter)
     }
 
     /**
@@ -213,6 +245,7 @@ class AwBannerView @JvmOverloads constructor(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        bindLifecycle()
         if (isAutoScrolling) {
             handler.postDelayed(autoScrollRunnable, interval)
         }
@@ -220,6 +253,34 @@ class AwBannerView @JvmOverloads constructor(
 
     override fun onDetachedFromWindow() {
         stopAutoScroll()
+        unbindLifecycle()
         super.onDetachedFromWindow()
+    }
+
+    private fun bindLifecycle() {
+        unbindLifecycle()
+        val owner = findViewTreeLifecycleOwner() ?: return
+        lifecycleObserver = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_PAUSE -> {
+                    wasAutoScrollingBeforePause = isAutoScrolling
+                    stopAutoScroll()
+                }
+                Lifecycle.Event.ON_RESUME -> {
+                    if (wasAutoScrollingBeforePause) {
+                        startAutoScroll()
+                    }
+                }
+                else -> {}
+            }
+        }
+        owner.lifecycle.addObserver(lifecycleObserver!!)
+    }
+
+    private fun unbindLifecycle() {
+        lifecycleObserver?.let { observer ->
+            findViewTreeLifecycleOwner()?.lifecycle?.removeObserver(observer)
+        }
+        lifecycleObserver = null
     }
 }

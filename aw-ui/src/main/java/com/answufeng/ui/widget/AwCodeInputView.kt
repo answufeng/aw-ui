@@ -241,6 +241,12 @@ class AwCodeInputView @JvmOverloads constructor(
         }
     }
 
+    internal fun onDigitCleared(index: Int) {
+        if (index > 0) {
+            getChildAt(index - 1)?.requestFocus()
+        }
+    }
+
     internal fun onPasteFullCode(pasted: String) {
         code = pasted
     }
@@ -351,6 +357,8 @@ class AwCodeInputView @JvmOverloads constructor(
                     setSelection(digit.length)
                     addTextChangedListener(this)
                     parent.onDigitEntered(index)
+                } else {
+                    parent.onDigitCleared(index)
                 }
             }
         }
@@ -369,13 +377,6 @@ class AwCodeInputView @JvmOverloads constructor(
             }
             setOnFocusChangeListener { _, hasFocus ->
                 parent.invalidate()
-            }
-        }
-
-        override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {
-            super.onTextChanged(text, start, before, count)
-            if (text.isNullOrEmpty() && before > 0) {
-                parent.onDigitDeleted(index)
             }
         }
     }
