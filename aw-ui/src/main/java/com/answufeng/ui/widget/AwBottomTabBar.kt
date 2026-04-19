@@ -261,7 +261,7 @@ class AwBottomTabBar @JvmOverloads constructor(
                 gravity = Gravity.CENTER
             }
             text = if (item.titleRes != 0) context.getString(item.titleRes) else item.title
-            textSize = textSize.spToPx()
+            setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, textSize)
             setTextColor(normalColor)
             gravity = Gravity.CENTER
             maxLines = 1
@@ -303,7 +303,7 @@ class AwBottomTabBar @JvmOverloads constructor(
                 gravity = Gravity.CENTER
             }
             text = titleText
-            textSize = textSize.spToPx()
+            setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, textSize)
             setTextColor(normalColor)
             gravity = Gravity.CENTER
             maxLines = 1
@@ -572,16 +572,13 @@ class AwBottomTabBar @JvmOverloads constructor(
         viewPager.registerOnPageChangeCallback(pageChangeCallback!!)
     }
 
-    fun bindFragments(activity: FragmentActivity, fragments: List<Fragment>) {
+    fun bindFragments(activity: FragmentActivity, fragments: List<Fragment>, viewPager: ViewPager2) {
         val fragmentAdapter = object : FragmentStateAdapter(activity) {
             override fun getItemCount(): Int = fragments.size
             override fun createFragment(position: Int): Fragment = fragments[position]
         }
-        val vp = ViewPager2(context).apply {
-            layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-            adapter = fragmentAdapter
-        }
-        bindViewPager(vp)
+        viewPager.adapter = fragmentAdapter
+        bindViewPager(viewPager)
     }
 
     private var pagerAdapter: RecyclerView.Adapter<*>? = null
@@ -719,7 +716,13 @@ class AwBottomTabBar @JvmOverloads constructor(
     override fun onRestoreInstanceState(state: Parcelable?) {
         if (state is Bundle) {
             currentIndex = state.getInt("currentIndex", 0)
-            super.onRestoreInstanceState(state.getParcelable("superState"))
+            val superState = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                state.getParcelable("superState", android.os.Parcelable::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                state.getParcelable("superState")
+            }
+            super.onRestoreInstanceState(superState)
         } else {
             super.onRestoreInstanceState(state)
         }
@@ -734,5 +737,4 @@ class AwBottomTabBar @JvmOverloads constructor(
 
     private fun Float.dp(): Float = this * resources.displayMetrics.density
     private fun Float.sp(): Float = this * resources.displayMetrics.scaledDensity
-    private fun Float.spToPx(): Float = this / resources.displayMetrics.scaledDensity
 }
