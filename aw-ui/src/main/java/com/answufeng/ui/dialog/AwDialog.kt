@@ -207,8 +207,8 @@ class AwLoadingDialog(context: Context) : Dialog(context) {
     }
 
     companion object {
-        fun show(context: Context, message: String = "加载中...") {
-            AwLoadingDialog(context).apply {
+        fun show(context: Context, message: String = "加载中..."): AwLoadingDialog {
+            return AwLoadingDialog(context).apply {
                 setLoadingMessage(message)
                 show()
             }

@@ -254,7 +254,7 @@ class AwPasswordInputView @JvmOverloads constructor(
         return Bundle().apply {
             putParcelable("superState", super.onSaveInstanceState())
             putBoolean("isPasswordVisible", isPasswordVisible)
-            putString("strength", lastStrength.name)
+            putInt("strength", lastStrength.ordinal)
         }
     }
 

@@ -200,7 +200,7 @@ class AwStateLayout @JvmOverloads constructor(
     override fun onSaveInstanceState(): Parcelable {
         return Bundle().apply {
             putParcelable("superState", super.onSaveInstanceState())
-            putString("state", currentState.name)
+            putInt("state", currentState.ordinal)
         }
     }
 
@@ -213,8 +213,8 @@ class AwStateLayout @JvmOverloads constructor(
                 state.getParcelable("superState")
             }
             super.onRestoreInstanceState(superState)
-            val saved = state.getString("state", State.CONTENT.name)
-            val restoredState = try { State.valueOf(saved) } catch (_: Exception) { State.CONTENT }
+            val savedOrdinal = state.getInt("state", State.CONTENT.ordinal)
+            val restoredState = State.entries.getOrElse(savedOrdinal) { State.CONTENT }
             if (restoredState != currentState) {
                 switchState(restoredState)
             }
