@@ -7,6 +7,12 @@ import android.animation.PropertyValuesHolder
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 
+/**
+ * 淡入动画。将视图透明度从当前值渐变到 1。
+ *
+ * @param duration 动画时长（毫秒），默认 300
+ * @param onEnd    动画结束回调
+ */
 fun View.fadeIn(duration: Long = 300L, onEnd: (() -> Unit)? = null) {
     animate().apply {
         alpha(1f)
@@ -21,6 +27,12 @@ fun View.fadeIn(duration: Long = 300L, onEnd: (() -> Unit)? = null) {
     }
 }
 
+/**
+ * 淡出动画。将视图透明度从当前值渐变到 0。
+ *
+ * @param duration 动画时长（毫秒），默认 300
+ * @param onEnd    动画结束回调
+ */
 fun View.fadeOut(duration: Long = 300L, onEnd: (() -> Unit)? = null) {
     animate().apply {
         alpha(0f)
@@ -35,6 +47,12 @@ fun View.fadeOut(duration: Long = 300L, onEnd: (() -> Unit)? = null) {
     }
 }
 
+/**
+ * 从底部滑入动画。视图先移到底部外侧，再滑回原位。
+ *
+ * @param duration 动画时长（毫秒），默认 300
+ * @param onEnd    动画结束回调
+ */
 fun View.slideInFromBottom(duration: Long = 300L, onEnd: (() -> Unit)? = null) {
     val targetY = translationY
     translationY = height.toFloat()
@@ -51,6 +69,12 @@ fun View.slideInFromBottom(duration: Long = 300L, onEnd: (() -> Unit)? = null) {
     }
 }
 
+/**
+ * 滑出到底部动画。视图向下滑出屏幕。
+ *
+ * @param duration 动画时长（毫秒），默认 300
+ * @param onEnd    动画结束回调
+ */
 fun View.slideOutToBottom(duration: Long = 300L, onEnd: (() -> Unit)? = null) {
     animate().apply {
         translationY(height.toFloat())
@@ -65,6 +89,12 @@ fun View.slideOutToBottom(duration: Long = 300L, onEnd: (() -> Unit)? = null) {
     }
 }
 
+/**
+ * 抖动动画。视图左右快速抖动，常用于输入错误提示。
+ *
+ * @param duration 动画时长（毫秒），默认 500
+ * @param onEnd    动画结束回调
+ */
 fun View.shake(duration: Long = 500L, onEnd: (() -> Unit)? = null) {
     val shakeCount = (duration / 100).coerceAtLeast(1).toInt()
     val shakeDistance = width * 0.1f
@@ -91,6 +121,12 @@ private fun generateShakeValues(distance: Float, count: Int): FloatArray {
     return values
 }
 
+/**
+ * 脉冲动画。视图先放大到 1.1 倍再缩回，常用于按钮点击反馈。
+ *
+ * @param duration 动画时长（毫秒），默认 200
+ * @param onEnd    动画结束回调
+ */
 fun View.pulse(duration: Long = 200L, onEnd: (() -> Unit)? = null) {
     val scaleX = PropertyValuesHolder.ofKeyframe("scaleX",
         android.animation.Keyframe.ofFloat(0f, 1f),
@@ -112,6 +148,12 @@ fun View.pulse(duration: Long = 200L, onEnd: (() -> Unit)? = null) {
     }
 }
 
+/**
+ * 弹跳动画。视图先放大到 1.2 倍再弹回，比 [pulse] 更明显的反馈。
+ *
+ * @param duration 动画时长（毫秒），默认 400
+ * @param onEnd    动画结束回调
+ */
 fun View.bounce(duration: Long = 400L, onEnd: (() -> Unit)? = null) {
     val scaleX = PropertyValuesHolder.ofKeyframe("scaleX",
         android.animation.Keyframe.ofFloat(0f, 1f),
@@ -133,6 +175,12 @@ fun View.bounce(duration: Long = 400L, onEnd: (() -> Unit)? = null) {
     }
 }
 
+/**
+ * 淡入+上滑组合动画。视图从下方淡入滑出，常用于列表项出现。
+ *
+ * @param duration 动画时长（毫秒），默认 400
+ * @param onEnd    动画结束回调
+ */
 fun View.fadeSlideIn(duration: Long = 400L, onEnd: (() -> Unit)? = null) {
     alpha = 0f
     translationY = height * 0.1f

@@ -12,10 +12,28 @@ import androidx.viewbinding.ViewBinding
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
+/**
+ * Activity ViewBinding 委托，懒加载绑定视图。
+ *
+ * ```kotlin
+ * class MainActivity : AppCompatActivity() {
+ *     private val binding by viewBinding(ActivityMainBinding::bind)
+ * }
+ * ```
+ */
 inline fun <reified T : ViewBinding> Activity.viewBinding(
     noinline bind: (View) -> T
 ): ReadOnlyProperty<Activity, T> = ActivityViewBindingDelegate(bind)
 
+/**
+ * Fragment ViewBinding 委托，懒加载绑定视图，生命周期自动清理。
+ *
+ * ```kotlin
+ * class HomeFragment : Fragment() {
+ *     private val binding by viewBinding(FragmentHomeBinding::bind)
+ * }
+ * ```
+ */
 inline fun <reified T : ViewBinding> Fragment.viewBinding(
     noinline bind: (View) -> T
 ): ReadOnlyProperty<Fragment, T> = FragmentViewBindingDelegate(bind)

@@ -9,6 +9,22 @@ import android.widget.TextView
 import com.answufeng.ui.R
 import com.google.android.material.color.MaterialColors
 
+/**
+ * 标签选择视图，支持单选/多选模式和最大选择数限制。
+ *
+ * ```xml
+ * <com.answufeng.ui.widget.AwTagView
+ *     android:layout_width="match_parent"
+ *     android:layout_height="wrap_content" />
+ * ```
+ *
+ * ```kotlin
+ * tagView.tags = listOf("Kotlin", "Java", "Python", "Go")
+ * tagView.selectionMode = AwTagView.SelectionMode.MULTI
+ * tagView.maxSelectCount = 3
+ * tagView.onSelectionChange = { selected -> updateSelection(selected) }
+ * ```
+ */
 class AwTagView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,

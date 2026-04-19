@@ -10,6 +10,11 @@ import android.view.animation.OvershootInterpolator
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
 
+/**
+ * RecyclerView 列表项动画器，在项目变更时添加淡入淡出效果。
+ *
+ * 使用方式：`recyclerView.itemAnimator = AwItemAnimator()`
+ */
 class AwItemAnimator : DefaultItemAnimator() {
 
     private val pendingAnimations = mutableListOf<RecyclerView.ViewHolder>()

@@ -5,6 +5,19 @@ import android.view.View
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
+/**
+ * 底部弹出面板，基于 BottomSheetDialog 封装。
+ *
+ * 支持自定义内容视图、拖拽、折叠/展开状态控制。
+ *
+ * ```kotlin
+ * AwBottomSheet.Builder(context)
+ *     .setContentView(customView)
+ *     .setPeekHeight(300)
+ *     .setDraggable(true)
+ *     .show()
+ * ```
+ */
 class AwBottomSheet private constructor(
     private val builder: Builder
 ) {

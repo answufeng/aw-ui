@@ -7,6 +7,18 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import com.answufeng.ui.R
 
+/**
+ * 跑马灯文本视图，支持水平滚动和自定义速度/方向/暂停时长。
+ *
+ * ```xml
+ * <com.answufeng.ui.widget.AwMarqueeTextView
+ *     android:layout_width="match_parent"
+ *     android:layout_height="wrap_content"
+ *     app:marquee_speed="2"
+ *     app:marquee_pauseDuration="2000"
+ *     app:marquee_direction="left_to_right" />
+ * ```
+ */
 class AwMarqueeTextView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,

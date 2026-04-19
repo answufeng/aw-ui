@@ -17,6 +17,31 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.answufeng.ui.R
 
+/**
+ * 轮播图视图，基于 ViewPager2 实现。
+ *
+ * 支持无限循环、自动滚动、指示器、生命周期感知（自动暂停/恢复）。
+ *
+ * ### XML 用法
+ * ```xml
+ * <com.answufeng.ui.widget.AwBannerView
+ *     android:layout_width="match_parent"
+ *     android:layout_height="200dp"
+ *     app:banner_interval="3000"
+ *     app:banner_indicatorColor="#80FFFFFF"
+ *     app:banner_indicatorSelectedColor="#FFFFFF" />
+ * ```
+ *
+ * ### 代码用法
+ * ```kotlin
+ * bannerView.setData(items) { view, item, position ->
+ *     val iv = ImageView(context)
+ *     Glide.with(iv).load(item.url).into(iv)
+ *     view.addView(iv)
+ * }
+ * bannerView.startAutoScroll()
+ * ```
+ */
 class AwBannerView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,

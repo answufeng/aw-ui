@@ -11,6 +11,23 @@ import android.widget.ImageView
 import com.answufeng.ui.R
 import com.google.android.material.color.MaterialColors
 
+/**
+ * 搜索栏视图，包含搜索图标、输入框和清除按钮。
+ *
+ * 支持实时搜索回调、提交搜索回调和清除按钮回调。
+ *
+ * ```xml
+ * <com.answufeng.ui.widget.AwSearchView
+ *     android:layout_width="match_parent"
+ *     android:layout_height="wrap_content"
+ *     app:search_hint="搜索..." />
+ * ```
+ *
+ * ```kotlin
+ * searchView.onQueryChange = { query -> filterList(query) }
+ * searchView.onQuerySubmit = { query -> doSearch(query) }
+ * ```
+ */
 class AwSearchView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,

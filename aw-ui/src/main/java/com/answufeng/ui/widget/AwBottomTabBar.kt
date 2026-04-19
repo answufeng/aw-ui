@@ -30,6 +30,18 @@ import androidx.viewpager2.widget.ViewPager2
 import com.answufeng.ui.R
 import com.google.android.material.tabs.TabLayoutMediator
 
+/**
+ * 底部导航栏，支持图标+文字标签、未读数角标、指示器样式和 ViewPager2 联动。
+ *
+ * ```kotlin
+ * val tab = AwBottomTabBar(context)
+ * tab.setItems(listOf(
+ *     AwBottomTabBar.TabItem("首页", R.drawable.ic_home, R.drawable.ic_home_sel),
+ *     AwBottomTabBar.TabItem("我的", R.drawable.ic_me, R.drawable.ic_me_sel)
+ * ))
+ * tab.bindViewPager(viewPager2)
+ * ```
+ */
 class AwBottomTabBar @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,

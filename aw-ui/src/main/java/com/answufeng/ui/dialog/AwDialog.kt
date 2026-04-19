@@ -9,6 +9,25 @@ import android.widget.TextView
 import com.answufeng.ui.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
+/**
+ * 通用对话框封装，基于 MaterialAlertDialogBuilder。
+ *
+ * 支持标题、消息、自定义视图、确定/取消按钮、取消和关闭回调。
+ *
+ * ### 用法
+ * ```kotlin
+ * AwDialog.Builder(context)
+ *     .title("提示")
+ *     .message("确定删除吗？")
+ *     .positiveButton("确定") { doDelete() }
+ *     .negativeButton("取消")
+ *     .show()
+ *
+ * // 快捷方法
+ * AwDialog.showMessage(context, "提示", "操作成功")
+ * AwDialog.showConfirm(context, "确认", "确定退出吗？") { exit() }
+ * ```
+ */
 class AwDialog private constructor(
     private val builder: Builder
 ) {
@@ -143,6 +162,15 @@ class AwDialog private constructor(
     }
 }
 
+/**
+ * 加载中对话框，显示旋转进度和提示文字。
+ *
+ * ```kotlin
+ * LoadingDialog.show(context, "加载中...")
+ * // 或
+ * LoadingDialog(context).showLoading("请稍候")
+ * ```
+ */
 class LoadingDialog(context: Context) : Dialog(context) {
 
     private var loadingMessage: String = "加载中..."
