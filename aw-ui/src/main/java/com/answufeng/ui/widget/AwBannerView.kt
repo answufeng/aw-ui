@@ -66,12 +66,14 @@ class AwBannerView @JvmOverloads constructor(
     var indicatorColor: Int = Color.parseColor("#80FFFFFF")
         set(value) {
             field = value
+            normalDotDrawable = null
             updateIndicatorDots()
         }
 
     var indicatorSelectedColor: Int = Color.parseColor("#FFFFFF")
         set(value) {
             field = value
+            selectedDotDrawable = null
             updateIndicatorDots()
         }
 
@@ -83,6 +85,8 @@ class AwBannerView @JvmOverloads constructor(
     private var indicatorClickListener: ((Int) -> Unit)? = null
     private var lifecycleObserver: LifecycleEventObserver? = null
     private var wasAutoScrollingBeforePause: Boolean = false
+    private var normalDotDrawable: android.graphics.drawable.GradientDrawable? = null
+    private var selectedDotDrawable: android.graphics.drawable.GradientDrawable? = null
 
     private val autoScrollRunnable = object : Runnable {
         override fun run() {
@@ -191,6 +195,8 @@ class AwBannerView @JvmOverloads constructor(
 
     private fun createIndicatorDots() {
         indicatorContainer.removeAllViews()
+        normalDotDrawable = null
+        selectedDotDrawable = null
         val dotSize = (6 * resources.displayMetrics.density).toInt()
         val dotMargin = (4 * resources.displayMetrics.density).toInt()
 
@@ -200,7 +206,7 @@ class AwBannerView @JvmOverloads constructor(
                     leftMargin = dotMargin
                     rightMargin = dotMargin
                 }
-                setImageDrawable(createDotDrawable(i == 0))
+                setImageDrawable(getDotDrawable(i == 0))
                 setOnClickListener {
                     val target = if (isInfiniteLoop) {
                         viewPager.currentItem - (viewPager.currentItem % realItemCount) + i
@@ -218,8 +224,15 @@ class AwBannerView @JvmOverloads constructor(
     private fun updateIndicatorDots(selectedPosition: Int = toRealPosition(viewPager.currentItem)) {
         for (i in 0 until indicatorContainer.childCount) {
             val dot = indicatorContainer.getChildAt(i) as? ImageView ?: continue
-            dot.setImageDrawable(createDotDrawable(i == selectedPosition))
+            dot.setImageDrawable(getDotDrawable(i == selectedPosition))
         }
+    }
+
+    private fun getDotDrawable(isSelected: Boolean): android.graphics.drawable.GradientDrawable {
+        if (isSelected) {
+            return selectedDotDrawable ?: createDotDrawable(true).also { selectedDotDrawable = it }
+        }
+        return normalDotDrawable ?: createDotDrawable(false).also { normalDotDrawable = it }
     }
 
     private fun createDotDrawable(isSelected: Boolean): android.graphics.drawable.GradientDrawable {

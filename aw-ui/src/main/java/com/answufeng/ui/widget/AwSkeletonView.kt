@@ -68,6 +68,7 @@ class AwSkeletonView @JvmOverloads constructor(
         set(value) {
             field = value
             basePaint.color = value
+            cachedShader = null
             invalidate()
         }
 
@@ -75,6 +76,7 @@ class AwSkeletonView @JvmOverloads constructor(
     var highlightColor: Int = Color.parseColor("#F5F5F5")
         set(value) {
             field = value
+            cachedShader = null
             invalidate()
         }
 

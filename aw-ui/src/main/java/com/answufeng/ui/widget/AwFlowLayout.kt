@@ -62,6 +62,8 @@ open class AwFlowLayout @JvmOverloads constructor(
     /** 记录每行的子 View 索引范围和行宽信息，用于 layout 阶段 gravity 计算 */
     private data class LineInfo(val startIndex: Int, val endIndex: Int, val lineWidth: Int, val lineHeight: Int)
     private val lines = mutableListOf<LineInfo>()
+    private val visibleIndices = mutableListOf<Int>()
+    private val visibleChildren = mutableListOf<android.view.View>()
 
     init {
         val ta = context.obtainStyledAttributes(attrs, R.styleable.AwFlowLayout)
@@ -96,7 +98,7 @@ open class AwFlowLayout @JvmOverloads constructor(
         var breakDueToMaxLines = false
 
         // 收集可见子 View 索引
-        val visibleIndices = mutableListOf<Int>()
+        visibleIndices.clear()
         for (i in 0 until childCount) {
             if (getChildAt(i).visibility != GONE) visibleIndices.add(i)
         }
@@ -151,7 +153,7 @@ open class AwFlowLayout @JvmOverloads constructor(
         val isRtl = layoutDirection == View.LAYOUT_DIRECTION_RTL
 
         // 收集可见子 View
-        val visibleChildren = mutableListOf<android.view.View>()
+        visibleChildren.clear()
         for (i in 0 until childCount) {
             val child = getChildAt(i)
             if (child.visibility != GONE) visibleChildren.add(child)

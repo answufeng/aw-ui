@@ -155,6 +155,7 @@ class AwCodeInputView @JvmOverloads constructor(
     private val focusedBoxPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
     }
+    private val boxRect = RectF()
 
     init {
         orientation = HORIZONTAL
@@ -270,17 +271,13 @@ class AwCodeInputView @JvmOverloads constructor(
 
         for (i in 0 until childCount) {
             val child = getChildAt(i)
-            val left = child.left.toFloat()
-            val top = child.top.toFloat()
-            val right = child.right.toFloat()
-            val bottom = child.bottom.toFloat()
-            val rect = RectF(left, top, right, bottom)
+            boxRect.set(child.left.toFloat(), child.top.toFloat(), child.right.toFloat(), child.bottom.toFloat())
             val radius = 8 * density
 
             if (child.hasFocus()) {
-                canvas.drawRoundRect(rect, radius, radius, focusedBoxPaint)
+                canvas.drawRoundRect(boxRect, radius, radius, focusedBoxPaint)
             }
-            canvas.drawRoundRect(rect, radius, radius, boxPaint)
+            canvas.drawRoundRect(boxRect, radius, radius, boxPaint)
         }
     }
 
