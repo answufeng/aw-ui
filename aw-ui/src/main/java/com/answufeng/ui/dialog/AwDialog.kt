@@ -166,12 +166,12 @@ class AwDialog private constructor(
  * 加载中对话框，显示旋转进度和提示文字。
  *
  * ```kotlin
- * LoadingDialog.show(context, "加载中...")
+ * AwLoadingDialog.show(context, "加载中...")
  * // 或
- * LoadingDialog(context).showLoading("请稍候")
+ * AwLoadingDialog(context).showLoading("请稍候")
  * ```
  */
-class LoadingDialog(context: Context) : Dialog(context) {
+class AwLoadingDialog(context: Context) : Dialog(context) {
 
     private var loadingMessage: String = "加载中..."
     private var messageTextView: TextView? = null
@@ -191,7 +191,7 @@ class LoadingDialog(context: Context) : Dialog(context) {
         updateMessage()
     }
 
-    fun setLoadingMessage(message: String): LoadingDialog {
+    fun setLoadingMessage(message: String): AwLoadingDialog {
         this.loadingMessage = message
         updateMessage()
         return this
@@ -208,10 +208,16 @@ class LoadingDialog(context: Context) : Dialog(context) {
 
     companion object {
         fun show(context: Context, message: String = "加载中...") {
-            LoadingDialog(context).apply {
+            AwLoadingDialog(context).apply {
                 setLoadingMessage(message)
                 show()
             }
         }
     }
 }
+
+@Deprecated(
+    message = "请使用 AwLoadingDialog 替代 LoadingDialog，保持命名一致性",
+    level = DeprecationLevel.WARNING
+)
+typealias LoadingDialog = AwLoadingDialog
