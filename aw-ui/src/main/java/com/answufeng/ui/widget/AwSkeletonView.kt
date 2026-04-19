@@ -17,12 +17,12 @@ import android.view.View
 import com.answufeng.ui.R
 
 /**
- * Skeleton loading view with a shimmer/gradient animation sweeping left to right.
+ * 骨架屏加载视图，带有从左到右扫过的闪光/渐变动画。
  *
- * Displays a rounded rectangle with a sweeping highlight gradient to indicate
- * loading state. The shimmer animation runs continuously until [stopShimmer] is called.
+ * 显示一个圆角矩形，带有扫过式高亮渐变以表示加载状态。
+ * 闪光动画持续运行，直到调用 [stopShimmer]。
  *
- * ### XML usage
+ * ### XML 用法
  * ```xml
  * <com.answufeng.ui.widget.AwSkeletonView
  *     android:layout_width="match_parent"
@@ -33,23 +33,23 @@ import com.answufeng.ui.R
  *     app:skeleton_duration="1000" />
  * ```
  *
- * ### Programmatic usage
+ * ### 代码用法
  * ```kotlin
  * skeletonView.startShimmer()
  * skeletonView.stopShimmer()
  * ```
  *
- * @property baseColor Base color of the skeleton. Default #E0E0E0.
- * @property highlightColor Highlight shimmer color. Default #F5F5F5.
- * @property cornerRadius Corner radius of the skeleton rectangle in pixels.
- * @property animationDuration Shimmer animation cycle duration in milliseconds. Default 1000.
+ * @property baseColor 骨架屏基础颜色，默认 #E0E0E0
+ * @property highlightColor 闪光高亮颜色，默认 #F5F5F5
+ * @property cornerRadius 骨架屏矩形的圆角半径（像素）
+ * @property animationDuration 闪光动画周期时长（毫秒），默认 1000
  *
- * | XML Attribute | Description | Default |
+ * | XML 属性 | 说明 | 默认值 |
  * |---|---|---|
- * | `skeleton_baseColor` | Base fill color | #E0E0E0 |
- * | `skeleton_highlightColor` | Shimmer highlight color | #F5F5F5 |
- * | `skeleton_cornerRadius` | Corner radius | 4dp |
- * | `skeleton_duration` | Animation duration (ms) | 1000 |
+ * | `skeleton_baseColor` | 基础填充颜色 | #E0E0E0 |
+ * | `skeleton_highlightColor` | 闪光高亮颜色 | #F5F5F5 |
+ * | `skeleton_cornerRadius` | 圆角半径 | 4dp |
+ * | `skeleton_duration` | 动画时长（毫秒） | 1000 |
  */
 class AwSkeletonView @JvmOverloads constructor(
     context: Context,
@@ -63,9 +63,7 @@ class AwSkeletonView @JvmOverloads constructor(
     private val rectF = RectF()
     private val cachedMatrix = android.graphics.Matrix()
 
-    /**
-     * Base color of the skeleton.
-     */
+    /** 骨架屏基础颜色 */
     var baseColor: Int = Color.parseColor("#E0E0E0")
         set(value) {
             field = value
@@ -73,27 +71,21 @@ class AwSkeletonView @JvmOverloads constructor(
             invalidate()
         }
 
-    /**
-     * Highlight shimmer color.
-     */
+    /** 闪光高亮颜色 */
     var highlightColor: Int = Color.parseColor("#F5F5F5")
         set(value) {
             field = value
             invalidate()
         }
 
-    /**
-     * Corner radius of the skeleton rectangle in pixels.
-     */
+    /** 骨架屏矩形的圆角半径（像素） */
     var cornerRadius: Float = 4f * resources.displayMetrics.density
         set(value) {
             field = value
             invalidate()
         }
 
-    /**
-     * Shimmer animation cycle duration in milliseconds.
-     */
+    /** 闪光动画周期时长（毫秒） */
     var animationDuration: Long = 1000L
         set(value) {
             field = value
@@ -103,10 +95,8 @@ class AwSkeletonView @JvmOverloads constructor(
             }
         }
 
-    /**
-     * Whether the shimmer animation is currently running.
-     */
-    var isShimmering: Boolean = false
+    /** 闪光动画当前是否正在运行 */
+    val isShimmering: Boolean = false
         private set
 
     var autoStart: Boolean = true
@@ -128,9 +118,7 @@ class AwSkeletonView @JvmOverloads constructor(
         shimmerPaint.isDither = true
     }
 
-    /**
-     * Starts the shimmer animation. If already running, this is a no-op.
-     */
+    /** 启动闪光动画。如果已在运行，则不执行任何操作 */
     fun startShimmer() {
         if (isShimmering) return
         isShimmering = true
@@ -146,9 +134,7 @@ class AwSkeletonView @JvmOverloads constructor(
         }
     }
 
-    /**
-     * Stops the shimmer animation and resets the highlight offset.
-     */
+    /** 停止闪光动画并重置高亮偏移量 */
     fun stopShimmer() {
         animator?.cancel()
         animator = null

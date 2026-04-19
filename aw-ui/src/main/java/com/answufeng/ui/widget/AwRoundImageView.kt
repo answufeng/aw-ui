@@ -15,12 +15,12 @@ import com.answufeng.ui.R
 import kotlin.math.min
 
 /**
- * Round/circle image view that clips the drawable to a rounded rectangle or circle shape.
+ * 圆角/圆形 ImageView，将 drawable 裁剪为圆角矩形或圆形。
  *
- * Uses [BitmapShader] to render the image within a rounded or circular clip path,
- * with optional border drawing.
+ * 使用 [BitmapShader] 在圆角或圆形裁剪路径内渲染图片，
+ * 可选绘制边框。
  *
- * ### XML usage
+ * ### XML 用法
  * ```xml
  * <com.answufeng.ui.widget.AwRoundImageView
  *     android:layout_width="80dp"
@@ -32,7 +32,7 @@ import kotlin.math.min
  *     app:roundImg_borderColor="#FFFFFF" />
  * ```
  *
- * ### Programmatic usage
+ * ### 代码用法
  * ```kotlin
  * roundImageView.isCircle = true
  * roundImageView.radius = 16f
@@ -40,17 +40,17 @@ import kotlin.math.min
  * roundImageView.borderColor = Color.WHITE
  * ```
  *
- * @property radius Corner radius in pixels. Ignored when [isCircle] is true.
- * @property isCircle If true, clips to a perfect circle regardless of [radius].
- * @property borderWidth Border width in pixels.
- * @property borderColor Border color.
+ * @property radius 圆角半径（像素）。当 [isCircle] 为 true 时忽略
+ * @property isCircle 如果为 true，则裁剪为完美圆形，忽略 [radius]
+ * @property borderWidth 边框宽度（像素）
+ * @property borderColor 边框颜色
  *
- * | XML Attribute | Description | Default |
+ * | XML 属性 | 说明 | 默认值 |
  * |---|---|---|
- * | `roundImg_radius` | Corner radius | 0 |
- * | `roundImg_isCircle` | Clip to circle | false |
- * | `roundImg_borderWidth` | Border width | 0 |
- * | `roundImg_borderColor` | Border color | #FFFFFF |
+ * | `roundImg_radius` | 圆角半径 | 0 |
+ * | `roundImg_isCircle` | 是否裁剪为圆形 | false |
+ * | `roundImg_borderWidth` | 边框宽度 | 0 |
+ * | `roundImg_borderColor` | 边框颜色 | #FFFFFF |
  */
 class AwRoundImageView @JvmOverloads constructor(
     context: Context,
@@ -70,36 +70,28 @@ class AwRoundImageView @JvmOverloads constructor(
     private var cachedBitmap: Bitmap? = null
     private var cachedDrawable: android.graphics.drawable.Drawable? = null
 
-    /**
-     * Corner radius in pixels. Ignored when [isCircle] is true.
-     */
+    /** 圆角半径（像素）。当 [isCircle] 为 true 时忽略 */
     var radius: Float = 0f
         set(value) {
             field = value
             invalidate()
         }
 
-    /**
-     * If true, clips to a perfect circle regardless of [radius].
-     */
+    /** 如果为 true，则裁剪为完美圆形，忽略 [radius] */
     var isCircle: Boolean = false
         set(value) {
             field = value
             invalidate()
         }
 
-    /**
-     * Border width in pixels.
-     */
+    /** 边框宽度（像素） */
     var borderWidth: Float = 0f
         set(value) {
             field = value
             invalidate()
         }
 
-    /**
-     * Border color.
-     */
+    /** 边框颜色 */
     var borderColor: Int = Color.WHITE
         set(value) {
             field = value

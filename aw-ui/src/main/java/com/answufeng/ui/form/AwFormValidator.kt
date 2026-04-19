@@ -6,33 +6,31 @@ import android.widget.TextView
 import com.answufeng.ui.widget.AwSmartEditText
 
 /**
- * A validation rule that checks a single constraint on a field's text input.
+ * 验证规则接口，检查字段文本输入的单个约束条件。
  */
 interface Rule {
 
-    /**
-     * The error message displayed when validation fails.
-     */
+    /** 验证失败时显示的错误信息 */
     val errorMsg: String
 
     /**
-     * Validates the given text against this rule.
+     * 验证给定文本是否符合此规则。
      *
-     * @param text The input text to validate.
-     * @return `true` if the text passes validation, `false` otherwise.
+     * @param text 要验证的输入文本
+     * @return 文本通过验证返回 `true`，否则返回 `false`
      */
     fun validate(text: String): Boolean
 }
 
 /**
- * A unified form validation framework with a chainable API.
+ * 统一的表单验证框架，支持链式调用 API。
  *
- * Supports validating any [TextView] (including [EditText]) and [AwSmartEditText].
- * For regular [TextView]s, text is extracted and rules are evaluated externally.
- * For [AwSmartEditText], validation is delegated to its own [AwSmartEditText.validate] method,
- * and any rules added via [addField] are registered as named validators on that view.
+ * 支持验证任何 [TextView]（包括 [EditText]）和 [AwSmartEditText]。
+ * 对于普通 [TextView]，提取文本并在此验证器中评估规则。
+ * 对于 [AwSmartEditText]，验证委托给其自身的 [AwSmartEditText.validate] 方法，
+ * 通过 [addField] 添加的规则会注册为该视图的命名验证器。
  *
- * ### Usage
+ * ### 用法
  * ```kotlin
  * val validator = AwFormValidator()
  *     .addField(usernameInput, AwFormValidator.required(), AwFormValidator.minLength(3))
@@ -60,16 +58,15 @@ class AwFormValidator {
     private var validityListener: ((Boolean) -> Unit)? = null
 
     /**
-     * Adds a field with one or more validation rules.
+     * 添加一个字段及其验证规则。
      *
-     * If the view is an [AwSmartEditText], the rules are registered as named validators
-     * on that view and validation is delegated to [AwSmartEditText.validate].
-     * For other [TextView] subclasses (e.g., [EditText]), text is extracted and
-     * rules are evaluated by this validator.
+     * 如果视图是 [AwSmartEditText]，规则会注册为该视图的命名验证器，
+     * 验证委托给 [AwSmartEditText.validate]。
+     * 对于其他 [TextView] 子类（如 [EditText]），提取文本并由此验证器评估规则。
      *
-     * @param view  The view to validate.
-     * @param rules One or more [Rule] instances to apply to this field.
-     * @return This validator instance for chaining.
+     * @param view  要验证的视图
+     * @param rules 应用于此字段的一个或多个 [Rule] 实例
+     * @return 当前验证器实例，用于链式调用
      */
     fun addField(view: View, vararg rules: Rule): AwFormValidator {
         if (rules.isEmpty()) return this
@@ -89,13 +86,12 @@ class AwFormValidator {
     }
 
     /**
-     * Validates all registered fields and returns `true` if every field passes.
+     * 验证所有已注册字段，全部通过则返回 `true`。
      *
-     * For [EditText] fields, the first failing rule's error message is set via
-     * [EditText.setError]. For [AwSmartEditText] fields, validation is delegated
-     * to [AwSmartEditText.validate].
+     * 对于 [EditText] 字段，第一个失败规则的错误信息通过 [EditText.setError] 设置。
+     * 对于 [AwSmartEditText] 字段，验证委托给 [AwSmartEditText.validate]。
      *
-     * @return `true` if all fields pass validation, `false` otherwise.
+     * @return 所有字段通过验证返回 `true`，否则返回 `false`
      */
     fun validate(): Boolean {
         errors.clear()
@@ -132,18 +128,18 @@ class AwFormValidator {
     }
 
     /**
-     * Returns a map of all fields that failed validation to their corresponding
-     * error messages. This map is populated after calling [validate].
+     * 返回所有验证失败字段及其对应错误信息的映射。
+     * 此映射在调用 [validate] 后填充。
      *
-     * @return A map where the key is the view and the value is the error message.
+     * @return 映射，键为视图，值为错误信息
      */
     fun getErrors(): Map<View, String> = errors.toMap()
 
     /**
-     * Clears all validation errors.
+     * 清除所有验证错误。
      *
-     * For [EditText] fields, this removes the error via [EditText.setError].
-     * For [AwSmartEditText] fields, this clears the displayed error message.
+     * 对于 [EditText] 字段，通过 [EditText.setError] 移除错误。
+     * 对于 [AwSmartEditText] 字段，清除显示的错误信息。
      */
     fun clearErrors() {
         errors.clear()
@@ -159,11 +155,10 @@ class AwFormValidator {
     }
 
     /**
-     * Registers a callback that is invoked whenever [validate] is called,
-     * reporting whether all fields are currently valid.
+     * 注册回调，在每次调用 [validate] 时报告所有字段是否有效。
      *
-     * @param listener A lambda that receives `true` if all fields pass, `false` otherwise.
-     * @return This validator instance for chaining.
+     * @param listener 接收验证结果的 lambda，全部通过为 `true`，否则为 `false`
+     * @return 当前验证器实例，用于链式调用
      */
     fun setOnValidityChange(listener: (Boolean) -> Unit): AwFormValidator {
         validityListener = listener
@@ -178,10 +173,10 @@ class AwFormValidator {
     companion object {
 
         /**
-         * Creates a rule that requires the field to be non-blank.
+         * 创建要求字段非空的规则。
          *
-         * @param errorMsg The error message when the field is blank.
-         * @return A [Rule] that rejects blank input.
+         * @param errorMsg 字段为空时的错误信息
+         * @return 拒绝空白输入的 [Rule]
          */
         @JvmStatic
         @JvmOverloads
@@ -191,12 +186,11 @@ class AwFormValidator {
         }
 
         /**
-         * Creates a rule that requires the field's text length to be at least [min].
+         * 创建要求字段文本长度至少为 [min] 的规则。
          *
-         * @param min      The minimum allowed length.
-         * @param errorMsg The error message when the text is too short.
-         *                 Defaults to "长度不能少于{min}个字符".
-         * @return A [Rule] that rejects input shorter than [min] characters.
+         * @param min      最小允许长度
+         * @param errorMsg 文本过短时的错误信息，默认 "长度不能少于{min}个字符"
+         * @return 拒绝短于 [min] 个字符输入的 [Rule]
          */
         @JvmStatic
         @JvmOverloads
@@ -206,12 +200,11 @@ class AwFormValidator {
         }
 
         /**
-         * Creates a rule that requires the field's text length to be at most [max].
+         * 创建要求字段文本长度最多为 [max] 的规则。
          *
-         * @param max      The maximum allowed length.
-         * @param errorMsg The error message when the text is too long.
-         *                 Defaults to "长度不能超过{max}个字符".
-         * @return A [Rule] that rejects input longer than [max] characters.
+         * @param max      最大允许长度
+         * @param errorMsg 文本过长时的错误信息，默认 "长度不能超过{max}个字符"
+         * @return 拒绝超过 [max] 个字符输入的 [Rule]
          */
         @JvmStatic
         @JvmOverloads
@@ -221,10 +214,10 @@ class AwFormValidator {
         }
 
         /**
-         * Creates a rule that validates the field as an email address.
+         * 创建验证邮箱地址格式的规则。
          *
-         * @param errorMsg The error message when the email format is invalid.
-         * @return A [Rule] that rejects input that does not match a standard email pattern.
+         * @param errorMsg 邮箱格式无效时的错误信息
+         * @return 拒绝不匹配标准邮箱格式输入的 [Rule]
          */
         @JvmStatic
         @JvmOverloads
@@ -237,10 +230,10 @@ class AwFormValidator {
         }
 
         /**
-         * Creates a rule that validates the field as a Chinese mobile phone number (11 digits).
+         * 创建验证中国大陆手机号（11 位）的规则。
          *
-         * @param errorMsg The error message when the phone format is invalid.
-         * @return A [Rule] that rejects input that does not match the phone number pattern.
+         * @param errorMsg 手机号格式无效时的错误信息
+         * @return 拒绝不匹配手机号格式输入的 [Rule]
          */
         @JvmStatic
         @JvmOverloads
@@ -253,11 +246,11 @@ class AwFormValidator {
         }
 
         /**
-         * Creates a rule that validates the field against a regular expression.
+         * 创建基于正则表达式的验证规则。
          *
-         * @param regex    The regular expression pattern to match.
-         * @param errorMsg The error message when the pattern does not match.
-         * @return A [Rule] that rejects input that does not match [regex].
+         * @param regex    要匹配的正则表达式模式
+         * @param errorMsg 不匹配时的错误信息
+         * @return 拒绝不匹配 [regex] 输入的 [Rule]
          */
         @JvmStatic
         fun pattern(regex: String, errorMsg: String): Rule = object : Rule {
@@ -266,11 +259,11 @@ class AwFormValidator {
         }
 
         /**
-         * Creates a rule with a custom validation predicate.
+         * 创建自定义验证谓词的规则。
          *
-         * @param predicate A function that returns `true` if the input is valid.
-         * @param errorMsg  The error message when validation fails.
-         * @return A [Rule] that delegates validation to [predicate].
+         * @param predicate 输入有效时返回 `true` 的函数
+         * @param errorMsg  验证失败时的错误信息
+         * @return 委托验证给 [predicate] 的 [Rule]
          */
         @JvmStatic
         fun custom(predicate: (String) -> Boolean, errorMsg: String): Rule = object : Rule {

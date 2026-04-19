@@ -19,17 +19,17 @@ import android.widget.ImageView
 import com.answufeng.ui.R
 
 /**
- * A password input view with visibility toggle and strength indicator.
+ * 带可见性切换和强度指示器的密码输入视图。
  *
- * Features:
- * - Toggle password visibility via an eye icon button
- * - Password strength indicator (Weak / Medium / Strong) shown as a colored bar
- * - Strength calculation based on length, uppercase, lowercase, digits, and special characters
- * - [password] property to get/set the current password
- * - [strength] enum property reflecting the current strength level
- * - [onStrengthChange] callback when strength changes
+ * 功能：
+ * - 通过眼睛图标按钮切换密码可见性
+ * - 密码强度指示条（弱 / 中 / 强），以彩色条显示
+ * - 强度计算基于长度、大写字母、小写字母、数字和特殊字符
+ * - [password] 属性获取/设置当前密码
+ * - [strength] 枚举属性反映当前强度级别
+ * - [onStrengthChange] 强度变化回调
  *
- * ### XML Usage
+ * ### XML 用法
  * ```xml
  * <com.answufeng.ui.widget.AwPasswordInputView
  *     android:layout_width="match_parent"
@@ -39,18 +39,18 @@ import com.answufeng.ui.R
  *     app:password_showStrength="true" />
  * ```
  *
- * ### Code Usage
+ * ### 代码用法
  * ```kotlin
  * passwordInput.password = "MyP@ss1"
  * val strength = passwordInput.strength
  * passwordInput.onStrengthChange = { s -> updateStrengthLabel(s) }
  * ```
  *
- * | XML Attribute | Description | Default |
+ * | XML 属性 | 说明 | 默认值 |
  * |---|---|---|
- * | `password_hint` | Hint text for the EditText | "Password" |
- * | `password_showToggle` | Show visibility toggle button | true |
- * | `password_showStrength` | Show strength indicator bar | true |
+ * | `password_hint` | EditText 提示文本 | "Password" |
+ * | `password_showToggle` | 是否显示可见性切换按钮 | true |
+ * | `password_showStrength` | 是否显示强度指示条 | true |
  */
 class AwPasswordInputView @JvmOverloads constructor(
     context: Context,
@@ -58,15 +58,13 @@ class AwPasswordInputView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
-    /**
-     * Password strength levels.
-     */
+    /** 密码强度级别 */
     enum class Strength {
-        /** Weak: score 0-1 */
+        /** 弱：得分 0-1 */
         WEAK,
-        /** Medium: score 2-3 */
+        /** 中：得分 2-3 */
         MEDIUM,
-        /** Strong: score 4-5 */
+        /** 强：得分 4-5 */
         STRONG
     }
 
@@ -81,51 +79,39 @@ class AwPasswordInputView @JvmOverloads constructor(
     private var eyeOpenDrawable: android.graphics.drawable.Drawable? = null
     private var eyeClosedDrawable: android.graphics.drawable.Drawable? = null
 
-    /**
-     * Hint text displayed in the password EditText.
-     */
+    /** 密码 EditText 的提示文本 */
     var hint: String = "Password"
         set(value) {
             field = value
             editText.hint = value
         }
 
-    /**
-     * Whether to show the visibility toggle button.
-     */
+    /** 是否显示可见性切换按钮 */
     var showToggle: Boolean = true
         set(value) {
             field = value
             toggleButton.visibility = if (value) View.VISIBLE else View.GONE
         }
 
-    /**
-     * Whether to show the password strength indicator bar.
-     */
+    /** 是否显示密码强度指示条 */
     var showStrength: Boolean = true
         set(value) {
             field = value
             strengthBarView.visibility = if (value) View.VISIBLE else View.GONE
         }
 
-    /**
-     * The current password text.
-     */
+    /** 当前密码文本 */
     var password: String
         get() = editText.text.toString()
         set(value) {
             editText.setText(value)
         }
 
-    /**
-     * The current password strength level.
-     */
+    /** 当前密码强度级别 */
     val strength: Strength
         get() = calculateStrength(password)
 
-    /**
-     * Callback invoked when the password strength changes.
-     */
+    /** 密码强度变化回调 */
     var onStrengthChange: ((Strength) -> Unit)? = null
 
     private var lastStrength: Strength = Strength.WEAK

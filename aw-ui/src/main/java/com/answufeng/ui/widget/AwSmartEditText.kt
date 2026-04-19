@@ -17,17 +17,17 @@ import androidx.appcompat.widget.AppCompatEditText
 import com.answufeng.ui.R
 
 /**
- * A smart EditText with built-in validation, input filtering, and auto-formatting.
+ * 智能 EditText，内置验证、输入过滤和自动格式化功能。
  *
- * Features:
- * - Real-time validation via [addValidator]
- * - Input length limit via [maxLength]
- * - Character-level input filtering via [inputFilter]
- * - Auto-formatting callback via [onFormat] (e.g., phone number formatting)
- * - Error message display below the EditText
- * - [isValid] property and [validate] method for programmatic checks
+ * 功能：
+ * - 通过 [addValidator] 实时验证
+ * - 通过 [maxLength] 限制输入长度
+ * - 通过 [inputFilter] 字符级输入过滤
+ * - 通过 [onFormat] 自动格式化回调（如手机号格式化）
+ * - EditText 下方显示错误信息
+ * - [isValid] 属性和 [validate] 方法用于编程式检查
  *
- * ### XML Usage
+ * ### XML 用法
  * ```xml
  * <com.answufeng.ui.widget.AwSmartEditText
  *     android:layout_width="match_parent"
@@ -36,7 +36,7 @@ import com.answufeng.ui.R
  *     app:smart_errorColor="#FF0000" />
  * ```
  *
- * ### Code Usage
+ * ### 代码用法
  * ```kotlin
  * smartEditText.maxLength = 11
  * smartEditText.inputFilter = { it.isDigit() }
@@ -45,10 +45,10 @@ import com.answufeng.ui.R
  * val valid = smartEditText.validate()
  * ```
  *
- * | XML Attribute | Description | Default |
+ * | XML 属性 | 说明 | 默认值 |
  * |---|---|---|
- * | `smart_maxLength` | Maximum input length | 0 (no limit) |
- * | `smart_errorColor` | Error message text color | Red |
+ * | `smart_maxLength` | 最大输入长度 | 0（无限制） |
+ * | `smart_errorColor` | 错误信息文本颜色 | Red |
  */
 class AwSmartEditText @JvmOverloads constructor(
     context: Context,
@@ -65,50 +65,31 @@ class AwSmartEditText @JvmOverloads constructor(
     private val validators = mutableListOf<Validator>()
     private var errorTextView: TextView? = null
 
-    /**
-     * Maximum input length. Set to 0 for no limit.
-     * When set, an [InputFilter.LengthFilter] is automatically applied.
-     */
+    /** 最大输入长度。设为 0 表示无限制。设置后自动应用 [InputFilter.LengthFilter] */
     var maxLength: Int = 0
         set(value) {
             field = value
             updateLengthFilter()
         }
 
-    /**
-     * Error message text color.
-     */
+    /** 错误信息文本颜色 */
     var errorColor: Int = Color.RED
         set(value) {
             field = value
             errorTextView?.setTextColor(value)
         }
 
-    /**
-     * Character-level input filter. Return `true` to allow the character, `false` to reject it.
-     * Set to `null` to disable character filtering.
-     *
-     * Example: `inputFilter = { it.isDigit() }` allows only digits.
-     */
+    /** 字符级输入过滤器。返回 `true` 允许该字符，`false` 拒绝。设为 `null` 禁用字符过滤。例如：`inputFilter = { it.isDigit() }` 仅允许数字 */
     var inputFilter: ((Char) -> Boolean)? = null
         set(value) {
             field = value
             updateCharFilter()
         }
 
-    /**
-     * Auto-formatting callback. Invoked on every text change with the raw input.
-     * Return the formatted string to replace the current text.
-     * Set to `null` to disable auto-formatting.
-     *
-     * Example: `onFormat = { raw -> raw.chunked(4).joinToString("-") }`
-     */
+    /** 自动格式化回调。每次文本变化时以原始输入调用，返回格式化后的字符串替换当前文本。设为 `null` 禁用自动格式化。例如：`onFormat = { raw -> raw.chunked(4).joinToString("-") }` */
     var onFormat: ((String) -> String)? = null
 
-    /**
-     * Whether all validators currently pass.
-     * This is updated in real-time as the user types.
-     */
+    /** 当前所有验证器是否通过，随用户输入实时更新 */
     val isValid: Boolean
         get() = validators.all { it.predicate(text.toString()) }
 
@@ -156,11 +137,11 @@ class AwSmartEditText @JvmOverloads constructor(
     }
 
     /**
-     * Adds a named validator.
+     * 添加命名验证器。
      *
-     * @param name      A unique name for this validator (used for deduplication).
-     * @param predicate Returns `true` if the input is valid.
-     * @param errorMsg  The error message to display when validation fails.
+     * @param name      验证器唯一名称（用于去重）
+     * @param predicate 输入有效时返回 `true`
+     * @param errorMsg  验证失败时显示的错误信息
      */
     fun addValidator(name: String, predicate: (String) -> Boolean, errorMsg: String) {
         validators.removeAll { it.name == name }
@@ -168,27 +149,25 @@ class AwSmartEditText @JvmOverloads constructor(
     }
 
     /**
-     * Removes a previously added validator by name.
+     * 按名称移除之前添加的验证器。
      *
-     * @param name The validator name to remove.
+     * @param name 要移除的验证器名称
      */
     fun removeValidator(name: String) {
         validators.removeAll { it.name == name }
     }
 
-    /**
-     * Removes all validators.
-     */
+    /** 移除所有验证器 */
     fun clearValidators() {
         validators.clear()
         hideError()
     }
 
     /**
-     * Runs all validators and returns `true` if all pass.
-     * Displays the first failing validator's error message.
+     * 运行所有验证器，全部通过则返回 `true`。
+     * 显示第一个失败验证器的错误信息。
      *
-     * @return `true` if all validators pass, `false` otherwise.
+     * @return 所有验证器通过返回 `true`，否则返回 `false`
      */
     fun validate(): Boolean {
         val input = text.toString()

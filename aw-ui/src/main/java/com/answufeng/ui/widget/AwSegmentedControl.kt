@@ -13,12 +13,12 @@ import android.widget.TextView
 import com.answufeng.ui.R
 
 /**
- * iOS-style segmented control.
+ * iOS 风格分段控制器。
  *
- * Displays a horizontal row of segments with a sliding highlight that animates
- * smoothly between selections using [View.animate].
+ * 水平排列的分段按钮组，选中项带有滑动高亮动画，
+ * 通过 [View.animate] 实现平滑过渡。
  *
- * ### XML usage
+ * ### XML 用法
  * ```xml
  * <com.answufeng.ui.widget.AwSegmentedControl
  *     android:layout_width="wrap_content"
@@ -30,20 +30,20 @@ import com.answufeng.ui.R
  *     app:seg_selectedTextColor="#FF000000" />
  * ```
  *
- * ### Programmatic usage
+ * ### 代码用法
  * ```kotlin
  * val control = AwSegmentedControl(context)
  * control.items = listOf("Tab 1", "Tab 2", "Tab 3")
  * control.onSelectionChange = { index -> ... }
  * ```
  *
- * | XML attribute | Description | Default |
+ * | XML 属性 | 说明 | 默认值 |
  * |---|---|---|
- * | `seg_items` | String array reference for segment labels | empty |
- * | `seg_selectedIndex` | Initially selected index | 0 |
- * | `seg_selectedColor` | Highlight / thumb background color | white |
- * | `seg_textColor` | Unselected segment text color | gray |
- * | `seg_selectedTextColor` | Selected segment text color | black |
+ * | `seg_items` | 分段标签字符串数组引用 | 空 |
+ * | `seg_selectedIndex` | 初始选中索引 | 0 |
+ * | `seg_selectedColor` | 高亮/滑块背景颜色 | white |
+ * | `seg_textColor` | 未选中分段文字颜色 | gray |
+ * | `seg_selectedTextColor` | 选中分段文字颜色 | black |
  */
 class AwSegmentedControl @JvmOverloads constructor(
     context: Context,
@@ -60,14 +60,14 @@ class AwSegmentedControl @JvmOverloads constructor(
 
     private val segmentViews = mutableListOf<TextView>()
 
-    /** Segment labels. */
+    /** 分段标签列表 */
     var items: List<String> = emptyList()
         set(value) {
             field = value
             rebuildSegments()
         }
 
-    /** Currently selected segment index. */
+    /** 当前选中的分段索引 */
     var selectedIndex: Int = 0
         set(value) {
             val clamped = value.coerceIn(0, (items.size - 1).coerceAtLeast(0))
@@ -78,24 +78,24 @@ class AwSegmentedControl @JvmOverloads constructor(
             }
         }
 
-    /** Callback invoked when the selected segment changes. */
+    /** 选中分段变化回调 */
     var onSelectionChange: ((Int) -> Unit)? = null
 
-    /** Background color of the sliding highlight. */
+    /** 滑动高亮背景颜色 */
     var selectedColor: Int = Color.WHITE
         set(value) {
             field = value
             (highlightView.background as? GradientDrawable)?.setColor(value)
         }
 
-    /** Text color for unselected segments. */
+    /** 未选中分段文字颜色 */
     var textColor: Int = Color.parseColor("#99000000")
         set(value) {
             field = value
             updateTextColors()
         }
 
-    /** Text color for the selected segment. */
+    /** 选中分段文字颜色 */
     var selectedTextColor: Int = Color.parseColor("#FF000000")
         set(value) {
             field = value

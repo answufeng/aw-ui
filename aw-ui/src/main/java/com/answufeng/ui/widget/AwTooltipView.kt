@@ -14,7 +14,7 @@ import com.answufeng.ui.R
 import kotlin.math.min
 
 /**
- * Arrow position for the tooltip pointer.
+ * 提示框箭头指针位置。
  */
 enum class ArrowPosition {
     LEFT,
@@ -24,12 +24,12 @@ enum class ArrowPosition {
 }
 
 /**
- * Tooltip/bubble view with a rounded rectangle body and a triangular arrow pointer.
+ * 提示框/气泡视图，带有圆角矩形主体和三角形箭头指针。
  *
- * Designed to be shown as a popup overlay anchored to a target view.
- * The arrow points toward the anchor view based on [arrowPosition].
+ * 设计为以弹出覆盖层的形式显示，锚定到目标视图。
+ * 箭头根据 [arrowPosition] 指向锚点视图。
  *
- * ### XML usage
+ * ### XML 用法
  * ```xml
  * <com.answufeng.ui.widget.AwTooltipView
  *     android:layout_width="wrap_content"
@@ -40,7 +40,7 @@ enum class ArrowPosition {
  *     app:tooltip_textColor="#FFFFFF" />
  * ```
  *
- * ### Programmatic usage
+ * ### 代码用法
  * ```kotlin
  * tooltipView.text = "Hello"
  * tooltipView.arrowPosition = ArrowPosition.BOTTOM
@@ -48,18 +48,18 @@ enum class ArrowPosition {
  * tooltipView.dismiss()
  * ```
  *
- * @property text The text displayed inside the tooltip.
- * @property arrowPosition The side on which the arrow pointer appears.
- * @property backgroundColor Background color of the tooltip body.
- * @property textColor Color of the tooltip text.
- * @property textSize Size of the tooltip text in pixels.
+ * @property text 提示框内显示的文本
+ * @property arrowPosition 箭头指针出现的一侧
+ * @property backgroundColor 提示框主体的背景颜色
+ * @property textColor 提示框文本的颜色
+ * @property textSize 提示框文本的大小（像素）
  *
- * | XML Attribute | Description | Default |
+ * | XML 属性 | 说明 | 默认值 |
  * |---|---|---|
- * | `tooltip_text` | Tooltip text | "" |
- * | `tooltip_arrowPosition` | Arrow side (left/top/right/bottom) | bottom |
- * | `tooltip_bgColor` | Background color | #333333 |
- * | `tooltip_textColor` | Text color | #FFFFFF |
+ * | `tooltip_text` | 提示框文本 | "" |
+ * | `tooltip_arrowPosition` | 箭头方向（left/top/right/bottom） | bottom |
+ * | `tooltip_bgColor` | 背景颜色 | #333333 |
+ * | `tooltip_textColor` | 文本颜色 | #FFFFFF |
  */
 class AwTooltipView @JvmOverloads constructor(
     context: Context,
@@ -72,9 +72,7 @@ class AwTooltipView @JvmOverloads constructor(
     private val arrowPath = Path()
     private val bodyRectF = RectF()
 
-    /**
-     * The text displayed inside the tooltip.
-     */
+    /** 提示框内显示的文本 */
     var text: CharSequence = ""
         set(value) {
             field = value
@@ -82,18 +80,14 @@ class AwTooltipView @JvmOverloads constructor(
             invalidate()
         }
 
-    /**
-     * The side on which the arrow pointer appears.
-     */
+    /** 箭头指针出现的一侧 */
     var arrowPosition: ArrowPosition = ArrowPosition.BOTTOM
         set(value) {
             field = value
             invalidate()
         }
 
-    /**
-     * Background color of the tooltip body.
-     */
+    /** 提示框主体的背景颜色 */
     var tooltipBackgroundColor: Int = Color.parseColor("#333333")
         set(value) {
             field = value
@@ -101,9 +95,7 @@ class AwTooltipView @JvmOverloads constructor(
             invalidate()
         }
 
-    /**
-     * Color of the tooltip text.
-     */
+    /** 提示框文本的颜色 */
     var textColor: Int = Color.WHITE
         set(value) {
             field = value
@@ -111,9 +103,7 @@ class AwTooltipView @JvmOverloads constructor(
             invalidate()
         }
 
-    /**
-     * Size of the tooltip text in pixels.
-     */
+    /** 提示框文本的大小（像素） */
     var textSize: Float = 14f * resources.displayMetrics.density
         set(value) {
             field = value
@@ -154,12 +144,12 @@ class AwTooltipView @JvmOverloads constructor(
     }
 
     /**
-     * Shows the tooltip anchored to the given [anchor] view.
+     * 显示提示框并锚定到给定的 [anchor] 视图。
      *
-     * The tooltip is added as an overlay in the anchor's parent [FrameLayout]
-     * and positioned relative to the anchor.
+     * 提示框作为覆盖层添加到锚点视图的父 [FrameLayout] 中，
+     * 并相对于锚点定位。
      *
-     * @param anchor The view to anchor the tooltip to.
+     * @param anchor 要锚定的目标视图
      */
     fun show(anchor: View) {
         this.anchorView = anchor
@@ -184,9 +174,7 @@ class AwTooltipView @JvmOverloads constructor(
         })
     }
 
-    /**
-     * Dismisses the tooltip with a fade-out animation.
-     */
+    /** 关闭提示框，带有淡出动画 */
     fun dismiss() {
         autoDismissRunnable?.let { handler.removeCallbacks(it) }
         autoDismissRunnable = null

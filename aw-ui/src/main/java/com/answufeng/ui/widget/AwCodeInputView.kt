@@ -20,17 +20,17 @@ import android.widget.LinearLayout
 import com.answufeng.ui.R
 
 /**
- * A verification code input view where each digit is displayed in a separate box.
+ * 验证码输入视图，每位数字显示在独立的方框中。
  *
- * Features:
- * - Configurable code length via [codeLength] (default 6)
- * - Auto-advance to next box on input
- * - Auto-focus first empty box
- * - Supports paste of full code
- * - [onCodeComplete] callback when all digits are filled
- * - [code] property to get/set the full code
+ * 功能：
+ * - 通过 [codeLength] 配置验证码位数（默认 6）
+ * - 输入后自动跳转到下一个方框
+ * - 自动聚焦第一个空方框
+ * - 支持粘贴完整验证码
+ * - [onCodeComplete] 所有数字输入完成回调
+ * - [code] 属性获取/设置完整验证码
  *
- * ### XML Usage
+ * ### XML 用法
  * ```xml
  * <com.answufeng.ui.widget.AwCodeInputView
  *     android:layout_width="wrap_content"
@@ -44,22 +44,22 @@ import com.answufeng.ui.R
  *     app:code_textSize="18sp" />
  * ```
  *
- * ### Code Usage
+ * ### 代码用法
  * ```kotlin
  * codeInputView.codeLength = 4
  * codeInputView.onCodeComplete = { code -> verifyCode(code) }
  * val entered = codeInputView.code
  * ```
  *
- * | XML Attribute | Description | Default |
+ * | XML 属性 | 说明 | 默认值 |
  * |---|---|---|
- * | `code_length` | Number of code digits | 6 |
- * | `code_boxSize` | Size of each digit box | 48dp |
- * | `code_boxSpacing` | Spacing between boxes | 8dp |
- * | `code_boxStrokeColor` | Box border color | #CCCCCC |
- * | `code_boxStrokeWidth` | Box border width | 2dp |
- * | `code_textColor` | Digit text color | #000000 |
- * | `code_textSize` | Digit text size | 18sp |
+ * | `code_length` | 验证码位数 | 6 |
+ * | `code_boxSize` | 每个方框尺寸 | 48dp |
+ * | `code_boxSpacing` | 方框间距 | 8dp |
+ * | `code_boxStrokeColor` | 方框边框颜色 | #CCCCCC |
+ * | `code_boxStrokeWidth` | 方框边框宽度 | 2dp |
+ * | `code_textColor` | 数字文字颜色 | #000000 |
+ * | `code_textSize` | 数字文字大小 | 18sp |
  */
 class AwCodeInputView @JvmOverloads constructor(
     context: Context,
@@ -69,80 +69,61 @@ class AwCodeInputView @JvmOverloads constructor(
 
     private val density = resources.displayMetrics.density
 
-    /**
-     * Number of code digits.
-     * Changing this value rebuilds the box views.
-     */
+    /** 验证码位数，修改此值会重建方框视图 */
     var codeLength: Int = 6
         set(value) {
             field = value.coerceAtLeast(1)
             rebuildBoxes()
         }
 
-    /**
-     * Size of each digit box in pixels.
-     */
+    /** 每个方框的尺寸（px） */
     var boxSize: Int = (48 * density).toInt()
         set(value) {
             field = value
             rebuildBoxes()
         }
 
-    /**
-     * Spacing between digit boxes in pixels.
-     */
+    /** 方框间距（px） */
     var boxSpacing: Int = (8 * density).toInt()
         set(value) {
             field = value
             rebuildBoxes()
         }
 
-    /**
-     * Box border stroke color.
-     */
+    /** 方框边框颜色 */
     var boxStrokeColor: Int = Color.parseColor("#CCCCCC")
         set(value) {
             field = value
             invalidateBoxes()
         }
 
-    /**
-     * Box border stroke width in pixels.
-     */
+    /** 方框边框宽度（px） */
     var boxStrokeWidth: Float = 2 * density
         set(value) {
             field = value
             invalidateBoxes()
         }
 
-    /**
-     * Digit text color.
-     */
+    /** 数字文字颜色 */
     var codeTextColor: Int = Color.BLACK
         set(value) {
             field = value
             invalidateBoxes()
         }
 
-    /**
-     * Digit text size in pixels.
-     */
+    /** 数字文字大小（px） */
     var codeTextSize: Float = 18 * density
         set(value) {
             field = value
             invalidateBoxes()
         }
 
-    /**
-     * Callback invoked when all code digits have been entered.
-     */
+    /** 所有数字输入完成回调 */
     var onCodeComplete: ((String) -> Unit)? = null
 
     var codeInputType: Int = InputType.TYPE_CLASS_NUMBER
 
-    /**
-     * The full code entered so far. Setting this property fills the boxes programmatically.
-     */
+    /** 当前已输入的完整验证码，设置此属性可程序化填充方框 */
     var code: String
         get() = buildString {
             for (i in 0 until childCount) {

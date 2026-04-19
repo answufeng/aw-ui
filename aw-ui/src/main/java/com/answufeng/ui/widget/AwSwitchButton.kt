@@ -15,13 +15,13 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import com.answufeng.ui.R
 
 /**
- * Custom switch button with smooth thumb animation.
+ * 带滑块动画的自定义开关按钮。
  *
- * Draws a rounded track and a circular thumb in [onDraw].
- * The track color transitions between checked and unchecked states,
- * and the thumb slides with a [ValueAnimator].
+ * 在 [onDraw] 中绘制圆角轨道和圆形滑块。
+ * 轨道颜色在选中/未选中状态之间平滑过渡，
+ * 滑块通过 [ValueAnimator] 滑动。
  *
- * ### XML usage
+ * ### XML 用法
  * ```xml
  * <com.answufeng.ui.widget.AwSwitchButton
  *     android:layout_width="52dp"
@@ -33,19 +33,19 @@ import com.answufeng.ui.R
  *     app:switch_thumbCheckedColor="#FFFFFF" />
  * ```
  *
- * ### Programmatic usage
+ * ### 代码用法
  * ```kotlin
  * switchButton.isChecked = true
  * switchButton.onCheckedChangeListener = { checked -> ... }
  * ```
  *
- * | XML attribute | Description | Default |
+ * | XML 属性 | 说明 | 默认值 |
  * |---|---|---|
- * | `switch_checked` | Initial checked state | false |
- * | `switch_trackColor` | Track color when unchecked | #CCCCCC |
- * | `switch_trackCheckedColor` | Track color when checked | #4CAF50 |
- * | `switch_thumbColor` | Thumb color when unchecked | white |
- * | `switch_thumbCheckedColor` | Thumb color when checked | white |
+ * | `switch_checked` | 初始选中状态 | false |
+ * | `switch_trackColor` | 未选中时轨道颜色 | #CCCCCC |
+ * | `switch_trackCheckedColor` | 选中时轨道颜色 | #4CAF50 |
+ * | `switch_thumbColor` | 未选中时滑块颜色 | white |
+ * | `switch_thumbCheckedColor` | 选中时滑块颜色 | white |
  */
 class AwSwitchButton @JvmOverloads constructor(
     context: Context,
@@ -53,7 +53,7 @@ class AwSwitchButton @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    /** Whether the switch is currently checked. */
+    /** 当前开关是否选中 */
     var isChecked: Boolean = false
         set(value) {
             if (field != value) {
@@ -66,31 +66,31 @@ class AwSwitchButton @JvmOverloads constructor(
             }
         }
 
-    /** Callback invoked when the checked state changes. */
+    /** 选中状态变化回调 */
     var onCheckedChangeListener: ((Boolean) -> Unit)? = null
 
-    /** Track color when unchecked. */
+    /** 未选中时轨道颜色 */
     var trackColor: Int = Color.parseColor("#CCCCCC")
         set(value) {
             field = value
             invalidate()
         }
 
-    /** Track color when checked. */
+    /** 选中时轨道颜色 */
     var trackCheckedColor: Int = Color.parseColor("#4CAF50")
         set(value) {
             field = value
             invalidate()
         }
 
-    /** Thumb color when unchecked. */
+    /** 未选中时滑块颜色 */
     var thumbColor: Int = Color.WHITE
         set(value) {
             field = value
             invalidate()
         }
 
-    /** Thumb color when checked. */
+    /** 选中时滑块颜色 */
     var thumbCheckedColor: Int = Color.WHITE
         set(value) {
             field = value

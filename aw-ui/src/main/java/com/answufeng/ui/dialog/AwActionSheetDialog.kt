@@ -18,13 +18,12 @@ import com.answufeng.ui.R
 import com.google.android.material.color.MaterialColors
 
 /**
- * iOS-style action sheet dialog displayed from the bottom of the screen.
+ * iOS 风格底部弹出操作表对话框。
  *
- * Shows a list of action items with a title header, optional destructive (red) item,
- * and a cancel button separated by a gap. The dialog has rounded top corners and
- * slides up from the bottom.
+ * 显示操作项列表，带有标题头部、可选的破坏性（红色）项和取消按钮，
+ * 取消按钮与操作列表之间有间隔。对话框具有圆角顶部并从底部滑入。
  *
- * ### Programmatic usage
+ * ### 代码用法
  * ```kotlin
  * AwActionSheetDialog(context)
  *     .setTitle("Select Action")
@@ -35,43 +34,31 @@ import com.google.android.material.color.MaterialColors
  *     .show()
  * ```
  *
- * @property title Optional title displayed at the top of the action sheet.
- * @property items List of action labels to display.
- * @property destructiveIndex Index of the destructive (red) item. Default -1 (none).
- * @property cancelText Label for the cancel button. Default "取消".
- * @property onSelect Callback invoked when an action item is selected. Receives the item index.
- * @property onCancel Callback invoked when the cancel button is pressed.
+ * @property title 操作表顶部显示的可选标题
+ * @property items 要显示的操作标签列表
+ * @property destructiveIndex 破坏性（红色）项的索引，默认 -1（无）
+ * @property cancelText 取消按钮文本，默认 "取消"
+ * @property onSelect 选中操作项时的回调，接收项索引
+ * @property onCancel 按下取消按钮时的回调
  */
 class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSheetDialog) {
 
-    /**
-     * Optional title displayed at the top of the action sheet.
-     */
+    /** 操作表顶部显示的可选标题 */
     var title: String? = null
 
-    /**
-     * List of action labels to display.
-     */
+    /** 要显示的操作标签列表 */
     var items: List<String> = emptyList()
 
-    /**
-     * Index of the destructive (red) item. Default -1 (none).
-     */
+    /** 破坏性（红色）项的索引，默认 -1（无） */
     var destructiveIndex: Int = -1
 
-    /**
-     * Label for the cancel button. Default "取消".
-     */
+    /** 取消按钮文本，默认 "取消" */
     var cancelText: String = "取消"
 
-    /**
-     * Callback invoked when an action item is selected. Receives the item index.
-     */
+    /** 选中操作项时的回调，接收项索引 */
     var onSelect: ((Int) -> Unit)? = null
 
-    /**
-     * Callback invoked when the cancel button is pressed.
-     */
+    /** 按下取消按钮时的回调 */
     var onCancel: (() -> Unit)? = null
 
     private val density = context.resources.displayMetrics.density
@@ -163,10 +150,10 @@ class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSh
     }
 
     /**
-     * Sets the title for the action sheet.
+     * 设置操作表标题。
      *
-     * @param title The title text.
-     * @return This dialog for chaining.
+     * @param title 标题文本
+     * @return 当前对话框，用于链式调用
      */
     fun setTitle(title: String): AwActionSheetDialog {
         this.title = title
@@ -174,10 +161,10 @@ class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSh
     }
 
     /**
-     * Sets the action items.
+     * 设置操作项列表。
      *
-     * @param items List of action labels.
-     * @return This dialog for chaining.
+     * @param items 操作标签列表
+     * @return 当前对话框，用于链式调用
      */
     fun setItems(items: List<String>): AwActionSheetDialog {
         this.items = items
@@ -185,10 +172,10 @@ class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSh
     }
 
     /**
-     * Sets the destructive item index (displayed in red).
+     * 设置破坏性项索引（显示为红色）。
      *
-     * @param index Zero-based index of the destructive item. -1 for none.
-     * @return This dialog for chaining.
+     * @param index 破坏性项的从零开始的索引，-1 表示无
+     * @return 当前对话框，用于链式调用
      */
     fun setDestructiveIndex(index: Int): AwActionSheetDialog {
         this.destructiveIndex = index
@@ -196,10 +183,10 @@ class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSh
     }
 
     /**
-     * Sets the cancel button text.
+     * 设置取消按钮文本。
      *
-     * @param text Cancel button label.
-     * @return This dialog for chaining.
+     * @param text 取消按钮标签
+     * @return 当前对话框，用于链式调用
      */
     fun setCancelText(text: String): AwActionSheetDialog {
         this.cancelText = text
@@ -207,10 +194,10 @@ class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSh
     }
 
     /**
-     * Sets the selection callback.
+     * 设置选中回调。
      *
-     * @param listener Callback receiving the selected item index.
-     * @return This dialog for chaining.
+     * @param listener 接收选中项索引的回调
+     * @return 当前对话框，用于链式调用
      */
     fun setOnSelect(listener: (Int) -> Unit): AwActionSheetDialog {
         this.onSelect = listener
@@ -218,10 +205,10 @@ class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSh
     }
 
     /**
-     * Sets the cancel callback.
+     * 设置取消回调。
      *
-     * @param listener Callback invoked on cancel.
-     * @return This dialog for chaining.
+     * @param listener 取消时的回调
+     * @return 当前对话框，用于链式调用
      */
     fun setOnCancel(listener: () -> Unit): AwActionSheetDialog {
         this.onCancel = listener
