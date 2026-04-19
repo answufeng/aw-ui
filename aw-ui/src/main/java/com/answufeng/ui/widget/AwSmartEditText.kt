@@ -215,9 +215,9 @@ class AwSmartEditText @JvmOverloads constructor(
                 FrameLayout.LayoutParams.WRAP_CONTENT,
                 FrameLayout.LayoutParams.WRAP_CONTENT
             ).apply {
-                gravity = Gravity.BOTTOM or Gravity.START
+                gravity = Gravity.START
                 marginStart = paddingStart
-                bottomMargin = 0
+                topMargin = bottom + paddingBottom
             }
             tv.layoutParams = lp
             (parent as ViewGroup).addView(tv)
@@ -226,6 +226,7 @@ class AwSmartEditText @JvmOverloads constructor(
                 ViewGroup.MarginLayoutParams.WRAP_CONTENT,
                 ViewGroup.MarginLayoutParams.WRAP_CONTENT
             )
+            lp.topMargin = bottom + paddingBottom
             tv.layoutParams = lp
             (parent as ViewGroup).addView(tv)
         }
