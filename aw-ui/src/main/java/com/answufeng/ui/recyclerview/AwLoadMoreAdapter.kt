@@ -179,9 +179,7 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
     }
 
     fun appendList(list: List<T>, commitCallback: Runnable? = null) {
-        val combined = currentList.toMutableList().apply { addAll(list) }
-        loadState = LoadState.IDLE
-        super.submitList(combined, commitCallback)
+        loadMore(list, commitCallback)
     }
 
     fun refreshAll(list: List<T>, commitCallback: Runnable? = null) {

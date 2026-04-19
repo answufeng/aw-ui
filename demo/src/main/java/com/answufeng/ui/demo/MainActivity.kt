@@ -99,9 +99,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnLoading.setOnClickListener {
-            LoadingDialog.show(this, "加载中...")
+            val dialog = LoadingDialog.show(this, "加载中...")
             binding.root.postDelayed({
-                LoadingDialog::class.java // dismiss after 2s
+                dialog?.dismiss()
             }, 2000)
             log("⏳ 加载对话框已显示")
         }

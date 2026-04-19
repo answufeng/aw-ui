@@ -98,7 +98,7 @@ class AwSkeletonView @JvmOverloads constructor(
         }
 
     /** 闪光动画当前是否正在运行 */
-    val isShimmering: Boolean = false
+    var isShimmering: Boolean = false
         private set
 
     var autoStart: Boolean = true
