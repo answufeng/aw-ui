@@ -13,6 +13,7 @@
 -keep class com.answufeng.ui.recyclerview.AwLoadMoreAdapter$* { *; }
 -keep class com.answufeng.ui.recyclerview.AwSimpleAdapter { *; }
 -keep class com.answufeng.ui.recyclerview.AwMultiTypeAdapter { *; }
+-keep class com.answufeng.ui.recyclerview.AwMultiTypeAdapter$* { *; }
 
 # Form validation
 -keep class com.answufeng.ui.form.AwFormValidator { *; }

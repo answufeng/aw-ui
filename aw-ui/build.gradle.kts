@@ -43,12 +43,11 @@ android {
 dependencies {
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
-    api(libs.material)
+    implementation(libs.material)
     implementation(libs.activity.ktx)
     implementation(libs.lifecycle.runtime.ktx)
-    api("androidx.constraintlayout:constraintlayout:2.1.4")
-    api("androidx.recyclerview:recyclerview:1.3.2")
-    api("androidx.viewpager2:viewpager2:1.0.0")
+    api(libs.recyclerview)
+    api(libs.viewpager2)
 
     testImplementation(libs.junit)
 }

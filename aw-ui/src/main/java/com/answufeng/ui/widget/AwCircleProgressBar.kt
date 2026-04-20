@@ -14,12 +14,12 @@ import com.answufeng.ui.R
 import kotlin.math.min
 
 /**
- * Circular progress bar with animated progress and optional center percentage text.
+ * 圆形进度条，支持动画进度和可选的中心百分比文字。
  *
- * Draws a background ring and a foreground arc representing the current progress.
- * Progress changes are animated by default using [ValueAnimator].
+ * 绘制一个背景圆环和一个表示当前进度的前景弧线。
+ * 进度变化默认使用 [ValueAnimator] 进行动画过渡。
  *
- * ### XML usage
+ * ### XML 使用
  * ```xml
  * <com.answufeng.ui.widget.AwCircleProgressBar
  *     android:layout_width="120dp"
@@ -32,29 +32,29 @@ import kotlin.math.min
  *     app:circleProgress_showText="true" />
  * ```
  *
- * ### Programmatic usage
+ * ### 代码使用
  * ```kotlin
  * circleProgressBar.progress = 75f
  * circleProgressBar.progressWithAnimation = 75f
  * ```
  *
- * @property progress Current progress value (0 to [max]). Default 0.
- * @property max Maximum progress value. Default 100.
- * @property strokeWidth Stroke width of the ring in pixels.
- * @property progressColor Color of the progress arc.
- * @property bgColor Color of the background ring.
- * @property showText Whether to display percentage text in the center.
- * @property textColor Color of the center text.
- * @property textSize Size of the center text in pixels.
+ * @property progress 当前进度值（0 到 [max]），默认 0。
+ * @property max 最大进度值，默认 100。
+ * @property strokeWidth 圆环描边宽度（像素）。
+ * @property progressColor 进度弧线颜色。
+ * @property bgColor 背景圆环颜色。
+ * @property showText 是否在中心显示百分比文字。
+ * @property textColor 中心文字颜色。
+ * @property textSize 中心文字大小（像素）。
  *
- * | XML Attribute | Description | Default |
+ * | XML 属性 | 描述 | 默认值 |
  * |---|---|---|
- * | `circleProgress_progress` | Initial progress | 0 |
- * | `circleProgress_max` | Maximum value | 100 |
- * | `circleProgress_strokeWidth` | Ring stroke width | 8dp |
- * | `circleProgress_progressColor` | Arc color | #4CAF50 |
- * | `circleProgress_bgColor` | Background ring color | #E0E0E0 |
- * | `circleProgress_showText` | Show percentage text | true |
+ * | `circleProgress_progress` | 初始进度 | 0 |
+ * | `circleProgress_max` | 最大值 | 100 |
+ * | `circleProgress_strokeWidth` | 圆环描边宽度 | 8dp |
+ * | `circleProgress_progressColor` | 弧线颜色 | #4CAF50 |
+ * | `circleProgress_bgColor` | 背景圆环颜色 | #E0E0E0 |
+ * | `circleProgress_showText` | 显示百分比文字 | true |
  */
 class AwCircleProgressBar @JvmOverloads constructor(
     context: Context,
@@ -79,7 +79,7 @@ class AwCircleProgressBar @JvmOverloads constructor(
     private val rectF = RectF()
 
     /**
-     * Maximum progress value.
+     * 最大进度值。
      */
     var max: Float = 100f
         set(value) {
@@ -88,7 +88,7 @@ class AwCircleProgressBar @JvmOverloads constructor(
         }
 
     /**
-     * Current progress value (0 to [max]).
+     * 当前进度值（0 到 [max]）。
      */
     var progress: Float = 0f
         set(value) {
@@ -97,7 +97,7 @@ class AwCircleProgressBar @JvmOverloads constructor(
         }
 
     /**
-     * Stroke width of the ring in pixels.
+     * 圆环描边宽度（像素）。
      */
     var strokeWidth: Float
         get() = bgPaint.strokeWidth
@@ -108,7 +108,7 @@ class AwCircleProgressBar @JvmOverloads constructor(
         }
 
     /**
-     * Color of the progress arc.
+     * 进度弧线颜色。
      */
     var progressColor: Int
         get() = progressPaint.color
@@ -118,7 +118,7 @@ class AwCircleProgressBar @JvmOverloads constructor(
         }
 
     /**
-     * Color of the background ring.
+     * 背景圆环颜色。
      */
     var bgColor: Int
         get() = bgPaint.color
@@ -128,7 +128,7 @@ class AwCircleProgressBar @JvmOverloads constructor(
         }
 
     /**
-     * Whether to display percentage text in the center.
+     * 是否在中心显示百分比文字。
      */
     var showText: Boolean = true
         set(value) {
@@ -137,7 +137,7 @@ class AwCircleProgressBar @JvmOverloads constructor(
         }
 
     /**
-     * Color of the center text.
+     * 中心文字颜色。
      */
     var textColor: Int
         get() = textPaint.color
@@ -147,7 +147,7 @@ class AwCircleProgressBar @JvmOverloads constructor(
         }
 
     /**
-     * Size of the center text in pixels.
+     * 中心文字大小（像素）。
      */
     var textSize: Float
         get() = textPaint.textSize
@@ -175,10 +175,10 @@ class AwCircleProgressBar @JvmOverloads constructor(
     }
 
     /**
-     * Sets [progress] with an animation from the current value.
+     * 以动画方式设置 [progress]。
      *
-     * @param target The target progress value.
-     * @param duration Animation duration in milliseconds. Default 800.
+     * @param target 目标进度值。
+     * @param duration 动画时长（毫秒），默认 800。
      */
     fun setProgressWithAnimation(target: Float, duration: Long = 800) {
         animator?.cancel()
