@@ -33,20 +33,36 @@ import com.google.android.material.tabs.TabLayoutMediator
 /**
  * 底部导航栏，支持图标+文字标签、未读数角标、指示器样式和 ViewPager2 联动。
  *
+ * 支持 Tab 切换指示器动画，可与 ViewPager2 绑定实现联动滑动，
+ * 也可与 Fragment 容器绑定实现页面切换。
+ *
+ * ### XML 属性
+ * - `tab_selected_color`: 选中状态颜色
+ * - `tab_normal_color`: 未选中状态颜色
+ * - `indicator_style`: 指示器样式（LINE/DOT/BLOCK/NONE）
+ * - `indicator_color`: 指示器颜色
+ * - `indicator_height`: 指示器高度
+ * - `indicator_marginTop`: 指示器上边距
+ * - `tab_icon_size`: 图标大小
+ * - `tab_text_size`: 文字大小
+ * - `tab_margin`: Tab 间距
+ * - `tab_auto_tint`: 是否自动着色图标
+ * - `tab_selected_scale`: 选中缩放比例
+ * - `badge_background_color`: 角标背景色
+ *
+ * ### 用法
  * ```kotlin
- * val tab = AwBottomTabBar(context)
- * tab.setItems(listOf(
- *     AwBottomTabBar.TabItem("首页", R.drawable.ic_home, R.drawable.ic_home_sel),
- *     AwBottomTabBar.TabItem("我的", R.drawable.ic_me, R.drawable.ic_me_sel)
+ * tabBar.setItems(listOf(
+ *     AwBottomTabBar.TabItem("首页", R.drawable.ic_home),
+ *     AwBottomTabBar.TabItem("我的", R.drawable.ic_me)
  * ))
- * tab.bindViewPager(viewPager2)
+ * tabBar.bindViewPager(viewPager2)
+ * tabBar.setOnTabSelectedListener { index -> /* Tab 选中 */ }
  * ```
  */
 class AwBottomTabBar @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr) {
+    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+) : FrameLayout(context, attrs, defStyleAttr) {
 
     enum class TabMode {
         ICON_TEXT, ICON_ONLY, TEXT_ONLY

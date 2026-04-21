@@ -5,38 +5,38 @@ package com.answufeng.ui
 import android.content.res.Resources
 import kotlin.math.roundToInt
 
-/** dp 转 px（Int） */
+/**
+ * 将 dp 值转换为 px（Int），适合用于需要整数像素的场景。
+ */
 val Int.dp: Int
-    get() = (this * Resources.getSystem().displayMetrics.density).roundToInt()
+    get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
-/** dp 转 px（Int） */
+/**
+ * 将 dp 值转换为 px（Int），适合用于需要整数像素的场景。
+ */
 val Float.dp: Int
-    get() = (this * Resources.getSystem().displayMetrics.density).roundToInt()
+    get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
-/** sp 转 px（Int） */
-val Int.sp: Int
-    get() = (this * Resources.getSystem().displayMetrics.scaledDensity).roundToInt()
+/**
+ * 将 sp 值转换为 px（Int），适合用于文字大小设置。
+ */
+val Int.spToPx: Int
+    get() = (this * Resources.getSystem().displayMetrics.scaledDensity).toInt()
 
-/** sp 转 px（Int） */
-val Float.sp: Int
-    get() = (this * Resources.getSystem().displayMetrics.scaledDensity).roundToInt()
+/**
+ * 将 sp 值转换为 px（Int），适合用于文字大小设置。
+ */
+val Float.spToPx: Int
+    get() = (this * Resources.getSystem().displayMetrics.scaledDensity).toInt()
 
-/** dp 转 px（Float） */
-val Int.dpToPx: Float
-    get() = this * Resources.getSystem().displayMetrics.density
-
-/** dp 转 px（Float） */
-val Float.dpToPx: Float
-    get() = this * Resources.getSystem().displayMetrics.density
-
-/** px 转 dp */
+/**
+ * 将 px 值转换为 dp（Float），适合用于比例计算。
+ */
 val Int.pxToDp: Float
     get() = this / Resources.getSystem().displayMetrics.density
 
-/** sp 转 px（Float） */
-val Int.spToPx: Float
-    get() = this * Resources.getSystem().displayMetrics.scaledDensity
-
-/** px 转 sp */
+/**
+ * 将 px 值转换为 sp（Float），适合用于文字大小比例计算。
+ */
 val Int.pxToSp: Float
     get() = this / Resources.getSystem().displayMetrics.scaledDensity

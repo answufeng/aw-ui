@@ -20,7 +20,10 @@ fun View.fadeIn(duration: Long = 300L, onEnd: (() -> Unit)? = null) {
         interpolator = AccelerateDecelerateInterpolator()
         onEnd?.let { callback ->
             setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) { callback() }
+                override fun onAnimationEnd(animation: Animator) {
+                    callback()
+                    setListener(null)
+                }
             })
         }
         start()
@@ -40,7 +43,10 @@ fun View.fadeOut(duration: Long = 300L, onEnd: (() -> Unit)? = null) {
         interpolator = AccelerateDecelerateInterpolator()
         onEnd?.let { callback ->
             setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) { callback() }
+                override fun onAnimationEnd(animation: Animator) {
+                    callback()
+                    setListener(null)
+                }
             })
         }
         start()
@@ -62,7 +68,10 @@ fun View.slideInFromBottom(duration: Long = 300L, onEnd: (() -> Unit)? = null) {
         interpolator = AccelerateDecelerateInterpolator()
         onEnd?.let { callback ->
             setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) { callback() }
+                override fun onAnimationEnd(animation: Animator) {
+                    callback()
+                    setListener(null)
+                }
             })
         }
         start()
@@ -82,7 +91,10 @@ fun View.slideOutToBottom(duration: Long = 300L, onEnd: (() -> Unit)? = null) {
         interpolator = AccelerateDecelerateInterpolator()
         onEnd?.let { callback ->
             setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) { callback() }
+                override fun onAnimationEnd(animation: Animator) {
+                    callback()
+                    setListener(null)
+                }
             })
         }
         start()
@@ -103,7 +115,10 @@ fun View.shake(duration: Long = 500L, onEnd: (() -> Unit)? = null) {
         interpolator = AccelerateDecelerateInterpolator()
         onEnd?.let { callback ->
             addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) { callback() }
+                override fun onAnimationEnd(animation: Animator) {
+                    callback()
+                    removeListener(this)
+                }
             })
         }
         start()
@@ -141,7 +156,10 @@ fun View.pulse(duration: Long = 200L, onEnd: (() -> Unit)? = null) {
         interpolator = AccelerateDecelerateInterpolator()
         onEnd?.let { callback ->
             addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) { callback() }
+                override fun onAnimationEnd(animation: Animator) {
+                    callback()
+                    removeListener(this)
+                }
             })
         }
         start()
@@ -168,7 +186,10 @@ fun View.bounce(duration: Long = 400L, onEnd: (() -> Unit)? = null) {
         interpolator = AccelerateDecelerateInterpolator()
         onEnd?.let { callback ->
             addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) { callback() }
+                override fun onAnimationEnd(animation: Animator) {
+                    callback()
+                    removeListener(this)
+                }
             })
         }
         start()
@@ -191,7 +212,10 @@ fun View.fadeSlideIn(duration: Long = 400L, onEnd: (() -> Unit)? = null) {
         interpolator = AccelerateDecelerateInterpolator()
         onEnd?.let { callback ->
             setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) { callback() }
+                override fun onAnimationEnd(animation: Animator) {
+                    callback()
+                    setListener(null)
+                }
             })
         }
         start()

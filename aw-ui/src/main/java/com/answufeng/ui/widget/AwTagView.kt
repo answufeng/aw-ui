@@ -12,12 +12,13 @@ import com.google.android.material.color.MaterialColors
 /**
  * 标签选择视图，支持单选/多选模式和最大选择数限制。
  *
- * ```xml
- * <com.answufeng.ui.widget.AwTagView
- *     android:layout_width="match_parent"
- *     android:layout_height="wrap_content" />
- * ```
+ * 支持自定义背景色、文字颜色、圆角等属性，
+ * 常用于分类筛选、标签展示等场景。
  *
+ * ### XML 属性
+ * - `tag_mode`: 标签模式（FLOW/GRID）
+ *
+ * ### 用法
  * ```kotlin
  * tagView.tags = listOf("Kotlin", "Java", "Python", "Go")
  * tagView.selectionMode = AwTagView.SelectionMode.MULTI
@@ -26,10 +27,8 @@ import com.google.android.material.color.MaterialColors
  * ```
  */
 class AwTagView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : AwFlowLayout(context, attrs, defStyleAttr) {
+    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+) : FrameLayout(context, attrs, defStyleAttr) {
 
     var tags: List<String> = emptyList()
         set(value) {

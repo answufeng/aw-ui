@@ -1,130 +1,307 @@
+@file:Suppress("unused")
+
 package com.answufeng.ui.widget
 
 import android.content.Context
+import android.graphics.Canvas
 import android.graphics.Color
-import android.os.CountDownTimer
+import android.graphics.Paint
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
-import android.util.TypedValue
-import androidx.appcompat.widget.AppCompatTextView
-import com.answufeng.ui.R
+import android.view.View
+import androidx.annotation.ColorInt
 
 /**
- * Countdown timer view that displays remaining seconds.
+ * 倒计时视图组件，用于显示倒计时动画和文字。
  *
- * Uses [CountDownTimer] internally. Displays remaining time as "XXs" by default,
- * or a custom format via [formatTime].
+ * 支持圆形进度动画和文本显示，可自定义颜色、大小、描边宽度等属性。
+ * 倒计时过程中可设置监听器来监听状态变化（进行中、完成、跳过）。
  *
- * ### XML usage
- * ```xml
- * <com.answufeng.ui.widget.AwCountDownView
- *     android:layout_width="wrap_content"
- *     android:layout_height="wrap_content"
- *     app:countdown_seconds="60"
- *     app:countdown_textColor="#FF0000"
- *     app:countdown_textSize="16sp" />
- * ```
+ * ### XML 属性
+ * - `countDownStrokeColor`: 倒计时圆环颜色（默认黑色）
+ * - `countDownTextColor`: 倒计时文字颜色（默认黑色）
+ * - `countDownBackgroundColor`: 倒计时圆环背景颜色（默认透明）
+ * - `countDownStrokeWidth`: 倒计时圆环描边宽度（默认 4dp）
+ * - `countDownTextSize`: 倒计时文字大小（默认 24sp）
  *
- * ### Programmatic usage
+ * ### 用法
  * ```kotlin
- * countDownView.formatTime = { seconds -> "${seconds}s remaining" }
- * countDownView.onFinish = { showToast("Done!") }
- * countDownView.onTick = { seconds -> Log.d("TAG", "$seconds left") }
- * countDownView.start(60)
+ * countDownView.start(durationMs = 3000, maxMs = 3000)
+ * countDownView.setCountDownListener(object : AwCountDownView.CountDownListener {
+ *     override fun onFinish() { /* 倒计时完成 */ }
+ *     override fun onSkip() { /* 用户跳过 */ }
+ *     override fun onProgress(progress: Int, remaining: Long) { /* 进度更新 */ }
+ * })
  * ```
- *
- * | XML attribute | Description | Default |
- * |---|---|---|
- * | `countdown_seconds` | Initial countdown duration in seconds | 60 |
- * | `countdown_textColor` | Text color | current text color |
- * | `countdown_textSize` | Text size | 14sp |
  */
 class AwCountDownView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : AppCompatTextView(context, attrs, defStyleAttr) {
+    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+) : View(context, attrs, defStyleAttr) {
 
-    /** Callback invoked when the countdown finishes. */
-    var onFinish: (() -> Unit)? = null
+    companion object {
+        private const val DEFAULT_DURATION_MS = 3000L
+        private const val DEFAULT_MAX_MS = 3000L
+        private const val DEFAULT_TEXT_SIZE_SP = 24f
+    }
 
-    /** Callback invoked on each tick with the remaining seconds. */
-    var onTick: ((Int) -> Unit)? = null
+    /** 倒计时过程中更新 UI 的 Handler */
+    private val updateHandler = Handler(Looper.getMainLooper())
 
-    /** Custom time format function. Receives remaining seconds, returns display string. */
-    var formatTime: ((Int) -> String)? = null
+    /** 倒计时圆环画笔 */
+    private val countDownStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+    }
 
-    /** Whether to auto-disable this view during countdown and re-enable on finish. Default true. */
-    var autoDisable: Boolean = true
+    /** 倒计时圆环背景填充画笔 */
+    private val countDownBgFillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+    }
 
-    /** Initial countdown duration in seconds, used by [reset]. */
-    var initialSeconds: Int = 60
-        private set
+    /** 倒计时文字画笔 */
+    private val countDownTextPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        textAlign = Paint.Align.CENTER
+    }
 
-    private var timer: CountDownTimer? = null
+    /** 倒计时动画进度（0~100） */
+    private var countDownAnimationProgress: Int = 100
 
-    private var remainingSeconds: Int = 0
+    /** 倒计时总时长（毫秒） */
+    private var countDownMaxMs: Long = DEFAULT_MAX_MS
+
+    /** 倒计时是否已完成 */
+    private var countDownFinished: Boolean = true
+
+    /** 倒计时是否正在进行 */
+    private var isRunning: Boolean = false
+
+    /** 上次更新时间戳 */
+    private var lastUpdateTimestamp: Long = 0L
+
+    /** 倒计时剩余时间 */
+    private var remainingTimeMs: Long = DEFAULT_MAX_MS
+
+    /** 倒计时监听器 */
+    private var countDownListener: CountDownListener? = null
+
+    /** 倒计时状态枚举 */
+    enum class State {
+        IN_PROGRESS, FINISHED, SKIPPED
+    }
+
+    /** 倒计时回调接口 */
+    interface CountDownListener {
+        /** 倒计时完成 */
+        fun onFinish() {}
+
+        /** 用户跳过倒计时 */
+        fun onSkip() {}
+
+        /**
+         * 倒计时进行中
+         * @param progress 进度百分比（0-100）
+         * @param remainingMs 剩余毫秒数
+         */
+        fun onProgress(progress: Int, remainingMs: Long) {}
+    }
 
     init {
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.AwCountDownView)
-        initialSeconds = ta.getInt(R.styleable.AwCountDownView_countdown_seconds, 60)
-        val textColor = ta.getColor(R.styleable.AwCountDownView_countdown_textColor, currentTextColor)
-        val textSize = ta.getDimension(R.styleable.AwCountDownView_countdown_textSize, 14f * resources.displayMetrics.density)
-        ta.recycle()
-
-        setTextColor(textColor)
-        setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize)
-        remainingSeconds = initialSeconds
-        updateDisplay()
-    }
-
-    /**
-     * Starts the countdown from the given number of seconds.
-     *
-     * @param seconds countdown duration in seconds
-     */
-    fun start(seconds: Int) {
-        stop()
-        initialSeconds = seconds
-        remainingSeconds = seconds
-        updateDisplay()
-        if (autoDisable) isEnabled = false
-
-        timer = object : CountDownTimer(seconds * 1000L, 1000L) {
-            override fun onTick(millisUntilFinished: Long) {
-                remainingSeconds = (millisUntilFinished / 1000).toInt()
-                updateDisplay()
-                onTick?.invoke(remainingSeconds)
+        context.theme.obtainStyledAttributes(
+            attrs, R.styleable.AwCountDownView, defStyleAttr, 0
+        ).apply {
+            try {
+                setStrokeColor(
+                    getColor(
+                        R.styleable.AwCountDownView_countDownStrokeColor,
+                        Color.BLACK
+                    )
+                )
+                setTextColor(
+                    getColor(
+                        R.styleable.AwCountDownView_countDownTextColor,
+                        Color.BLACK
+                    )
+                )
+                setBackgroundColor(
+                    getColor(
+                        R.styleable.AwCountDownView_countDownBackgroundColor,
+                        Color.TRANSPARENT
+                    )
+                )
+                setStrokeWidth(
+                    getDimensionPixelSize(
+                        R.styleable.AwCountDownView_countDownStrokeWidth,
+                        4.dp
+                    )
+                )
+                setTextSize(
+                    getDimensionPixelSize(
+                        R.styleable.AwCountDownView_countDownTextSize,
+                        DEFAULT_TEXT_SIZE_SP.spToPx
+                    )
+                )
+            } finally {
+                recycle()
             }
+        }
+    }
 
-            override fun onFinish() {
-                remainingSeconds = 0
-                updateDisplay()
-                if (autoDisable) isEnabled = true
-                onFinish?.invoke()
-            }
-        }.start()
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val widthMode = MeasureSpec.getMode(widthMeasureSpec)
+        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
+
+        val heightMode = MeasureSpec.getMode(heightMeasureSpec)
+        val heightSize = MeasureSpec.getSize(heightMeasureSpec)
+
+        // 计算视图所需的最小尺寸，基于文字大小
+        val textHeight = countDownTextPaint.fontMetrics.run { descent - ascent }
+        val desiredSize = (textHeight + countDownStrokePaint.strokeWidth).toInt()
+
+        val width = when (widthMode) {
+            MeasureSpec.EXACTLY -> widthSize
+            MeasureSpec.AT_MOST -> minOf(desiredSize, widthSize)
+            else -> desiredSize
+        }
+        val height = when (heightMode) {
+            MeasureSpec.EXACTLY -> heightSize
+            MeasureSpec.AT_MOST -> minOf(desiredSize, heightSize)
+            else -> desiredSize
+        }
+
+        setMeasuredDimension(width, height)
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+
+        val centerX = width / 2f
+        val centerY = height / 2f
+
+        val strokeWidth = countDownStrokePaint.strokeWidth
+        val radius = minOf(width, height) / 2f - strokeWidth / 2f
+
+        // 绘制圆环背景
+        canvas.drawCircle(centerX, centerY, radius, countDownBgFillPaint)
+        canvas.drawCircle(centerX, centerY, radius, countDownStrokePaint)
+
+        // 绘制倒计时进度圆弧
+        if (!countDownFinished) {
+            val startAngle = -90f
+            val sweepAngle = (countDownAnimationProgress / 100f) * 360f
+            canvas.drawArc(
+                centerX - radius, centerY - radius,
+                centerX + radius, centerY + radius,
+                startAngle, sweepAngle, false, countDownStrokePaint
+            )
+        }
+
+        // 绘制倒计时文字
+        val text = if (isRunning) {
+            (remainingTimeMs / 1000 + 1).toString()
+        } else {
+            ""
+        }
+        val textY = centerY - (countDownTextPaint.descent() + countDownTextPaint.ascent()) / 2f
+        canvas.drawText(text, centerX, textY, countDownTextPaint)
     }
 
     /**
-     * Stops the countdown without resetting the display.
+     * 开始倒计时
+     * @param durationMs 倒计时总时长（毫秒）
+     * @param maxMs 倒计时最大值（毫秒），用于计算进度百分比
      */
-    fun stop() {
-        timer?.cancel()
-        timer = null
+    fun start(durationMs: Long = DEFAULT_DURATION_MS, maxMs: Long = DEFAULT_MAX_MS) {
+        countDownFinished = false
+        countDownMaxMs = maxMs
+        remainingTimeMs = durationMs
+        countDownAnimationProgress = 100
+        isRunning = true
+        lastUpdateTimestamp = System.currentTimeMillis()
+
+        updateHandler.removeCallbacksAndMessages(null)
+        updateCountDown()
     }
 
-    /**
-     * Resets the view to the initial state, displaying [initialSeconds].
-     * Stops any running countdown.
-     */
+    /** 更新倒计时进度 */
+    private fun updateCountDown() {
+        val currentTime = System.currentTimeMillis()
+        val elapsed = currentTime - lastUpdateTimestamp
+        remainingTimeMs -= elapsed
+        lastUpdateTimestamp = currentTime
+
+        if (remainingTimeMs <= 0) {
+            remainingTimeMs = 0
+            isRunning = false
+            countDownFinished = true
+            countDownAnimationProgress = 0
+
+            updateHandler.removeCallbacksAndMessages(null)
+
+            countDownListener?.onFinish()
+            countDownListener?.onProgress(countDownAnimationProgress, remainingTimeMs)
+        } else {
+            countDownAnimationProgress = ((remainingTimeMs.toFloat() / countDownMaxMs) * 100).toInt()
+
+            updateHandler.postDelayed({ updateCountDown() }, 16L)
+            countDownListener?.onProgress(countDownAnimationProgress, remainingTimeMs)
+        }
+
+        invalidate()
+    }
+
+    /** 重置倒计时视图 */
     fun reset() {
-        stop()
-        remainingSeconds = initialSeconds
-        updateDisplay()
-        if (autoDisable) isEnabled = true
+        isRunning = false
+        countDownAnimationProgress = 100
+        countDownFinished = true
+        remainingTimeMs = countDownMaxMs
+        updateHandler.removeCallbacksAndMessages(null)
+        invalidate()
     }
 
-    private fun updateDisplay() {
-        text = formatTime?.invoke(remainingSeconds) ?: "${remainingSeconds}s"
+    /** 设置倒计时监听器 */
+    fun setCountDownListener(listener: CountDownListener) {
+        this.countDownListener = listener
+    }
+
+    /**
+     * 跳过倒计时
+     * @param invokeListener 是否触发 onSkip 回调（默认 true）
+     */
+    fun skip(invokeListener: Boolean = true) {
+        isRunning = false
+        countDownAnimationProgress = 0
+        countDownFinished = true
+        remainingTimeMs = 0
+        updateHandler.removeCallbacksAndMessages(null)
+        if (invokeListener) {
+            countDownListener?.onSkip()
+        }
+        invalidate()
+    }
+
+    /** 设置倒计时圆环颜色 */
+    fun setStrokeColor(@ColorInt color: Int) {
+        countDownStrokePaint.color = color
+    }
+
+    /** 设置倒计时文字颜色 */
+    fun setTextColor(@ColorInt color: Int) {
+        countDownTextPaint.color = color
+    }
+
+    /** 设置倒计时圆环背景颜色 */
+    fun setBackgroundColor(@ColorInt color: Int) {
+        countDownBgFillPaint.color = color
+    }
+
+    /** 设置倒计时圆环描边宽度 */
+    fun setStrokeWidth(widthPx: Int) {
+        countDownStrokePaint.strokeWidth = widthPx.toFloat()
+    }
+
+    /** 设置倒计时文字大小 */
+    fun setTextSize(sizePx: Int) {
+        countDownTextPaint.textSize = sizePx.toFloat()
     }
 }

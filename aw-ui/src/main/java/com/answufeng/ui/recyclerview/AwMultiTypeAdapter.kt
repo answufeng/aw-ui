@@ -8,6 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import kotlin.reflect.KClass
 
+/**
+ * 标记注解，用于标注 DSL 风格的类型注册代码块。
+ *
+ * 此注解无运行时作用，仅用于提高代码可读性和 IDE 提示。
+ */
 @DslMarker
 annotation class AwUiDsl
 
