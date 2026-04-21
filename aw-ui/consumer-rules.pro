@@ -19,17 +19,14 @@
 -keep class com.answufeng.ui.form.AwFormValidator { *; }
 -keep class com.answufeng.ui.form.AwFormValidator$* { *; }
 
-# ViewBinding delegate
--keep class com.answufeng.ui.ext.ViewBindingDelegateKt { *; }
-
 # Dimen extensions
--keep class com.answufeng.ui.ext.DimenExtKt { *; }
+-keep class com.answufeng.ui.DimenExtKt { *; }
 
 # DiffCallbacks
 -keep class com.answufeng.ui.recyclerview.DiffCallbacksKt { *; }
 
 # Animation extensions
--keep class com.answufeng.ui.ext.AnimKt { *; }
+-keep class com.answufeng.ui.anim.AnimKt { *; }
 
 # Kotlin metadata
 -keepattributes Signature, *Annotation*
