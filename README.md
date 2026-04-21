@@ -4,6 +4,17 @@
 
 Android 通用 UI 组件库，涵盖状态管理、列表适配器、对话框、动画、表单验证、输入增强、进度指示、特殊效果等常用场景。
 
+## 环境要求
+
+| 依赖项 | 要求 |
+|--------|------|
+| minSdk | 24+ |
+| compileSdk | 35 |
+| Kotlin | 2.0+ |
+| AGP | 8.0+ |
+| Java | 17 |
+| ViewBinding | 需要启用 |
+
 ## 特性
 
 ### 基础控件增强
@@ -458,6 +469,60 @@ passwordInputView.passwordStrengthRule = AwPasswordInputView.StrengthRule(
 )
 passwordInputView.showPasswordToggle = true       // 显示/隐藏切换按钮
 ```
+
+## API 速查
+
+### Widget 组件
+
+| API | 说明 | 关键属性/方法 |
+|-----|------|--------------|
+| `AwBannerView` | 轮播图 | `setData()`, `startAutoScroll()`, `setOnPageClickListener` |
+| `AwBadgeView` | 角标视图 | `count`, `maxCount`, `increment()`, `decrement()` |
+| `AwBottomTabBar` | 底部导航栏 | `setTabs()`, `setOnTabSelectedListener` |
+| `AwCodeInputView` | 验证码输入 | `codeLength`, `setOnCodeCompleteListener` |
+| `AwCountDownView` | 倒计时 | `start(seconds)`, `onFinish`, `autoDisable` |
+| `AwExpandableLayout` | 展开/收起布局 | `expand()`, `collapse()`, `toggle()` |
+| `AwFlowLayout` | 流式布局 | `flow_horizontalSpacing`, `flow_maxLines` |
+| `AwMarqueeTextView` | 跑马灯文本 | `startScroll()`, `stopScroll()` |
+| `AwPasswordInputView` | 密码输入 | `setOnPasswordChangeListener`, `showPasswordToggle` |
+| `AwRoundImageView` | 圆角/圆形图片 | `cornerRadius`, `isCircle`, `borderWidth` |
+| `AwRoundLayout` | 圆角容器 | `cornerRadius`, `isCircle` |
+| `AwSearchView` | 搜索栏 | `onQueryChange`, `onQuerySubmit` |
+| `AwSegmentedControl` | 分段选择器 | `setItems()`, `setSelectedIndex()` |
+| `AwSkeletonView` | 骨架屏 | `startShimmer()`, `stopShimmer()` |
+| `AwSmartEditText` | 智能输入框 | `setRule()`, `setMaxLength()` |
+| `AwSwitchButton` | 开关按钮 | `isChecked`, `setOnCheckedChangeListener` |
+| `AwTagView` | 标签选择 | `tags`, `selectionMode`, `onSelectionChange` |
+| `AwTooltipView` | 气泡提示 | `setText()`, `show(anchorView)`, `dismiss()` |
+
+### 对话框组件
+
+| API | 说明 | 关键方法 |
+|-----|------|---------|
+| `AwDialog.Builder` | 对话框构建器 | `title()`, `message()`, `show()` |
+| `LoadingDialog` | Loading 对话框 | `show(context, message)` |
+| `AwActionSheetDialog` | 底部操作菜单 | `setTitle()`, `addItem()`, `show()` |
+| `AwBottomSheet` | 底部弹窗 | `setContentView()`, `setPeekHeight()`, `show()` |
+
+### 列表组件
+
+| API | 说明 | 关键方法 |
+|-----|------|---------|
+| `AwSimpleAdapter` | 单类型适配器 | `submitList()`, `addPayload()` |
+| `AwMultiTypeAdapter` | 多类型适配器 | `addType()`, `submitList()` |
+| `AwLoadMoreAdapter` | 加载更多适配器 | `setLoadMoreListener()`, `setLoadMoreState()` |
+| `AwDividerDecoration` | 分割线 | `setDivider()`, `setPadding()` |
+| `AwItemAnimator` | 入场动画 | `setItemAnimator()` |
+
+### 其他组件
+
+| API | 说明 | 关键方法 |
+|-----|------|---------|
+| `AwStateLayout` | 四态容器 | `showLoading()`, `showContent()`, `showEmpty()`, `showError()` |
+| `AwTitleBar` | 标题栏 | `title`, `setRightText()`, `applyImmersivePadding()` |
+| `AwFormValidator` | 表单验证 | `addField()`, `validate()`, `getErrors()` |
+| `viewBinding()` | ViewBinding 委托 | `by viewBinding(BindingClass::bind)` |
+| `16.dp` | 尺寸扩展 | `Int.dp`, `Float.sp`, `Int.pxToDp` |
 
 ## ProGuard / 混淆
 
