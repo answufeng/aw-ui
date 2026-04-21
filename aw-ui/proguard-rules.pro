@@ -1,48 +1,10 @@
+
 # aw-ui ProGuard Rules
 # 此文件用于库自身的 release 构建混淆规则
 # Consumer-facing rules（供使用者混淆时使用）位于 consumer-rules.pro
 
 # ===========================================================
-# 保留公共 API
-# ===========================================================
-
-# 保留所有公共类
--keep class com.answufeng.ui.** { *; }
-
-# ===========================================================
-# 保留 View 构造函数（自定义 View 必须在 XML 中能正常实例化）
-# ===========================================================
-
-# 保留所有 View 的无参构造函数
--keep public class * extends android.view.View {
-    public <init>(android.content.Context);
-    public <init>(android.content.Context, android.util.AttributeSet);
-    public <init>(android.content.Context, android.util.AttributeSet, int);
-}
-
-# 保留自定义 View 的构造函数
--keep public class * extends android.view.View {
-    public <init>(android.content.Context);
-    public <init>(android.content.Context, android.util.AttributeSet);
-    public <init>(android.content.Context, android.util.AttributeSet, int);
-    public <init>(android.content.Context, android.util.AttributeSet, int, int);
-}
-
-# ===========================================================
-# 保留 RecyclerView 和 Adapter 相关类
-# ===========================================================
-
--keep class androidx.recyclerview.** { *; }
--keep class androidx.viewpager2.** { *; }
-
-# ===========================================================
-# 保留 Material Design 相关类
-# ===========================================================
-
--keep class com.google.android.material.** { *; }
-
-# ===========================================================
-# 保留 Kotlin 反射和元数据
+# 保留 Kotlin 元数据和注解
 # ===========================================================
 
 -keepattributes *Annotation*
@@ -52,12 +14,10 @@
 -keepattributes InnerClasses
 -keepattributes Signature
 -keepattributes Exceptions
-
-# 保留 Kotlin Metadata
 -keep class kotlin.Metadata { *; }
 
 # ===========================================================
-# 保留枚举和 sealed class
+# 保留枚举、Serializable 和 Parcelable
 # ===========================================================
 
 -keepclassmembers enum * {
@@ -68,17 +28,14 @@
 -keepclassmembers class * implements java.io.Serializable {
     static final long serialVersionUID;
     private static final java.io.ObjectStreamField[] serialPersistentFields;
-    !static !transient <fields>;
+    !static !transient &lt;fields&gt;;
     private void writeObject(java.io.ObjectOutputStream);
     private void readObject(java.io.ObjectInputStream);
     java.lang.Object writeReplace();
     java.lang.Object readResolve();
 }
 
-# ===========================================================
-# 保留 Parcelable 实现类
-# ===========================================================
-
 -keepclassmembers class * implements android.os.Parcelable {
     public static final android.os.Parcelable$Creator *;
 }
+
