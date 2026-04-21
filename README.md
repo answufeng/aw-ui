@@ -459,6 +459,46 @@ passwordInputView.passwordStrengthRule = AwPasswordInputView.StrengthRule(
 passwordInputView.showPasswordToggle = true       // 显示/隐藏切换按钮
 ```
 
+## ProGuard / 混淆
+
+aw-ui 已内置 consumer-rules.pro，在被宿主应用混淆时会自动应用以下规则：
+
+- 保留自定义 View 类名（XML 布局 inflation 需要）
+- 保留 RecyclerView 适配器相关类
+- 保留表单验证相关类
+- 保留 Kotlin 元数据和注解
+
+**宿主应用无需额外配置**，库会自动处理混淆规则。
+
+## 常见问题（FAQ）
+
+### 1. 为什么我的 ViewBinding 委托不起作用？
+
+请确保：
+- 在 `onCreate`（Activity）或 `onViewCreated`（Fragment）中调用 `setContentView` 或返回 `binding.root`
+- ViewBinding 类名与布局文件名匹配（如 `activity_main.xml` 对应 `ActivityMainBinding`）
+
+### 2. 为什么 AwBannerView 不自动轮播？
+
+请确保：
+- 调用了 `startAutoScroll()` 方法
+- 至少有 2 个页面
+- 未在 `onPause` 时停止轮播
+
+### 3. 为什么 AwStateLayout 切换动画不生效？
+
+请确保：
+- 内容视图是通过 `setContentView` 或 XML 设置的
+- 切换状态时视图已经加载完成
+
+### 4. 如何自定义 AwDialog 的样式？
+
+可以通过继承 `AwDialog.Builder` 或使用 `setView()` 方法设置自定义布局。
+
+### 5. AwFlowLayout 在 RTL 布局下如何工作？
+
+`flow_gravity` 属性支持 `start` / `center` / `end`，在 RTL 布局下会自动适配。
+
 ## 许可证
 
 Apache License 2.0，详见 [LICENSE](LICENSE)。
