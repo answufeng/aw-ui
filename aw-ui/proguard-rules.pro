@@ -1,2 +1,80 @@
-# aw-ui ProGuard rules (release build)
-# Consumer-facing rules are in consumer-rules.pro
+# aw-ui ProGuard Rules
+# 此文件用于库自身的 release 构建混淆规则
+# Consumer-facing rules（供使用者混淆时使用）位于 consumer-rules.pro
+
+# ===========================================================
+# 保留公共 API 和所有自定义 View
+# ===========================================================
+
+# 保留所有公共类
+-keep class com.answufeng.ui.** { *; }
+
+# 保留 Kotlin 反射和元数据
+-keepattributes *Annotation*
+-keepattributes RuntimeVisibleAnnotations
+-keepattributes RuntimeInvisibleAnnotations
+-keepattributes RuntimeVisibleParameterAnnotations
+-keepattributes RuntimeInvisibleParameterAnnotations
+
+-keepattributes EnclosingMethod
+-keepattributes InnerClasses
+-keepattributes Signature
+-keepattributes Exceptions
+
+# 保留 Kotlin Metadata
+-keep class kotlin.Metadata { *; }
+
+# ===========================================================
+# 保留 View 构造函数（自定义 View 必须在 XML 中能正常实例化）
+# ===========================================================
+
+# 保留所有 View 的无参构造函数
+-keep public class * extends android.view.View {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+}
+
+# 保留 Dialog 的构造函数
+-keep public class * extends android.app.Dialog {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, int);
+}
+
+# 保留 Fragment 的构造函数
+-keep public class * extends androidx.fragment.app.Fragment {
+    public <init>();
+}
+
+# ===========================================================
+# 保留枚举和 sealed class
+# ===========================================================
+
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+-keepclassmembers class * {
+    @kotlin.Metadata *;
+}
+
+# ===========================================================
+# 保留 RecyclerView.Adapter 相关
+# ===========================================================
+
+-keep class androidx.recyclerview.** { *; }
+
+# ===========================================================
+# 保留 ViewBinding 相关
+# ===========================================================
+
+-keep class * extends androidx.viewbinding.ViewBinding {
+    *;
+}
+
+# ===========================================================
+# 保留动画相关
+# ===========================================================
+
+-keep class android.animation.** { *; }

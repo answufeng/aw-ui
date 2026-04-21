@@ -313,39 +313,154 @@ if (validator.validate()) {
 
 更多组件的详细用法请参考源码中的 KDoc 文档。
 
-## 更新日志
+### AwActionSheetDialog（iOS 风格底部操作菜单）
 
-### v2.1.0
+```kotlin
+AwActionSheetDialog(context)
+    .setTitle("选择操作")
+    .addItem("拍照") { takePhoto() }
+    .addItem("从相册选择") { pickFromGallery() }
+    .addItem("取消", isCancel = true)
+    .show()
 
-**新增组件**
-- AwSmartEditText — 智能输入框，实时验证、输入限制、自动格式化
-- AwCodeInputView — 验证码输入框，自动聚焦、粘贴支持
-- AwPasswordInputView — 密码输入框，强度检测、显示/隐藏切换
-- AwSegmentedControl — iOS 风格分段选择器
-- AwFormValidator — 统一表单验证框架，链式调用
-- AwCircleProgressBar — 圆形进度条，动画+百分比文字
-- AwSkeletonView — 骨架屏加载，shimmer 闪光动画
-- AwBannerView — 轮播图组件，ViewPager2 + 自动轮播
-- AwRoundImageView — 圆角/圆形图片，BitmapShader + 边框
-- AwExpandableLayout — 可展开/收起布局，高度动画
-- AwActionSheetDialog — iOS 风格底部操作菜单
-- AwTooltipView — 气泡提示组件
-- AwMarqueeTextView — 跑马灯文本
-- AwSwitchButton — 自定义开关按钮
-- AwCountDownView — 倒计时组件
+// 支持暗黑模式
+AwActionSheetDialog(context, isDarkMode = true)
+    .setTitle("确认删除")
+    .addItem("删除", isDestructive = true) { deleteItem() }
+    .addItem("取消", isCancel = true)
+    .show()
+```
 
-### v2.0.0
+### AwRoundImageView（圆角/圆形图片）
 
-- MultiTypeAdapter 改用 AsyncListDiffer
-- LoadMoreAdapter 基于 ListAdapter 重构
-- AwAnim 新增创建型 API
-- StateLayout 新增 StateTransition 接口
-- ViewBinding 属性委托
-- RoundLayout ViewOutlineProvider 硬件加速
-- FlowLayout RTL 支持
-- TitleBar WindowInsets 沉浸式
-- 暗黑模式适配
+```kotlin
+// XML 配置
+<com.answufeng.ui.widget.AwRoundImageView
+    android:layout_width="80dp"
+    android:layout_height="80dp"
+    app:riv_cornerRadius="8dp"
+    app:riv_borderWidth="2dp"
+    app:riv_borderColor="#FFFFFF"
+    app:riv_isCircle="false" />
+
+// 代码设置
+roundImageView.setImageResource(R.drawable.avatar)
+roundImageView.cornerRadius = 16f
+roundImageView.borderWidth = 4f
+roundImageView.borderColor = Color.WHITE
+roundImageView.isCircle = true
+```
+
+### AwExpandableLayout（可展开/收起布局）
+
+```kotlin
+expandableLayout.expand()     // 展开
+expandableLayout.collapse()   // 收起
+expandableLayout.toggle()     // 切换状态
+
+expandableLayout.setOnExpandChangeListener { isExpanded ->
+    arrow.rotation = if (isExpanded) 180f else 0f
+}
+```
+
+### AwMarqueeTextView（跑马灯文本）
+
+```kotlin
+marqueeTextView.text = "这是一条很长的跑马灯文字..."
+marqueeTextView.startScroll()     // 开始滚动
+marqueeTextView.stopScroll()      // 停止滚动
+marqueeTextView.isFocused = true  // 需要获取焦点才能滚动
+```
+
+### AwSwitchButton（自定义开关）
+
+```kotlin
+switchButton.isChecked = true
+switchButton.setOnCheckedChangeListener { _, isChecked ->
+    updateUI(isChecked)
+}
+switchButton.setThumbColor(normalColor, checkedColor)
+switchButton.setTrackColor(normalColor, checkedColor)
+```
+
+### AwCircleProgressBar（圆形进度条）
+
+```kotlin
+progressBar.progress = 60           // 设置进度（0-100）
+progressBar.maxProgress = 100       // 最大值
+progressBar.setProgressText("60%") // 显示文字
+progressBar.setProgressColor(Color.BLUE)
+progressBar.setBackgroundColor(Color.GRAY)
+progressBar.startAnimation()        // 开始动画
+progressBar.stopAnimation()          // 停止动画
+```
+
+### AwTooltipView（气泡提示）
+
+```kotlin
+tooltipView.setText("提示内容")
+tooltipView.setTextColor(Color.WHITE)
+tooltipView.setBackgroundColor(Color.BLACK)
+tooltipView.setArrowDirection(AwTooltipView.ArrowDirection.BOTTOM)
+tooltipView.show(anchorView)       // 显示在指定视图下方
+tooltipView.dismiss()               // 隐藏
+```
+
+### AwSegmentedControl（iOS 风格分段选择器）
+
+```kotlin
+segmentedControl.setItems(listOf("选项1", "选项2", "选项3"))
+segmentedControl.setSelectedIndex(0)
+segmentedControl.setOnSelectionChangeListener { index, text ->
+    Log.d("Segment", "Selected: $index - $text")
+}
+segmentedControl.setSelectedTextColor(Color.WHITE)
+segmentedControl.setUnselectedTextColor(Color.GRAY)
+```
+
+### AwSmartEditText（智能输入框）
+
+```kotlin
+smartEditText.setRule(AwSmartEditText.Rule.PHONE)     // 手机号
+smartEditText.setRule(AwSmartEditText.Rule.EMAIL)    // 邮箱
+smartEditText.setRule(AwSmartEditText.Rule.ID_CARD)  // 身份证
+smartEditText.setRule(AwSmartEditText.Rule.CUSTOM, regex = "^[a-zA-Z0-9]+$")
+smartEditText.setMaxLength(11)                        // 最大长度
+smartEditText.setOnValidityChangeListener { isValid ->
+    submitButton.isEnabled = isValid
+}
+```
+
+### AwCodeInputView（验证码输入框）
+
+```kotlin
+codeInputView.codeLength = 6                    // 验证码长度
+codeInputView.setOnCodeCompleteListener { code ->
+    verifyCode(code)
+}
+codeInputView.setOnCodeChangeListener { code ->
+    updateUI(code.length)
+}
+// 自动聚焦
+codeInputView.requestFocus()
+```
+
+### AwPasswordInputView（密码输入框）
+
+```kotlin
+passwordInputView.setOnPasswordChangeListener { password, isStrong ->
+    strengthIndicator.level = if (isStrong) 3 else 1
+}
+passwordInputView.passwordStrengthRule = AwPasswordInputView.StrengthRule(
+    weak = ".*",
+    medium = "^(?=.*[a-zA-Z])(?=.*[0-9]).{6,}$",
+    strong = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#\$%^&*]).{8,}$"
+)
+passwordInputView.showPasswordToggle = true       // 显示/隐藏切换按钮
+```
 
 ## 许可证
 
 Apache License 2.0，详见 [LICENSE](LICENSE)。
+
+# Last updated: 2026年 4月 21日
