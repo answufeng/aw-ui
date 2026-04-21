@@ -3,26 +3,11 @@
 # Consumer-facing rules（供使用者混淆时使用）位于 consumer-rules.pro
 
 # ===========================================================
-# 保留公共 API 和所有自定义 View
+# 保留公共 API
 # ===========================================================
 
 # 保留所有公共类
 -keep class com.answufeng.ui.** { *; }
-
-# 保留 Kotlin 反射和元数据
--keepattributes *Annotation*
--keepattributes RuntimeVisibleAnnotations
--keepattributes RuntimeInvisibleAnnotations
--keepattributes RuntimeVisibleParameterAnnotations
--keepattributes RuntimeInvisibleParameterAnnotations
-
--keepattributes EnclosingMethod
--keepattributes InnerClasses
--keepattributes Signature
--keepattributes Exceptions
-
-# 保留 Kotlin Metadata
--keep class kotlin.Metadata { *; }
 
 # ===========================================================
 # 保留 View 构造函数（自定义 View 必须在 XML 中能正常实例化）
@@ -35,16 +20,41 @@
     public <init>(android.content.Context, android.util.AttributeSet, int);
 }
 
-# 保留 Dialog 的构造函数
--keep public class * extends android.app.Dialog {
+# 保留自定义 View 的构造函数
+-keep public class * extends android.view.View {
     public <init>(android.content.Context);
-    public <init>(android.content.Context, int);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+    public <init>(android.content.Context, android.util.AttributeSet, int, int);
 }
 
-# 保留 Fragment 的构造函数
--keep public class * extends androidx.fragment.app.Fragment {
-    public <init>();
-}
+# ===========================================================
+# 保留 RecyclerView 和 Adapter 相关类
+# ===========================================================
+
+-keep class androidx.recyclerview.** { *; }
+-keep class androidx.viewpager2.** { *; }
+
+# ===========================================================
+# 保留 Material Design 相关类
+# ===========================================================
+
+-keep class com.google.android.material.** { *; }
+
+# ===========================================================
+# 保留 Kotlin 反射和元数据
+# ===========================================================
+
+-keepattributes *Annotation*
+-keepattributes RuntimeVisibleAnnotations
+-keepattributes RuntimeInvisibleAnnotations
+-keepattributes EnclosingMethod
+-keepattributes InnerClasses
+-keepattributes Signature
+-keepattributes Exceptions
+
+# 保留 Kotlin Metadata
+-keep class kotlin.Metadata { *; }
 
 # ===========================================================
 # 保留枚举和 sealed class
@@ -55,26 +65,20 @@
     public static ** valueOf(java.lang.String);
 }
 
--keepclassmembers class * {
-    @kotlin.Metadata *;
+-keepclassmembers class * implements java.io.Serializable {
+    static final long serialVersionUID;
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    !static !transient <fields>;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
 }
 
 # ===========================================================
-# 保留 RecyclerView.Adapter 相关
+# 保留 Parcelable 实现类
 # ===========================================================
 
--keep class androidx.recyclerview.** { *; }
-
-# ===========================================================
-# 保留 ViewBinding 相关
-# ===========================================================
-
--keep class * extends androidx.viewbinding.ViewBinding {
-    *;
+-keepclassmembers class * implements android.os.Parcelable {
+    public static final android.os.Parcelable$Creator *;
 }
-
-# ===========================================================
-# 保留动画相关
-# ===========================================================
-
--keep class android.animation.** { *; }
