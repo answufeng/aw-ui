@@ -89,6 +89,15 @@
 }
 
 # ===========================================================
+# SwipeRefresh（XML inflation）
+# ===========================================================
+
+-keepclassmembers class com.answufeng.ui.widget.AwSwipeRefreshLayout {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+}
+
+# ===========================================================
 # StateLayout / TitleBar 自定义属性
 # ===========================================================
 

@@ -4,7 +4,9 @@
     <string name="demo_search_hint">搜索组件/页面</string>
     <string name="demo_playbook_action">演示清单</string>
     <string name="demo_playbook_title">演示清单</string>
-    <string name="demo_playbook_message">入口与组件对照见仓库 demo/DEMO_MATRIX.md。\n\n• 组件总览（Showcase）：输入、进度、Dialog、列表装饰等\n• 状态页：AwStateLayout 四态与重试\n• 轮播：AwBannerView\n\n发版前请配合 README「工程品质与发版检查」跑 lint + demo R8，并在真机核对无障碍与低内存场景。</string>
+    <string name="demo_playbook_message">入口与组件对照见仓库 demo/DEMO_MATRIX.md。\n\n• 组件总览（Showcase）：输入、进度、Dialog、列表装饰等\n• 状态页：AwStateLayout 四态与重试\n• 下拉刷新列表：AwSwipeRefreshLayout + RecyclerView\n• 轮播：AwBannerView\n\n发版前请配合 README「工程品质与发版检查」跑 lint + demo R8，并在真机核对无障碍与低内存场景。</string>
+    <string name="demo_swipe_refresh_title">下拉刷新列表</string>
+    <string name="demo_swipe_refresh_hint">演示 AwSwipeRefreshLayout 包裹 RecyclerView；刷新结束后务必将 isRefreshing 置为 false。可与 AwLoadMoreAdapter 分饰「头部刷新 / 底部追加」。</string>
     <string-array name="segment_items">
         <item>选项一</item>
         <item>选项二</item>

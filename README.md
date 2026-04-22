@@ -4,6 +4,12 @@
 
 Android 通用 UI 组件库，涵盖状态管理、列表适配器、对话框、动画、表单验证、输入增强、进度指示、特殊效果等常用场景。
 
+## 文档导读
+
+1. [环境要求](#环境要求) → [工程品质与发版检查](#工程品质与发版检查) → [特性与 API 速览](#特性)  
+2. 集成清单：[ProGuard / 混淆](#proguard--混淆)、[常见问题](#常见问题faq)  
+3. 演示：[demo/DEMO_MATRIX.md](demo/DEMO_MATRIX.md) 与 demo 内 **「演示清单」**
+
 ## 环境要求
 
 | 依赖项 | 要求 |
@@ -48,6 +54,7 @@ Android 通用 UI 组件库，涵盖状态管理、列表适配器、对话框�
 | AwSimpleAdapter | 单类型 RecyclerView 适配器，DiffUtil + Payload |
 | AwMultiTypeAdapter | 多类型适配器，DSL 构建 + AsyncListDiffer + Payload |
 | AwLoadMoreAdapter | 上拉加载更多适配器，DiffUtil + 加载状态管理 |
+| AwSwipeRefreshLayout | 下拉刷新容器（基于 SwipeRefreshLayout，主题色指示器） |
 | AwItemAnimator | RecyclerView Item 入场动画 |
 | AwDividerDecoration | 通用分割线，支持 Linear/Grid/StaggeredGrid |
 
@@ -520,6 +527,7 @@ passwordInputView.showPasswordToggle = true       // 显示/隐藏切换按钮
 | `AwSimpleAdapter` | 单类型适配器 | `submitList()`, `addPayload()` |
 | `AwMultiTypeAdapter` | 多类型适配器 | `addType()`, `submitList()` |
 | `AwLoadMoreAdapter` | 加载更多适配器 | `setLoadMoreListener()`, `setLoadMoreState()` |
+| `AwSwipeRefreshLayout` | 下拉刷新 | `setOnRefreshListener { }`，结束刷新设 `isRefreshing = false` |
 | `AwDividerDecoration` | 分割线 | `setDivider()`, `setPadding()` |
 | `AwItemAnimator` | 入场动画 | `setItemAnimator()` |
 

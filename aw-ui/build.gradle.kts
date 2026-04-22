@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
     implementation(libs.material)
+    implementation(libs.swiperefresh)
     implementation(libs.activity.ktx)
     implementation(libs.lifecycle.runtime.ktx)
     api(libs.recyclerview)

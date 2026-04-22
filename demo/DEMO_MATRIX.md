@@ -8,6 +8,7 @@
 |------|----------|----------|
 | 组件总览 | `ShowcaseActivity` | 输入类、进度、Dialog、分割线、Banner 导航等聚合演示 |
 | 状态页 | `StateDemoActivity` | `AwStateLayout` 内容/加载/空/错与重试 |
+| 下拉刷新 + 列表 | `SwipeRefreshListDemoActivity` | `AwSwipeRefreshLayout` + `RecyclerView`，结束刷新关闭指示器 |
 | 轮播 | `BannerDemoActivity` | `AwBannerView` 自动滚动、指示器、点击 |
 
 ## Showcase 内常见映射（摘录）
@@ -17,11 +18,20 @@
 | 输入 | `AwSmartEditText`、`AwCodeInputView`、`AwPasswordInputView` | 校验、格式化、强度 |
 | 分段 | `AwSegmentedControl` | 滑动与选中 |
 | 表单 | `AwFormValidator` | 链式规则 |
-| 列表 | `AwSimpleAdapter`、`AwMultiTypeAdapter`、`AwLoadMoreAdapter`、`AwDividerDecoration` | Diff、Payload、加载更多 |
+| 列表 | `AwSimpleAdapter`、`AwMultiTypeAdapter`、`AwLoadMoreAdapter`、`AwDividerDecoration`、`AwSwipeRefreshLayout` | Diff、Payload、加载更多、下拉刷新 |
 | 对话框 | `AwDialog`、`LoadingDialog`、`AwActionSheetDialog`、`AwBottomSheet` | 与 Material 主题一致 |
 | 进度 / 骨架 | `AwCircleProgressBar`、`AwSkeletonView` | 动画与生命周期 |
 | 视觉 | `AwBannerView`、`AwRoundImageView`、`AwRoundLayout`、`AwExpandableLayout` | 轮播、圆角、展开 |
 | 其他 | `AwBadgeView`、`AwTooltipView`、`AwItemAnimator` | 角标、气泡、列表动画 |
+
+## 推荐手测（边界与极端场景）
+
+| 场景 | 建议操作 |
+|------|----------|
+| 下拉刷新 | 快速连续下拉、刷新中途退出 Activity，确认无泄漏且 `isRefreshing` 能关掉 |
+| 列表 | 长列表惯性滚动 + 系统「减少动画」开关 |
+| 无障碍 | TalkBack 走查 Showcase 主要按钮与状态页 |
+| 低内存 | 开发者选项不保留活动 + 反复打开 Banner / 列表页 |
 
 ## 质量与发版
 

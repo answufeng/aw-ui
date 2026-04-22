@@ -37,3 +37,7 @@
 ./gradlew :aw-ui:lintRelease
 ./gradlew :demo:assembleRelease         # 构建 Demo
 ```
+
+## 发版前补充检查（R8）
+
+自定义 View、适配器内部类依赖 consumer rules；发版前 `assembleRelease` + demo。收紧混淆时用 `-printusage` 辅助，避免整包 `-keep`。

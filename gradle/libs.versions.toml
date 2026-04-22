@@ -10,6 +10,7 @@ recyclerview = "1.3.2"
 viewpager2 = "1.1.0"
 annotation = "1.9.1"
 material = "1.12.0"
+swiperefresh = "1.1.0"
 
 junit = "4.13.2"
 robolectric = "4.14.1"
@@ -27,6 +28,7 @@ recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version
 viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewpager2" }
 annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+swiperefresh = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefresh" }
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }

@@ -50,6 +50,11 @@ class MainActivity : AppCompatActivity() {
                 activity = StateDemoActivity::class.java
             ),
             DemoEntry(
+                title = "下拉刷新 + 列表",
+                desc = "AwSwipeRefreshLayout 包裹 RecyclerView，可与 AwLoadMoreAdapter 组合",
+                activity = SwipeRefreshListDemoActivity::class.java
+            ),
+            DemoEntry(
                 title = "轮播 Banner",
                 desc = "演示 AwBannerView（自动滚动、指示器、点击回调）",
                 activity = BannerDemoActivity::class.java
