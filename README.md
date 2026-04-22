@@ -2,6 +2,8 @@
 
 [![](https://jitpack.io/v/answufeng/aw-ui.svg)](https://jitpack.io/#answufeng/aw-ui)
 
+> **相关仓库**：GitHub [answufeng](https://github.com/answufeng) 组织内另有多个独立维护的 `aw-*` 基础库（架构、存储、网络、图片、日志、权限、启动、工具等），与本库相同面向传统 View/XML，工程基线多为 minSdk 24 与 JDK 17。
+
 Android 通用 UI 组件库，涵盖状态管理、列表适配器、对话框、动画、表单验证、输入增强、进度指示、特殊效果等常用场景。
 
 ## 文档导读
