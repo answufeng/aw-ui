@@ -8,7 +8,7 @@ Android 通用 UI 组件库，涵盖状态管理、列表适配器、对话框�
 
 1. [环境要求](#环境要求) → [工程品质与发版检查](#工程品质与发版检查) → [特性与 API 速览](#特性)  
 2. 集成清单：[ProGuard / 混淆](#proguard--混淆)、[常见问题](#常见问题faq)  
-3. 演示：[demo/DEMO_MATRIX.md](demo/DEMO_MATRIX.md)（含 `BottomTabBarDemoActivity`）与 demo 内 **「演示清单」**
+3. 演示：[demo/DEMO_MATRIX.md](demo/DEMO_MATRIX.md) 与 demo 内 **「演示清单」**
 
 ## 环境要求
 
@@ -26,7 +26,7 @@ Android 通用 UI 组件库，涵盖状态管理、列表适配器、对话框�
 
 - **CI**：[`.github/workflows/ci.yml`](.github/workflows/ci.yml) — `assembleRelease`、`ktlintCheck`、`lintRelease`、`:demo:assembleRelease`（R8）。
 - **本地建议**：`./gradlew :aw-ui:assembleRelease :aw-ui:ktlintCheck :aw-ui:lintRelease :demo:assembleRelease`
-- **演示**：[demo/DEMO_MATRIX.md](demo/DEMO_MATRIX.md)；主页标题栏 **「演示清单」** 可速览 Showcase / 状态页 / Banner / **底部导航（AwBottomTabBar）** 等分工。
+- **演示**：[demo/DEMO_MATRIX.md](demo/DEMO_MATRIX.md)；主页标题栏 **「演示清单」** 可速览 Showcase / 状态页 / Banner 分工。
 - **可访问性**：列表/状态类组件请在业务侧为关键控件补 **`contentDescription`**、焦点顺序与 TalkBack 文案（本库保持控件语义中性）。
 - **上线前**：对照矩阵在 **真机** 跑一轮列表滚动、对话框与低内存；自定义动画注意与系统「减少动画」设置协调。
 
@@ -307,109 +307,6 @@ titleBar.setRightText("保存") { saveData() }
 titleBar.applyImmersivePadding()
 ```
 
-XML 属性（`app:` 前缀）：
-
-| 属性 | 说明 | 典型值 |
-|------|------|--------|
-| `titleBar_title` | 标题文案 | 字符串或 `@string/...` |
-| `titleBar_showBack` | 是否显示返回区 | 默认 true |
-| `titleBar_leftIcon` | 左侧图标 | `@drawable/...` |
-| `titleBar_rightText` | 右侧文字 | 字符串 |
-| `titleBar_rightIcon` | 右侧图标 | `@drawable/...` |
-| `titleBar_titleColor` / `titleBar_bgColor` | 标题色 / 背景色 | 颜色 |
-| `titleBar_immersive` | 是否按沉浸式处理 | 与 `applyImmersivePadding()` 配合 |
-
-### AwBottomTabBar（底部导航）
-
-Material 风格的底部 Tab：图标 + 文案（或可切换为仅图标 / 仅文字）、底部指示条（线 / 圆点 / 色块 / 无）、数字或文字角标，可与 [ViewPager2](https://developer.android.com/jetpack/androidx/releases/viewpager2) 双向联动（滑动页面时指示器与选中态跟随）。
-
-可运行示例见 demo 模块 [`BottomTabBarDemoActivity`](demo/src/main/java/com/answufeng/ui/demo/BottomTabBarDemoActivity.kt)（`bindFragments`、角标、`setOnTabReselectedListener`）。
-
-**展示模式 `tab_mode`（XML） / `tabMode`（代码）**
-
-| 值 | 含义 |
-|----|------|
-| `icon_text`（0） | 上图标下标题，默认 |
-| `icon_only`（1） | 仅图标 |
-| `text_only`（2） | 仅标题 |
-
-**指示器 `indicator_style` / `indicatorStyle`**
-
-| 值 | 含义 |
-|----|------|
-| `line`（0） | 底部圆角横条，宽度可铺满整个 Tab 或跟随文字宽度 |
-| `dot`（1） | 底部小圆点 |
-| `block`（2） | 底部大圆角矩形条（略缩进） |
-| `none`（3） | 不绘制指示器 |
-
-**XML 属性一览**
-
-| 属性 | 说明 | 备注 |
-|------|------|------|
-| `tab_titles` | `@array` 字符串数组 | 与 `tab_icons` 成对可在 XML 中预置 Tab |
-| `tab_icons` | `@array` 的 drawable 引用数组 | 与 `tab_titles` 逐项对应 |
-| `tab_selected_color` | 选中时图标（着色开启时）与文字颜色 | 默认为主题色 |
-| `tab_normal_color` | 未选中颜色 | |
-| `tab_icon_size` | 图标边长 | dimension |
-| `tab_text_size` | 标题字号 | dimension（px） |
-| `tab_margin` | 相邻 Tab 之间的左边距 | 首项不加 |
-| `tab_auto_tint` | 是否用选中/未选中色对图标做 tint | 矢量图 / 单色图标建议 true |
-| `tab_selected_scale` | 选中时图标或文字的缩放倍数 | 默认 1.1，`1` 关闭缩放动画 |
-| `indicator_color` | 指示器填充色 | |
-| `indicator_height` | 指示器厚度（线/块高度或点直径相关） | |
-| `indicator_marginTop` | 指示器距底边的向上偏移 | 微调与底边的距离 |
-| `indicator_width_follows_text` | 线型指示器宽度是否对齐文字区域 | 无文字 Tab 时回退为居中 40% 宽度 |
-| `indicator_anim_duration` | 指示器位移动画时长（ms） | 默认 300 |
-| `badge_background_color` | 角标圆点/数字底背景色 | |
-
-**代码示例**
-
-```kotlin
-// 动态配置（与 XML 二选一或混用：XML 预置后仍可用 setItems 覆盖）
-tabBar.setItems(
-    listOf(
-        AwBottomTabBar.TabItem("首页", iconRes = R.drawable.ic_home),
-        AwBottomTabBar.TabItem("消息", iconRes = R.drawable.ic_msg),
-        AwBottomTabBar.TabItem(titleRes = R.string.tab_me, iconRes = R.drawable.ic_me),
-    )
-)
-tabBar.bindViewPager(viewPager)
-// 或一次性挂上 Fragment + ViewPager2：
-// tabBar.bindFragments(this, listOf(f1, f2, f3), viewPager)
-
-tabBar.setOnTabSelectedListener { index -> /* 用户点选切换到 index（与当前不同）*/ }
-tabBar.setOnTabReselectedListener { index -> /* 再次点击已选中的 Tab */ }
-tabBar.setOnTabLongClickListener { index -> /* 长按 */ }
-
-tabBar.setBadgeCount(1, 3)           // 数字角标，>99 显示为 "99+"
-tabBar.setBadgeText(2, "新")         // 自定义短文案角标
-tabBar.clearBadge(1)
-
-tabBar.setCurrentIndex(0, animate = true)  // 程序化切换
-```
-
-**XML 预置标题与图标**
-
-```xml
-<com.answufeng.ui.widget.AwBottomTabBar
-    android:layout_width="match_parent"
-    android:layout_height="56dp"
-    android:background="?attr/colorSurface"
-    app:tab_mode="icon_text"
-    app:indicator_style="line"
-    app:tab_titles="@array/main_tabs"
-    app:tab_icons="@array/main_tab_icons"
-    app:tab_selected_color="?attr/colorPrimary"
-    app:tab_normal_color="#99000000"
-    app:indicator_width_follows_text="true" />
-```
-
-**生命周期**
-
-- `Activity`/`Fragment` 销毁前若曾调用 `bindViewPager`，控件在 `onDetachedFromWindow` 时会自动 `unbindViewPager`；若在多层嵌套中手动持有 `ViewPager2` 引用，仍建议在页面销毁时取消对监听器的依赖，避免泄漏。
-
-**无障碍**：会填充 `AccessibilityEvent` 的 `itemCount` / `currentItemIndex`，建议在业务侧为每个 Tab 的语义补充 `contentDescription`（例如未读数变化时更新文案）。
-
 ### AwFlowLayout
 
 ```xml
@@ -464,63 +361,22 @@ AwActionSheetDialog(context, isDarkMode = true)
 ### AwRoundImageView（圆角/圆形图片）
 
 ```kotlin
-// XML 配置（属性前缀为 roundImg_，与 attrs 一致）
+// XML 配置
 <com.answufeng.ui.widget.AwRoundImageView
     android:layout_width="80dp"
     android:layout_height="80dp"
-    app:roundImg_radius="8dp"
-    app:roundImg_borderWidth="2dp"
-    app:roundImg_borderColor="#FFFFFF"
-    app:roundImg_isCircle="false" />
+    app:riv_cornerRadius="8dp"
+    app:riv_borderWidth="2dp"
+    app:riv_borderColor="#FFFFFF"
+    app:riv_isCircle="false" />
 
-// 代码设置（圆角半径为像素值）
+// 代码设置
 roundImageView.setImageResource(R.drawable.avatar)
-roundImageView.radius = 16f * resources.displayMetrics.density
+roundImageView.cornerRadius = 16f
 roundImageView.borderWidth = 4f
 roundImageView.borderColor = Color.WHITE
 roundImageView.isCircle = true
 ```
-
-### AwRoundLayout（圆角容器）
-
-子 View 按圆角裁切，支持统一圆角或四角独立半径及描边。属性见 [attrs.xml](aw-ui/src/main/res/values/attrs.xml) 中 `AwRoundLayout`：`round_radius`、`round_topLeftRadius` 等。
-
-```xml
-<com.answufeng.ui.widget.AwRoundLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:round_radius="12dp"
-    app:round_strokeWidth="1dp"
-    app:round_strokeColor="#33000000">
-    <!-- 子内容 -->
-</com.answufeng.ui.widget.AwRoundLayout>
-```
-
-### AwSwipeRefreshLayout（下拉刷新）
-
-继承 `SwipeRefreshLayout`，在 `init` 中用主题 `colorPrimary` 设置刷新环颜色。请将可垂直滚动的列表作为直接子 View，结束刷新时设置 `isRefreshing = false`。可与 `AwLoadMoreAdapter` 同屏使用，注意刷新与加载更多的并发与列表数据源一致性。
-
-### AwLoadMoreAdapter（加载更多）
-
-仅对 [LinearLayoutManager](https://developer.android.com/reference/androidx/recyclerview/widget/LinearLayoutManager) 自动检测触底；底部 Footer 展示加载中、失败（可点击重试）、无更多。
-
-```kotlin
-val adapter = AwLoadMoreAdapter(ItemBinding::inflate, diffCallback) { b, item, _ ->
-    b.tvTitle.text = item.title
-}
-adapter.preloadOffset = 3 // 距底部还剩几个 item 时预加载，默认 3
-adapter.setOnLoadMoreListener {
-    // 异步结束后：有下一页数据 -> loadMore(list)；无后续 -> noMore()；失败 -> loadFailed()
-}
-adapter.submitInitialList(firstPage) // 或 refreshAll(list) 替换全表并回到 IDLE
-
-// 文案
-adapter.loadingText = "正在加载…"
-adapter.noMoreText = "—— 没有更多了 ——"
-adapter.failedText = "加载失败，点击重试"
-```
-
-与下拉刷新组合时：**刷新**请调用 `submitInitialList` / `refreshAll` 重置数据与加载状态，并递增你自己的「请求代数」以丢弃旧的加载回调（示例见 demo [`SwipeRefreshListDemoActivity`](demo/src/main/java/com/answufeng/ui/demo/SwipeRefreshListDemoActivity.kt)）。
 
 ### AwExpandableLayout（可展开/收起布局）
 
@@ -638,17 +494,17 @@ passwordInputView.showPasswordToggle = true       // 显示/隐藏切换按钮
 |-----|------|--------------|
 | `AwBannerView` | 轮播图 | `setData()`, `startAutoScroll()`, `setOnPageClickListener` |
 | `AwBadgeView` | 角标视图 | `count`, `maxCount`, `increment()`, `decrement()` |
-| `AwBottomTabBar` | 底部导航栏 | `setItems()`, `bindViewPager()`, `setOnTabSelectedListener` |
+| `AwBottomTabBar` | 底部导航栏 | `setTabs()`, `setOnTabSelectedListener` |
 | `AwCodeInputView` | 验证码输入 | `codeLength`, `setOnCodeCompleteListener` |
 | `AwCountDownView` | 倒计时 | `start(seconds)`, `onFinish`, `autoDisable` |
 | `AwExpandableLayout` | 展开/收起布局 | `expand()`, `collapse()`, `toggle()` |
 | `AwFlowLayout` | 流式布局 | `flow_horizontalSpacing`, `flow_maxLines` |
 | `AwMarqueeTextView` | 跑马灯文本 | `startScroll()`, `stopScroll()` |
 | `AwPasswordInputView` | 密码输入 | `setOnPasswordChangeListener`, `showPasswordToggle` |
-| `AwRoundImageView` | 圆角/圆形图片 | `radius`, `isCircle`, `borderWidth`（XML：`roundImg_*`） |
-| `AwRoundLayout` | 圆角容器 | `setRadius`, `setRadii`, `setStroke`；XML：`round_*` |
+| `AwRoundImageView` | 圆角/圆形图片 | `cornerRadius`, `isCircle`, `borderWidth` |
+| `AwRoundLayout` | 圆角容器 | `cornerRadius`, `isCircle` |
 | `AwSearchView` | 搜索栏 | `onQueryChange`, `onQuerySubmit` |
-| `AwSegmentedControl` | 分段选择器 | `items`, `selectedIndex`, `onSelectionChange` |
+| `AwSegmentedControl` | 分段选择器 | `setItems()`, `setSelectedIndex()` |
 | `AwSkeletonView` | 骨架屏 | `startShimmer()`, `stopShimmer()` |
 | `AwSmartEditText` | 智能输入框 | `setRule()`, `setMaxLength()` |
 | `AwSwitchButton` | 开关按钮 | `isChecked`, `setOnCheckedChangeListener` |
@@ -668,12 +524,12 @@ passwordInputView.showPasswordToggle = true       // 显示/隐藏切换按钮
 
 | API | 说明 | 关键方法 |
 |-----|------|---------|
-| `AwSimpleAdapter` | 单类型适配器 | `submitList()`, 可选 `bindWithPayload`, `setOnItemClickListener`, `setEmptyView` |
-| `AwMultiTypeAdapter` | 多类型适配器 | `register()`, `submitList()` |
-| `AwLoadMoreAdapter` | 加载更多适配器 | `setOnLoadMoreListener`, `submitInitialList`, `loadMore`, `noMore`, `loadFailed`, `refreshAll` |
+| `AwSimpleAdapter` | 单类型适配器 | `submitList()`, `addPayload()` |
+| `AwMultiTypeAdapter` | 多类型适配器 | `addType()`, `submitList()` |
+| `AwLoadMoreAdapter` | 加载更多适配器 | `setLoadMoreListener()`, `setLoadMoreState()` |
 | `AwSwipeRefreshLayout` | 下拉刷新 | `setOnRefreshListener { }`，结束刷新设 `isRefreshing = false` |
-| `AwDividerDecoration` | 分割线 | 构造：`height(px)`, `color`, `paddingStart/End(px)`；依赖 `LinearLayoutManager` 等 |
-| `AwItemAnimator` | 入场动画 | `recyclerView.itemAnimator = AwItemAnimator()` |
+| `AwDividerDecoration` | 分割线 | `setDivider()`, `setPadding()` |
+| `AwItemAnimator` | 入场动画 | `setItemAnimator()` |
 
 ### 其他组件
 
@@ -729,4 +585,4 @@ aw-ui 已内置 consumer-rules.pro，在被宿主应用混淆时会自动应用�
 
 Apache License 2.0，详见 [LICENSE](LICENSE)。
 
-# Last updated: 2026年 4月 22日（BottomTabBar 演示；下拉刷新页接入加载更多与 README API 修正）
+# Last updated: 2026年 4月 21日
