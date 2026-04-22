@@ -2,6 +2,7 @@ package com.answufeng.ui.demo
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.answufeng.ui.demo.databinding.ActivityHomeBinding
@@ -27,6 +28,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupToolbar() {
         binding.titleBar.title = getString(R.string.demo_home_title)
+        binding.titleBar.setRightText(getString(R.string.demo_playbook_action)) {
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.demo_playbook_title)
+                .setMessage(R.string.demo_playbook_message)
+                .setPositiveButton(android.R.string.ok, null)
+                .show()
+        }
     }
 
     private fun setupList() {

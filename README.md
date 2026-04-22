@@ -10,10 +10,19 @@ Android 通用 UI 组件库，涵盖状态管理、列表适配器、对话框�
 |--------|------|
 | minSdk | 24+ |
 | compileSdk | 35 |
+| targetSdk（demo 验证） | 35 |
 | Kotlin | 2.0+ |
 | AGP | 8.0+ |
 | Java | 17 |
 | ViewBinding | 需要启用 |
+
+### 工程品质与发版检查
+
+- **CI**：[`.github/workflows/ci.yml`](.github/workflows/ci.yml) — `assembleRelease`、`ktlintCheck`、`lintRelease`、`:demo:assembleRelease`（R8）。
+- **本地建议**：`./gradlew :aw-ui:assembleRelease :aw-ui:ktlintCheck :aw-ui:lintRelease :demo:assembleRelease`
+- **演示**：[demo/DEMO_MATRIX.md](demo/DEMO_MATRIX.md)；主页标题栏 **「演示清单」** 可速览 Showcase / 状态页 / Banner 分工。
+- **可访问性**：列表/状态类组件请在业务侧为关键控件补 **`contentDescription`**、焦点顺序与 TalkBack 文案（本库保持控件语义中性）。
+- **上线前**：对照矩阵在 **真机** 跑一轮列表滚动、对话框与低内存；自定义动画注意与系统「减少动画」设置协调。
 
 ## 特性
 

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ktlint)
 }
 
 android {
@@ -25,13 +26,9 @@ android {
         viewBinding = true
     }
 
-    testOptions {
-        unitTests.isReturnDefaultValues = true
-    }
-
     buildTypes {
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -40,9 +37,14 @@ android {
     }
 
     lint {
-        abortOnError = false
+        abortOnError = true
         warningsAsErrors = false
     }
+}
+
+ktlint {
+    android.set(true)
+    ignoreFailures = false
 }
 
 dependencies {
@@ -53,8 +55,6 @@ dependencies {
     implementation(libs.lifecycle.runtime.ktx)
     api(libs.recyclerview)
     api(libs.viewpager2)
-
-    testImplementation(libs.junit)
 }
 
 apply(from = "${rootDir}/gradle/publish.gradle.kts")
