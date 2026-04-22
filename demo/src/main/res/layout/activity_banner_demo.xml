@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <com.answufeng.ui.titlebar.AwTitleBar
+        android:id="@+id/titleBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:titleBar_title="轮播 Banner"
+        app:titleBar_showBack="true"
+        app:titleBar_immersive="true" />
+
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Card.AwUi"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="16dp"
+        android:layout_marginTop="56dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <com.answufeng.ui.widget.AwBannerView
+                android:id="@+id/bannerView"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                app:banner_interval="2800"
+                app:banner_indicatorColor="#66FFFFFF"
+                app:banner_indicatorSelectedColor="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/tvHint"
+                style="@style/Text.AwUi.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="支持自动滚动、指示器点击与页面点击回调（示例使用纯色卡片）" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnToggleAuto"
+                style="@style/MaterialButton.AwUi.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="停止自动滚动" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

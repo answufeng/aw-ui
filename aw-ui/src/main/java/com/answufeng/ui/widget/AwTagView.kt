@@ -3,8 +3,9 @@ package com.answufeng.ui.widget
 import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.Gravity
-import android.view.View
+import android.view.ViewGroup.MarginLayoutParams
 import android.widget.TextView
 import com.answufeng.ui.R
 import com.google.android.material.color.MaterialColors
@@ -16,7 +17,7 @@ import com.google.android.material.color.MaterialColors
  * 常用于分类筛选、标签展示等场景。
  *
  * ### XML 属性
- * - `tag_mode`: 标签模式（FLOW/GRID）
+ * - 布局采用 [AwFlowLayout]：子标签自动换行
  *
  * ### 用法
  * ```kotlin
@@ -28,7 +29,7 @@ import com.google.android.material.color.MaterialColors
  */
 class AwTagView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr) {
+) : AwFlowLayout(context, attrs, defStyleAttr) {
 
     var tags: List<String> = emptyList()
         set(value) {
@@ -57,6 +58,7 @@ class AwTagView @JvmOverloads constructor(
     var tagSelectedTextColor: Int = Color.WHITE
     var tagBgColor: Int = MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurfaceVariant, Color.parseColor("#F0F0F0"))
     var tagSelectedBgColor: Int = MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimary, Color.BLUE)
+    /** 标签文字大小（**sp**） */
     var tagTextSize: Float = 14f
     var tagPaddingH: Int = (12 * resources.displayMetrics.density).toInt()
     var tagPaddingV: Int = (6 * resources.displayMetrics.density).toInt()
@@ -100,12 +102,15 @@ class AwTagView @JvmOverloads constructor(
         val isSelected = selectedTags.contains(tag)
         return TextView(context).apply {
             text = tag
-            textSize = tagTextSize
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, tagTextSize)
             setTextColor(if (isSelected) tagSelectedTextColor else tagTextColor)
             setPadding(tagPaddingH, tagPaddingV, tagPaddingH, tagPaddingV)
             background = createTagBackground(isSelected)
             setOnClickListener { handleTagClick(tag) }
-            layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+            layoutParams = MarginLayoutParams(
+                MarginLayoutParams.WRAP_CONTENT,
+                MarginLayoutParams.WRAP_CONTENT
+            )
         }
     }
 
@@ -152,6 +157,7 @@ class AwTagView @JvmOverloads constructor(
             val child = getChildAt(i) as? TextView ?: continue
             val tag = child.text.toString()
             val isSelected = selectedTags.contains(tag)
+            child.setTextSize(TypedValue.COMPLEX_UNIT_SP, tagTextSize)
             child.setTextColor(if (isSelected) tagSelectedTextColor else tagTextColor)
             child.background = createTagBackground(isSelected)
         }

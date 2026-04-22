@@ -17,15 +17,17 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
  * 仅在相邻 item 之间绘制分割线，最后一个 item 下方不绘制。
  *
  * ```kotlin
+ * val r = recyclerView.resources
  * recyclerView.addItemDecoration(
  *     AwDividerDecoration(
- *         height = 1.dp,
+ *         height = r.dpToPx(1),
  *         color = Color.LTGRAY,
- *         paddingStart = 16.dp,
- *         paddingEnd = 16.dp
+ *         paddingStart = r.dpToPx(16),
+ *         paddingEnd = r.dpToPx(16)
  *     )
  * )
  * ```
+ * 其中 `r.dpToPx(n)` 为 `com.answufeng.ui` 包中对 [android.content.res.Resources] 的扩展，**n 为 dp**。
  *
  * @param height       分割线高度（px）
  * @param color        分割线颜色，默认 #E0E0E0

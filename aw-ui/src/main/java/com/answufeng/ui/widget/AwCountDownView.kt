@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package com.answufeng.ui.widget
 
 import android.content.Context
@@ -11,6 +9,8 @@ import android.os.Looper
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.ColorInt
+import com.answufeng.ui.R
+import kotlin.math.roundToInt
 
 /**
  * 倒计时视图组件，用于显示倒计时动画和文字。
@@ -21,9 +21,10 @@ import androidx.annotation.ColorInt
  * ### XML 属性
  * - `countDownStrokeColor`: 倒计时圆环颜色（默认黑色）
  * - `countDownTextColor`: 倒计时文字颜色（默认黑色）
- * - `countDownBackgroundColor`: 倒计时圆环背景颜色（默认透明）
+ * - `countDownTrackColor`: 圆环轨道填充颜色（默认透明，非整 View 背景）
  * - `countDownStrokeWidth`: 倒计时圆环描边宽度（默认 4dp）
  * - `countDownTextSize`: 倒计时文字大小（默认 24sp）
+ * - `countdown_seconds`: 默认倒计时时长（秒），>0 时作为 [start] / [startSeconds] 未传参时的默认总时长
  *
  * ### 用法
  * ```kotlin
@@ -81,6 +82,10 @@ class AwCountDownView @JvmOverloads constructor(
     /** 倒计时剩余时间 */
     private var remainingTimeMs: Long = DEFAULT_MAX_MS
 
+    /** [start] 未显式传入时使用的默认时长与进度分母（可由 XML `countdown_seconds` 覆盖） */
+    private var defaultDurationMs: Long = DEFAULT_DURATION_MS
+    private var defaultMaxMs: Long = DEFAULT_MAX_MS
+
     /** 倒计时监听器 */
     private var countDownListener: CountDownListener? = null
 
@@ -106,10 +111,21 @@ class AwCountDownView @JvmOverloads constructor(
     }
 
     init {
+        val dm = context.resources.displayMetrics
+        val defaultStrokePx = (4f * dm.density).roundToInt()
+        val defaultTextPx = (DEFAULT_TEXT_SIZE_SP * dm.scaledDensity).roundToInt()
         context.theme.obtainStyledAttributes(
             attrs, R.styleable.AwCountDownView, defStyleAttr, 0
         ).apply {
             try {
+                val sec = getInt(R.styleable.AwCountDownView_countdown_seconds, 0)
+                if (sec > 0) {
+                    val ms = sec * 1000L
+                    defaultDurationMs = ms
+                    defaultMaxMs = ms
+                    countDownMaxMs = ms
+                    remainingTimeMs = ms
+                }
                 setStrokeColor(
                     getColor(
                         R.styleable.AwCountDownView_countDownStrokeColor,
@@ -122,28 +138,34 @@ class AwCountDownView @JvmOverloads constructor(
                         Color.BLACK
                     )
                 )
-                setBackgroundColor(
+                setCountDownTrackColor(
                     getColor(
-                        R.styleable.AwCountDownView_countDownBackgroundColor,
+                        R.styleable.AwCountDownView_countDownTrackColor,
                         Color.TRANSPARENT
                     )
                 )
                 setStrokeWidth(
                     getDimensionPixelSize(
                         R.styleable.AwCountDownView_countDownStrokeWidth,
-                        4.dp
+                        defaultStrokePx
                     )
                 )
                 setTextSize(
                     getDimensionPixelSize(
                         R.styleable.AwCountDownView_countDownTextSize,
-                        DEFAULT_TEXT_SIZE_SP.spToPx
+                        defaultTextPx
                     )
                 )
             } finally {
                 recycle()
             }
         }
+    }
+
+    override fun onDetachedFromWindow() {
+        updateHandler.removeCallbacksAndMessages(null)
+        isRunning = false
+        super.onDetachedFromWindow()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -207,10 +229,12 @@ class AwCountDownView @JvmOverloads constructor(
 
     /**
      * 开始倒计时
-     * @param durationMs 倒计时总时长（毫秒）
-     * @param maxMs 倒计时最大值（毫秒），用于计算进度百分比
+     * @param durationMs 倒计时总时长（**毫秒**）
+     * @param maxMs 进度条分母（**毫秒**），用于计算进度百分比
+     * @see startSeconds
      */
-    fun start(durationMs: Long = DEFAULT_DURATION_MS, maxMs: Long = DEFAULT_MAX_MS) {
+    @JvmOverloads
+    fun start(durationMs: Long = defaultDurationMs, maxMs: Long = defaultMaxMs) {
         countDownFinished = false
         countDownMaxMs = maxMs
         remainingTimeMs = durationMs
@@ -220,6 +244,16 @@ class AwCountDownView @JvmOverloads constructor(
 
         updateHandler.removeCallbacksAndMessages(null)
         updateCountDown()
+    }
+
+    /**
+     * 以**秒**为单位开始倒计时（与 [start] 的毫秒参数区分，避免误传）。
+     * @param totalSeconds 总秒数，至少为 1
+     */
+    fun startSeconds(totalSeconds: Int) {
+        val sec = totalSeconds.coerceAtLeast(1)
+        val ms = sec * 1000L
+        start(ms, ms)
     }
 
     /** 更新倒计时进度 */
@@ -290,8 +324,8 @@ class AwCountDownView @JvmOverloads constructor(
         countDownTextPaint.color = color
     }
 
-    /** 设置倒计时圆环背景颜色 */
-    fun setBackgroundColor(@ColorInt color: Int) {
+    /** 设置圆环内轨道（底层填充）颜色，与 [View.setBackgroundColor] 无关 */
+    fun setCountDownTrackColor(@ColorInt color: Int) {
         countDownBgFillPaint.color = color
     }
 

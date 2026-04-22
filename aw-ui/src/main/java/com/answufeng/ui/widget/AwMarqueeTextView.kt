@@ -1,5 +1,7 @@
 package com.answufeng.ui.widget
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
@@ -44,6 +46,13 @@ class AwMarqueeTextView @JvmOverloads constructor(
     private var currentOffset: Float = 0f
     private var isScrolling: Boolean = false
     private var scrollAnimator: ValueAnimator? = null
+
+    /** 一轮滚动结束并暂停后再次开跑，便于 [removeCallbacks] 防止泄漏 */
+    private val resumeAfterPauseRunnable = Runnable {
+        if (isScrolling && isAttachedToWindow) {
+            startScrollCycle()
+        }
+    }
 
     init {
         val ta = context.obtainStyledAttributes(attrs, R.styleable.AwMarqueeTextView)
@@ -101,6 +110,7 @@ class AwMarqueeTextView @JvmOverloads constructor(
     }
 
     private fun resetScroll() {
+        removeCallbacks(resumeAfterPauseRunnable)
         scrollAnimator?.cancel()
         scrollAnimator = null
         currentOffset = 0f
@@ -115,6 +125,7 @@ class AwMarqueeTextView @JvmOverloads constructor(
 
     private fun stopScrolling() {
         isScrolling = false
+        removeCallbacks(resumeAfterPauseRunnable)
         scrollAnimator?.cancel()
         scrollAnimator = null
     }
@@ -126,7 +137,7 @@ class AwMarqueeTextView @JvmOverloads constructor(
         if (overflow <= 0f) return
 
         val durationPerPx = 16L / speed.coerceAtLeast(0.1f)
-        val scrollDuration = (overflow * durationPerPx).toLong()
+        val scrollDuration = (overflow * durationPerPx).toLong().coerceAtLeast(1L)
 
         scrollAnimator?.cancel()
         scrollAnimator = ValueAnimator.ofFloat(0f, overflow).apply {
@@ -135,20 +146,16 @@ class AwMarqueeTextView @JvmOverloads constructor(
                 currentOffset = animator.animatedValue as Float
                 invalidate()
             }
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    if (!isScrolling || !isAttachedToWindow) return
+                    scrollAnimator = null
+                    currentOffset = 0f
+                    invalidate()
+                    postDelayed(resumeAfterPauseRunnable, pauseDuration)
+                }
+            })
             start()
         }
-
-        postDelayed({
-            if (!isScrolling || !isAttachedToWindow) return@postDelayed
-            scrollAnimator?.cancel()
-            scrollAnimator = null
-            currentOffset = 0f
-            invalidate()
-            postDelayed({
-                if (isScrolling && isAttachedToWindow) {
-                    startScrollCycle()
-                }
-            }, pauseDuration)
-        }, scrollDuration)
     }
 }

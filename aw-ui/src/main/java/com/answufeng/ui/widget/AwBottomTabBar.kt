@@ -62,7 +62,7 @@ import com.google.android.material.tabs.TabLayoutMediator
  */
 class AwBottomTabBar @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr) {
+) : LinearLayout(context, attrs, defStyleAttr) {
 
     enum class TabMode {
         ICON_TEXT, ICON_ONLY, TEXT_ONLY
@@ -111,7 +111,7 @@ class AwBottomTabBar @JvmOverloads constructor(
     var badgeBackgroundColor: Int = 0
 
     init {
-        orientation = HORIZONTAL
+        orientation = LinearLayout.HORIZONTAL
         gravity = Gravity.CENTER
 
         selectedColor = ContextCompat.getColor(context, R.color.tab_selected_default)
@@ -229,9 +229,9 @@ class AwBottomTabBar @JvmOverloads constructor(
 
     private fun addTabView(item: TabItem, index: Int) {
         val tabView = createTabView(item, index)
-        val params = LayoutParams(0, LayoutParams.MATCH_PARENT, 1f)
+        val params = LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1f)
         if (index > 0) {
-            (params as MarginLayoutParams).leftMargin = tabMargin.toInt()
+            params.leftMargin = tabMargin.toInt()
         }
         addView(tabView, params)
         tabViews.add(tabView)
@@ -253,7 +253,7 @@ class AwBottomTabBar @JvmOverloads constructor(
 
     private fun createIconOnlyTabView(item: TabItem, index: Int): View {
         val container = FrameLayout(context)
-        container.layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT)
+        container.layoutParams = LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT)
 
         val iconView = ImageView(context).apply {
             layoutParams = FrameLayout.LayoutParams(iconSize.toInt(), iconSize.toInt()).apply {
@@ -273,7 +273,7 @@ class AwBottomTabBar @JvmOverloads constructor(
 
     private fun createTextOnlyTabView(item: TabItem, index: Int): View {
         return TextView(context).apply {
-            layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT).apply {
+            layoutParams = LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT).apply {
                 gravity = Gravity.CENTER
             }
             text = if (item.titleRes != 0) context.getString(item.titleRes) else item.title
@@ -287,9 +287,9 @@ class AwBottomTabBar @JvmOverloads constructor(
 
     private fun createIconTextTabView(item: TabItem, index: Int): View {
         val container = LinearLayout(context).apply {
-            orientation = VERTICAL
+            orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
-            layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT)
+            layoutParams = LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT)
         }
 
         val iconContainer = FrameLayout(context).apply {

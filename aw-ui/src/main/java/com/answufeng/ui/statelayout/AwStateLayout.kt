@@ -349,6 +349,11 @@ class AwStateLayout @JvmOverloads constructor(
         if (currentState == state) return
         val oldState = currentState
         currentState = state
+        if (state != State.CUSTOM) {
+            for (view in customStates.values) {
+                view.visibility = GONE
+            }
+        }
         stateChangeListener?.onStateChanged(oldState, state)
         announceStateForAccessibility(state)
         showOrHide(contentView, state == State.CONTENT)
@@ -390,10 +395,11 @@ class AwStateLayout @JvmOverloads constructor(
 
     private fun announceStateForAccessibility(state: State) {
         val message = when (state) {
-            State.CONTENT -> context.getString(android.R.string.ok)
+            State.CONTENT -> context.getString(R.string.aw_state_content)
             State.LOADING -> context.getString(R.string.aw_state_loading)
             State.EMPTY -> context.getString(R.string.aw_state_empty)
             State.ERROR -> context.getString(R.string.aw_state_error)
+            State.CUSTOM -> context.getString(R.string.aw_state_custom)
         }
         announceForAccessibility(message)
     }

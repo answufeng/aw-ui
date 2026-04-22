@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="aw_state_content">Content</string>
     <string name="aw_state_loading">Loading</string>
     <string name="aw_state_empty">No data</string>
     <string name="aw_state_error">Load failed</string>
+    <string name="aw_state_custom">Custom view</string>
 </resources>

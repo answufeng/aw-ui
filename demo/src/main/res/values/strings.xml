@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">aw-ui Demo</string>
+    <string name="demo_home_title">aw-ui 组件库 Demo</string>
+    <string name="demo_search_hint">搜索组件/页面</string>
     <string-array name="segment_items">
         <item>选项一</item>
         <item>选项二</item>

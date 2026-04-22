@@ -113,8 +113,11 @@
     <!-- AwCountDownView 自定义属性 -->
     <declare-styleable name="AwCountDownView">
         <attr name="countdown_seconds" format="integer" />
-        <attr name="countdown_textColor" format="color" />
-        <attr name="countdown_textSize" format="dimension" />
+        <attr name="countDownStrokeColor" format="color" />
+        <attr name="countDownTextColor" format="color" />
+        <attr name="countDownTrackColor" format="color" />
+        <attr name="countDownStrokeWidth" format="dimension" />
+        <attr name="countDownTextSize" format="dimension" />
     </declare-styleable>
 
     <!-- AwCircleProgressBar 自定义属性 -->

@@ -143,6 +143,12 @@ class AwTooltipView @JvmOverloads constructor(
         visibility = View.GONE
     }
 
+    override fun onDetachedFromWindow() {
+        autoDismissRunnable?.let { handler.removeCallbacks(it) }
+        autoDismissRunnable = null
+        super.onDetachedFromWindow()
+    }
+
     /**
      * 显示提示框并锚定到给定的 [anchor] 视图。
      *

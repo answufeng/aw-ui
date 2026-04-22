@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:titleBar_title="UI 组件演示"
-        app:titleBar_showBack="false"
+        app:titleBar_showBack="true"
         app:titleBar_immersive="true" />
 
     <com.google.android.material.card.MaterialCardView
