@@ -65,7 +65,7 @@
                             android:layout_marginTop="12dp"
                             app:password_hint="请输入密码"
                             app:password_showToggle="true"
-                            app:password_showStrength="true" />
+                            app:password_showStrength="false" />
 
                         <com.answufeng.ui.widget.AwCodeInputView
                             android:id="@+id/codeInputView"
@@ -190,8 +190,10 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="24dp"
-                                android:textColor="@color/error"
-                                app:countdown_seconds="10" />
+                                app:countdown_seconds="10"
+                                app:countDownStrokeColor="?attr/colorPrimary"
+                                app:countDownTextColor="?attr/colorPrimary"
+                                app:countDown_timeMode="mmss" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btnStartCountDown"
@@ -213,6 +215,71 @@
                             app:marquee_speed="1"
                             app:marquee_pauseDuration="1000" />
 
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    style="@style/Card.AwUi">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="加载样式（AwLoadingView）"
+                            style="@style/Text.AwUi.Subtitle"
+                            android:layout_marginBottom="12dp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <com.answufeng.ui.widget.AwLoadingView
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                app:loading_style="circular" />
+
+                            <com.answufeng.ui.widget.AwLoadingView
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:layout_marginStart="16dp"
+                                app:loading_style="dots" />
+
+                            <com.answufeng.ui.widget.AwLoadingView
+                                android:layout_width="0dp"
+                                android:layout_height="48dp"
+                                android:layout_weight="1"
+                                android:layout_marginStart="16dp"
+                                app:loading_style="horizontal" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <com.answufeng.ui.widget.AwLoadingView
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                app:loading_style="flower" />
+
+                            <com.answufeng.ui.widget.AwLoadingView
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:layout_marginStart="16dp"
+                                app:loading_style="bars" />
+                        </LinearLayout>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 

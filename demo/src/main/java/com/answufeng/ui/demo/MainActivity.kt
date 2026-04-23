@@ -46,18 +46,23 @@ class MainActivity : AppCompatActivity() {
             ),
             DemoEntry(
                 title = "状态页（加载/空/错/自定义）",
-                desc = "演示 AwStateLayout 的四态切换与重试回调",
+                desc = "AwStateLayout 四态与重试；可循环切换无/淡入/交叉/自底（slideFromBottom）过渡",
                 activity = StateDemoActivity::class.java
             ),
             DemoEntry(
                 title = "下拉刷新 + 列表",
-                desc = "AwSwipeRefreshLayout 包裹 RecyclerView，可与 AwLoadMoreAdapter 组合",
+                desc = "AwSwipeRefreshLayout + AwLoadMoreAdapter + setOnRefreshWithStop（上拉分页与下拉回第一页）",
                 activity = SwipeRefreshListDemoActivity::class.java
             ),
             DemoEntry(
                 title = "轮播 Banner",
                 desc = "演示 AwBannerView（自动滚动、指示器、点击回调）",
                 activity = BannerDemoActivity::class.java
+            ),
+            DemoEntry(
+                title = "分段控制 Segmented",
+                desc = "AwSegmentedControl：文字/图标/指示器样式、bindViewPager2 与独立回调",
+                activity = SegmentedControlDemoActivity::class.java
             )
         )
 

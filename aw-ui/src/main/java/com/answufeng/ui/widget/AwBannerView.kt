@@ -107,8 +107,14 @@ class AwBannerView @JvmOverloads constructor(
     init {
         val ta = context.obtainStyledAttributes(attrs, R.styleable.AwBannerView)
         interval = ta.getInteger(R.styleable.AwBannerView_banner_interval, 3000).toLong()
-        indicatorColor = ta.getColor(R.styleable.AwBannerView_banner_indicatorColor, Color.parseColor("#80FFFFFF"))
-        indicatorSelectedColor = ta.getColor(R.styleable.AwBannerView_banner_indicatorSelectedColor, Color.parseColor("#FFFFFF"))
+        val xmlIndicatorColor = ta.getColor(
+            R.styleable.AwBannerView_banner_indicatorColor,
+            Color.parseColor("#80FFFFFF")
+        )
+        val xmlIndicatorSelectedColor = ta.getColor(
+            R.styleable.AwBannerView_banner_indicatorSelectedColor,
+            Color.parseColor("#FFFFFF")
+        )
         ta.recycle()
 
         viewPager = ViewPager2(context).apply {
@@ -127,11 +133,24 @@ class AwBannerView @JvmOverloads constructor(
             layoutParams = lp
         }
         addView(indicatorContainer)
+
+        // 须先完成 viewPager / indicator 再设颜色，否则 setter 会调 updateIndicatorDots 访问未初始化的 viewPager
+        indicatorColor = xmlIndicatorColor
+        indicatorSelectedColor = xmlIndicatorSelectedColor
     }
 
-    fun setAdapter(adapter: RecyclerView.Adapter<*>) {
+    /**
+     * @param knownItemCount 当 [RecyclerView.Adapter.getItemCount] 为 [Int.MAX_VALUE] 等“虚假”大数时（如内部无限轮播），必须显式传入真实条数
+     */
+    @JvmOverloads
+    fun setAdapter(adapter: RecyclerView.Adapter<*>, knownItemCount: Int? = null) {
         viewPager.adapter = adapter
-        realItemCount = adapter.itemCount
+        val raw = adapter.itemCount
+        realItemCount = when {
+            knownItemCount != null -> knownItemCount
+            raw in 0..500_000 -> raw
+            else -> 0
+        }
         createIndicatorDots()
         if (isInfiniteLoop && realItemCount > 1) {
             val mid = Int.MAX_VALUE / 2
@@ -166,7 +185,7 @@ class AwBannerView @JvmOverloads constructor(
                 return if (isInfiniteLoop && items.size > 1) Int.MAX_VALUE else items.size
             }
         }
-        setAdapter(adapter)
+        setAdapter(adapter, items.size)
     }
 
     fun setOnPageClickListener(listener: (Int) -> Unit) {

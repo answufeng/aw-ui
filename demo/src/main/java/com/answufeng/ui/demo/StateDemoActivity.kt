@@ -16,7 +16,23 @@ class StateDemoActivity : AppCompatActivity() {
 
         binding.titleBar.setOnBackClickListener { finish() }
 
-        binding.stateLayout.transition = StateTransition.CROSS_FADE
+        val transModes = listOf(
+            "无" to StateTransition.NONE,
+            "淡入" to StateTransition.FADE,
+            "交叉" to StateTransition.CROSS_FADE,
+            "自底" to StateTransition.slideFromBottom()
+        )
+        var transIndex = 2
+        fun applyTransition() {
+            val (label, tr) = transModes[transIndex]
+            binding.stateLayout.transition = tr
+            binding.btnTransition.text = getString(R.string.state_demo_transition_cycling, label)
+        }
+        applyTransition()
+        binding.btnTransition.setOnClickListener {
+            transIndex = (transIndex + 1) % transModes.size
+            applyTransition()
+        }
 
         binding.btnContent.setOnClickListener { binding.stateLayout.showContent() }
         binding.btnLoading.setOnClickListener { binding.stateLayout.showLoading() }

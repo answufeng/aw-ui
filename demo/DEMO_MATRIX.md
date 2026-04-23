@@ -7,9 +7,10 @@
 | 入口 | Activity | 建议验证 |
 |------|----------|----------|
 | 组件总览 | `ShowcaseActivity` | 输入类、进度、Dialog、分割线、Banner 导航等聚合演示 |
-| 状态页 | `StateDemoActivity` | `AwStateLayout` 内容/加载/空/错与重试 |
-| 下拉刷新 + 列表 | `SwipeRefreshListDemoActivity` | `AwSwipeRefreshLayout` + `RecyclerView`，结束刷新关闭指示器 |
+| 状态页 | `StateDemoActivity` | `AwStateLayout` 四态与重试；**点按单键循环** `StateTransition`（无 / 淡入 / 交叉 / **自底** `slideFromBottom`） |
+| 下拉刷新 + 列表 | `SwipeRefreshListDemoActivity` | `AwSwipeRefreshLayout` + `AwLoadMoreAdapter` + `setOnRefreshWithStop`，上拉分页 / 无更多、下拉回第一页 |
 | 轮播 | `BannerDemoActivity` | `AwBannerView` 自动滚动、指示器、点击 |
+| 分段控制 | `SegmentedControlDemoActivity` | `AwSegmentedControl` 文字/图标/下划线/圆点、`bindViewPager2` 与仅回调两种 |
 
 ## Showcase 内常见映射（摘录）
 

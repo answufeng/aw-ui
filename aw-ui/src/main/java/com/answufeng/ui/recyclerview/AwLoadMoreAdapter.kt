@@ -149,10 +149,13 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
                 val total = layoutManager.itemCount
 
                 if (lastVisible >= total - 1 - preloadOffset) {
+                    // 在 onScrolled 内直接 notify 会触发非法状态，延后到 post；此时必为 IDLE，尚无 footer，需 insert 而非 change
                     loadState = LoadState.LOADING
-                    if (showFooter()) notifyItemChanged(currentList.size)
-                    else notifyItemInserted(currentList.size)
-                    onLoadMore?.invoke()
+                    val footerPos = currentList.size
+                    rv.post {
+                        notifyItemInserted(footerPos)
+                        onLoadMore?.invoke()
+                    }
                 }
             }
         }
@@ -174,6 +177,9 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
      * @param list 第一页数据
      */
     fun submitInitialList(list: List<T>) {
+        if (showFooter()) {
+            notifyItemRemoved(currentList.size)
+        }
         loadState = LoadState.IDLE
         super.submitList(list)
     }
@@ -183,6 +189,9 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
     }
 
     fun refreshAll(list: List<T>, commitCallback: Runnable? = null) {
+        if (showFooter()) {
+            notifyItemRemoved(currentList.size)
+        }
         loadState = LoadState.IDLE
         super.submitList(list, commitCallback)
     }
@@ -196,6 +205,10 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
      */
     fun loadMore(list: List<T>, commitCallback: Runnable? = null) {
         val combined = currentList.toMutableList().apply { addAll(list) }
+        // 先去掉底部 footer 再 submitList。否则与 AsyncListDiffer 的增量更新交叠，会触发 Inconsistency / footer 错位
+        if (showFooter()) {
+            notifyItemRemoved(currentList.size)
+        }
         loadState = LoadState.IDLE
         super.submitList(combined, commitCallback)
     }
@@ -212,6 +225,8 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
 
     /**
      * 标记加载失败（用户可点击 footer 重试）。
+     *
+     * 若 [onLoadMore] 中请求再次失败，需再次调用 [loadFailed]；否则 [LoadState.LOADING] 下可能长期停留在“加载中”且无法重试。
      */
     fun loadFailed() {
         val hadFooter = showFooter()

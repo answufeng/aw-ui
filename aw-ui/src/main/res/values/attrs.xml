@@ -83,6 +83,19 @@
         <attr name="seg_selectedColor" format="color" />
         <attr name="seg_textColor" format="color" />
         <attr name="seg_selectedTextColor" format="color" />
+        <attr name="seg_selectionAppearance" format="enum">
+            <enum name="pill" value="0" />
+            <enum name="underline" value="1" />
+            <enum name="text_tint" value="2" />
+            <enum name="rect" value="3" />
+        </attr>
+        <!-- 仅 selectionAppearance=rect 时：选中块圆角。默认 4dp。设为 0dp 为直角长方形。 -->
+        <attr name="seg_rectCornerRadius" format="dimension" />
+        <attr name="seg_accessoryIndicator" format="enum">
+            <enum name="none" value="0" />
+            <enum name="dot" value="1" />
+        </attr>
+        <attr name="seg_iconSize" format="dimension" />
     </declare-styleable>
 
     <!-- AwExpandableLayout 自定义属性 -->
@@ -118,6 +131,21 @@
         <attr name="countDownTrackColor" format="color" />
         <attr name="countDownStrokeWidth" format="dimension" />
         <attr name="countDownTextSize" format="dimension" />
+        <attr name="countDown_timeMode" format="enum">
+            <enum name="seconds" value="0" />
+            <enum name="mmss" value="1" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="AwLoadingView">
+        <attr name="loading_style" format="enum">
+            <enum name="circular" value="0" />
+            <enum name="dots" value="1" />
+            <enum name="horizontal" value="2" />
+            <enum name="flower" value="3" />
+            <enum name="bars" value="4" />
+        </attr>
+        <attr name="loading_tint" format="color" />
     </declare-styleable>
 
     <!-- AwCircleProgressBar 自定义属性 -->

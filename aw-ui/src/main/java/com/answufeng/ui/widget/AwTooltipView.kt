@@ -6,6 +6,8 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
+import android.app.Activity
+import android.content.ContextWrapper
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewTreeObserver
@@ -152,32 +154,35 @@ class AwTooltipView @JvmOverloads constructor(
     /**
      * 显示提示框并锚定到给定的 [anchor] 视图。
      *
-     * 提示框作为覆盖层添加到锚点视图的父 [FrameLayout] 中，
-     * 并相对于锚点定位。
-     *
-     * @param anchor 要锚定的目标视图
+     * 提示框挂在 Activity 的 `android.R.id.content` 下，不依赖锚点父级是否为 [FrameLayout]。
      */
     fun show(anchor: View) {
+        val act = anchor.context.findHostActivity() ?: return
+        val content = act.findViewById<FrameLayout>(android.R.id.content) ?: return
         this.anchorView = anchor
-        val parent = anchor.parent as? FrameLayout ?: return
-        this.parentOverlay = parent
-
-        if (parent.indexOfChild(this) == -1) {
-            parent.addView(this)
+        this.parentOverlay = content
+        if (content.indexOfChild(this) == -1) {
+            val lp = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT
+            )
+            elevation = 12f * resources.displayMetrics.density
+            content.addView(this, lp)
         }
-
-        anchor.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                anchor.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                positionRelativeToAnchor(anchor)
-                visibility = View.VISIBLE
-                animate().alpha(1f).setDuration(200).start()
-                if (autoDismissDelay > 0) {
-                    autoDismissRunnable = Runnable { dismiss() }
-                    handler.postDelayed(autoDismissRunnable!!, autoDismissDelay)
-                }
+        alpha = 0f
+        visibility = View.INVISIBLE
+        val wSpec = View.MeasureSpec.makeMeasureSpec(content.width, View.MeasureSpec.AT_MOST)
+        val hSpec = View.MeasureSpec.makeMeasureSpec(content.height, View.MeasureSpec.AT_MOST)
+        measure(wSpec, hSpec)
+        anchor.post {
+            positionRelativeToAnchor(anchor)
+            visibility = View.VISIBLE
+            animate().alpha(1f).setDuration(200).start()
+            if (autoDismissDelay > 0) {
+                autoDismissRunnable = Runnable { dismiss() }
+                handler.postDelayed(autoDismissRunnable!!, autoDismissDelay)
             }
-        })
+        }
     }
 
     /** 关闭提示框，带有淡出动画 */
@@ -357,4 +362,13 @@ class AwTooltipView @JvmOverloads constructor(
         val y = textCenterY - (textPaint.descent() + textPaint.ascent()) / 2f
         canvas.drawText(textStr, textCenterX, y, textPaint)
     }
+}
+
+private fun android.content.Context.findHostActivity(): Activity? {
+    var c: android.content.Context? = this
+    while (c is ContextWrapper) {
+        if (c is Activity) return c
+        c = c.baseContext
+    }
+    return null
 }

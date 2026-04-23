@@ -4,12 +4,28 @@
     <string name="demo_search_hint">搜索组件/页面</string>
     <string name="demo_playbook_action">演示清单</string>
     <string name="demo_playbook_title">演示清单</string>
-    <string name="demo_playbook_message">入口与组件对照见仓库 demo/DEMO_MATRIX.md。\n\n• 组件总览（Showcase）：输入、进度、Dialog、列表装饰等\n• 状态页：AwStateLayout 四态与重试\n• 下拉刷新列表：AwSwipeRefreshLayout + RecyclerView\n• 轮播：AwBannerView\n\n发版前请配合 README「工程品质与发版检查」跑 lint + demo R8，并在真机核对无障碍与低内存场景。</string>
+    <string name="demo_playbook_message">入口与组件对照见仓库 demo/DEMO_MATRIX.md。\n\n• 组件总览（Showcase）：输入、进度、Dialog、列表装饰等\n• 状态页：AwStateLayout 四态与重试\n• 下拉刷新列表：AwSwipeRefreshLayout + AwLoadMoreAdapter + setOnRefreshWithStop\n• 轮播：AwBannerView\n• 分段控制：AwSegmentedControl 专项页（文字/图标/指示器、ViewPager2 联动）\n\n发版前请配合 README「工程品质与发版检查」跑 lint + demo R8，并在真机核对无障碍与低内存场景。</string>
+    <string name="state_demo_transition_boot">过渡: 交叉（点按循环切换）</string>
+    <string name="state_demo_transition_cycling">过渡: %1$s（点按循环：无 → 淡入 → 交叉 → 自底）</string>
     <string name="demo_swipe_refresh_title">下拉刷新列表</string>
-    <string name="demo_swipe_refresh_hint">演示 AwSwipeRefreshLayout 包裹 RecyclerView；刷新结束后务必将 isRefreshing 置为 false。可与 AwLoadMoreAdapter 分饰「头部刷新 / 底部追加」。</string>
+    <string name="demo_swipe_refresh_hint">本页为 AwLoadMoreAdapter 与 Swipe 组合样例：上拉加载 2、3 页，到底「没有更多」；下拉拉回第 1 页，并用 setOnRefreshWithStop 结束指示器。RecyclerView 须为单 child。</string>
     <string-array name="segment_items">
         <item>选项一</item>
         <item>选项二</item>
         <item>选项三</item>
     </string-array>
+    <string name="seg_demo_title">分段控制 AwSegmentedControl</string>
+    <string name="seg_demo_sec_text_pill">仅文字 · 胶囊高亮 + 无底部圆点</string>
+    <string name="seg_demo_sec_text_rect">仅文字 · 圆角长方形（rect，默认约 4dp 圆角，非胶囊）</string>
+    <string name="seg_demo_sec_text_underline">仅文字 · 下划线 + 无圆点</string>
+    <string name="seg_demo_sec_text_tint">仅文字 · 无滑块/线（仅文字色变化）</string>
+    <string name="seg_demo_sec_text_tint_dot">仅文字 + 底部小圆点</string>
+    <string name="seg_demo_sec_pill_dot">胶囊高亮 + 底部圆点</string>
+    <string name="seg_demo_sec_icon_text">图标 + 文字</string>
+    <string name="seg_demo_sec_icon_only">仅图标</string>
+    <string name="seg_demo_sec_pager">配合 ViewPager2（与页码同步）</string>
+    <string name="seg_demo_sec_no_pager">不联动：仅 onSelectionChange 更新文案</string>
+    <string name="seg_demo_pager_bound_hint">左右滑动 ViewPager2，分段会跟随；点分段，页面会切页（bindViewPager2）。</string>
+    <string name="seg_demo_selected_only">当前选中：%1$d（onSelectionChange，未 bind ViewPager2）</string>
+    <string name="seg_demo_page_n">第 %1$d 页</string>
 </resources>

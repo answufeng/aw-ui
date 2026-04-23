@@ -89,6 +89,31 @@ class AwCountDownView @JvmOverloads constructor(
     /** 倒计时监听器 */
     private var countDownListener: CountDownListener? = null
 
+    /** 时间展示方式；也可设置 [timeTextFormatter] 完全自定义文案 */
+    enum class TimeDisplayMode {
+        /** 只显示剩余秒数（进位，与原先一致） */
+        SECONDS,
+        /** 分:秒 如 01:40 */
+        MM_SS
+    }
+
+    var timeDisplayMode: TimeDisplayMode = TimeDisplayMode.SECONDS
+        set(value) {
+            field = value
+            requestLayout()
+            invalidate()
+        }
+
+    /**
+     * 若非 null，优先于 [timeDisplayMode] 生成中间文字，参数为剩余毫秒
+     */
+    var timeTextFormatter: ((Long) -> String)? = null
+        set(value) {
+            field = value
+            requestLayout()
+            invalidate()
+        }
+
     /** 倒计时状态枚举 */
     enum class State {
         IN_PROGRESS, FINISHED, SKIPPED
@@ -156,6 +181,12 @@ class AwCountDownView @JvmOverloads constructor(
                         defaultTextPx
                     )
                 )
+                timeDisplayMode = when (
+                    getInt(R.styleable.AwCountDownView_countDown_timeMode, 0)
+                ) {
+                    1 -> TimeDisplayMode.MM_SS
+                    else -> TimeDisplayMode.SECONDS
+                }
             } finally {
                 recycle()
             }
@@ -175,9 +206,17 @@ class AwCountDownView @JvmOverloads constructor(
         val heightMode = MeasureSpec.getMode(heightMeasureSpec)
         val heightSize = MeasureSpec.getSize(heightMeasureSpec)
 
-        // 计算视图所需的最小尺寸，基于文字大小
-        val textHeight = countDownTextPaint.fontMetrics.run { descent - ascent }
-        val desiredSize = (textHeight + countDownStrokePaint.strokeWidth).toInt()
+        val sample = timeTextFormatter?.invoke(65_000L) ?: when (timeDisplayMode) {
+            TimeDisplayMode.MM_SS -> "00:00"
+            TimeDisplayMode.SECONDS -> "99"
+        }
+        val textHeight = with(countDownTextPaint.fontMetrics) { descent - ascent }
+        val textW = countDownTextPaint.measureText(sample)
+        val sw = countDownStrokePaint.strokeWidth
+        val minDp = 48f * resources.displayMetrics.density
+        val desiredSize = (maxOf(textW, textHeight) + sw * 3f)
+            .toInt()
+            .coerceAtLeast(minDp.toInt())
 
         val width = when (widthMode) {
             MeasureSpec.EXACTLY -> widthSize
@@ -217,9 +256,16 @@ class AwCountDownView @JvmOverloads constructor(
             )
         }
 
-        // 绘制倒计时文字
         val text = if (isRunning) {
-            (remainingTimeMs / 1000 + 1).toString()
+            timeTextFormatter?.invoke(remainingTimeMs) ?: when (timeDisplayMode) {
+                TimeDisplayMode.SECONDS -> (remainingTimeMs / 1000 + 1).toString()
+                TimeDisplayMode.MM_SS -> {
+                    val totalSec = (remainingTimeMs + 999) / 1000
+                    val m = totalSec / 60
+                    val s = totalSec % 60
+                    String.format("%02d:%02d", m, s)
+                }
+            }
         } else {
             ""
         }

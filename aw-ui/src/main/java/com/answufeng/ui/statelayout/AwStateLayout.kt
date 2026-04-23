@@ -9,6 +9,7 @@ import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import androidx.annotation.LayoutRes
+import androidx.core.view.doOnLayout
 import com.answufeng.ui.R
 
 /**
@@ -76,17 +77,32 @@ fun interface StateTransition {
         /**
          * 从底部滑入动画（translationY + alpha）。
          *
+         * 若切换瞬间目标视图尚未完成布局（高度为 0），会等首次 [android.view.View.layout] 再开启动画；仍无高度时以约 96dp 为位移，避免无位移。
+         *
          * @return 从底部滑入的过渡动画实例
          */
         @JvmStatic
         fun slideFromBottom(): StateTransition = StateTransition { view, duration ->
             view.alpha = 0f
-            view.translationY = view.height.toFloat()
-            view.animate()
-                .alpha(1f)
-                .translationY(0f)
-                .setDuration(duration)
-                .start()
+            val startSlide: () -> Unit = {
+                val h = view.height
+                val offsetY = if (h > 0) {
+                    h.toFloat()
+                } else {
+                    96f * view.resources.displayMetrics.density
+                }
+                view.translationY = offsetY
+                view.animate()
+                    .alpha(1f)
+                    .translationY(0f)
+                    .setDuration(duration)
+                    .start()
+            }
+            if (view.height > 0) {
+                startSlide()
+            } else {
+                view.doOnLayout { startSlide() }
+            }
         }
     }
 }

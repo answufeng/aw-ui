@@ -49,9 +49,10 @@ ktlint {
 
 dependencies {
     implementation(libs.core.ktx)
-    implementation(libs.appcompat)
+    // 多个公开 View 继承 AppCompat*；viewBinding 等 API 使用 AppCompatActivity / AppCompat* 类型
+    api(libs.appcompat)
     implementation(libs.material)
-    implementation(libs.swiperefresh)
+    api(libs.swiperefresh)
     implementation(libs.activity.ktx)
     implementation(libs.lifecycle.runtime.ktx)
     api(libs.recyclerview)

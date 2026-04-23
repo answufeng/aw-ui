@@ -14,8 +14,8 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
 import com.answufeng.ui.R
 
 /**
@@ -56,7 +56,7 @@ class AwPasswordInputView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr) {
+) : LinearLayout(context, attrs, defStyleAttr) {
 
     /** 密码强度级别 */
     enum class Strength {
@@ -123,59 +123,63 @@ class AwPasswordInputView @JvmOverloads constructor(
 
         override fun afterTextChanged(s: Editable?) {
             val newStrength = strength
+            strengthBarView.currentStrength = newStrength
             if (newStrength != lastStrength) {
                 lastStrength = newStrength
-                strengthBarView.currentStrength = newStrength
                 onStrengthChange?.invoke(newStrength)
             }
         }
     }
 
     init {
+        orientation = VERTICAL
         val ta = context.obtainStyledAttributes(attrs, R.styleable.AwPasswordInputView)
         val xmlHint = ta.getString(R.styleable.AwPasswordInputView_password_hint) ?: "Password"
         val xmlShowToggle = ta.getBoolean(R.styleable.AwPasswordInputView_password_showToggle, true)
         val xmlShowStrength = ta.getBoolean(R.styleable.AwPasswordInputView_password_showStrength, true)
         ta.recycle()
 
+        val inputRow = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+        }
+
         editText = EditText(context).apply {
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
             hint = xmlHint
             setSingleLine()
-            layoutParams = LayoutParams(
-                LayoutParams.MATCH_PARENT,
-                LayoutParams.WRAP_CONTENT
-            ).apply {
-                marginEnd = (40 * density).toInt()
-            }
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
         }
 
         toggleButton = ImageView(context).apply {
-            layoutParams = LayoutParams(
+            layoutParams = LinearLayout.LayoutParams(
                 (32 * density).toInt(),
                 (32 * density).toInt()
             ).apply {
-                gravity = Gravity.END or Gravity.CENTER_VERTICAL
                 marginEnd = (8 * density).toInt()
             }
             setImageDrawable(getEyeDrawable(false))
             setOnClickListener { togglePasswordVisibility() }
         }
+        inputRow.addView(editText)
+        inputRow.addView(toggleButton)
+        addView(
+            inputRow,
+            LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+        )
 
         strengthBarView = StrengthBarView(context).apply {
-            layoutParams = LayoutParams(
-                LayoutParams.MATCH_PARENT,
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
                 (4 * density).toInt()
             ).apply {
-                gravity = Gravity.BOTTOM
-                val editHeight = (48 * density).toInt()
-                bottomMargin = editHeight / 2 - (2 * density).toInt()
+                topMargin = (6 * density).toInt()
             }
             visibility = if (xmlShowStrength) View.VISIBLE else View.GONE
         }
-
-        addView(editText)
-        addView(toggleButton)
         addView(strengthBarView)
 
         showToggle = xmlShowToggle
@@ -268,11 +272,8 @@ class AwPasswordInputView @JvmOverloads constructor(
             }
             super.onRestoreInstanceState(superState)
             val savedVisible = state.getBoolean("isPasswordVisible", false)
-            val savedStrength = try {
-                Strength.valueOf(state.getString("strength") ?: "WEAK")
-            } catch (_: IllegalArgumentException) {
-                Strength.WEAK
-            }
+            val ord = state.getInt("strength", 0)
+            val savedStrength = Strength.values().getOrNull(ord) ?: Strength.WEAK
             editText.removeTextChangedListener(textWatcher)
             isPasswordVisible = savedVisible
             if (isPasswordVisible) {
@@ -283,6 +284,7 @@ class AwPasswordInputView @JvmOverloads constructor(
             lastStrength = savedStrength
             strengthBarView.currentStrength = savedStrength
             toggleButton.setImageDrawable(getEyeDrawable(isPasswordVisible))
+            editText.addTextChangedListener(textWatcher)
         } else {
             super.onRestoreInstanceState(state)
         }

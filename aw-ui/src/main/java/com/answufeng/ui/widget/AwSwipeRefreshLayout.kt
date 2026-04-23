@@ -15,6 +15,8 @@ import com.google.android.material.color.MaterialColors
  * ### 与 AwLoadMoreAdapter
  * 下拉刷新与加载更多可同时使用：刷新重置页码并 [androidx.recyclerview.widget.ListAdapter.submitList]，
  * 加载更多在底部回调中追加数据；注意避免两次操作并发修改同一数据源。
+ *
+ * 结束刷新的便捷写法见 [setOnRefreshWithStop]。
  */
 class AwSwipeRefreshLayout @JvmOverloads constructor(
     context: Context,

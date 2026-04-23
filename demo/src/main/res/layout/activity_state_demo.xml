@@ -74,6 +74,14 @@
                     android:text="错误" />
             </LinearLayout>
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTransition"
+                style="@style/MaterialButton.AwUi.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/state_demo_transition_boot" />
+
             <com.answufeng.ui.statelayout.AwStateLayout
                 android:id="@+id/stateLayout"
                 android:layout_width="match_parent"
