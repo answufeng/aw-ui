@@ -42,9 +42,6 @@
             android:name=".StateDemoActivity"
             android:exported="false" />
         <activity
-            android:name=".BannerDemoActivity"
-            android:exported="false" />
-        <activity
             android:name=".SwipeRefreshListDemoActivity"
             android:exported="false" />
         <activity
