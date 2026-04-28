@@ -8,11 +8,13 @@
     android:orientation="vertical">
 
     <com.answufeng.ui.widget.AwTitleBar
-        android:id="@+id/top_bar"
+        android:id="@+id/demo_titlebar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:titleBar_bgColor="@color/white"
+        app:titleBar_iconTint="@color/text_primary"
         app:titleBar_showDivider="true"
-        app:titleBar_title="AwBannerView Demo" />
+        app:titleBar_title="订单中心" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,28 +22,34 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <com.answufeng.ui.widget.AwBannerView
-            android:id="@+id/demo_banner"
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            app:banner_autoStart="true"
-            app:banner_infiniteLoop="true"
-            app:banner_showIndicators="true" />
+            android:layout_height="wrap_content"
+            android:text="演示点：副标题显隐、右侧文字/图标切换、标题栏高度变化。"
+            android:textColor="@color/text_secondary" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_toggle_auto"
+            android:id="@+id/btn_toggle_subtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="开始 / 停止自动轮播" />
+            android:text="切换副标题" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_jump_third"
+            android:id="@+id/btn_toggle_action"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="跳到第 3 页" />
+            android:text="切换右侧动作" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_toggle_height"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="切换标题栏高度" />
     </LinearLayout>
 
 </LinearLayout>

@@ -40,6 +40,36 @@ class MainActivity : AppCompatActivity() {
     private fun setupList() {
         allEntries = listOf(
             DemoEntry(
+                title = "AwBottomTabBar演示",
+                desc = "一页快速体验AwBottomTabBar",
+                activity = AwBottomTabBarDemoActivity::class.java
+            ),
+            DemoEntry(
+                title = "轮播 Banner",
+                desc = "演示 AwBannerView（自动滚动、指示器、点击回调）",
+                activity = BannerDemoActivity::class.java
+            ),
+            DemoEntry(
+                title = "AwTitleBar演示",
+                desc = "一页快速体验 AwTitleBar",
+                activity = TitleBarDemoActivity::class.java
+            ),
+            DemoEntry(
+                title = "AwBadgeView 演示",
+                desc = "一页快速体验 AwBadgeView",
+                activity = BadgeDemoActivity::class.java
+            ),
+            DemoEntry(
+                title = "AwCircleProgressBar 演示",
+                desc = "一页快速体验 AwCircleProgressBar",
+                activity = CircleProgressDemoActivity::class.java
+            ),
+            DemoEntry(
+                title = "AwLoadingView 演示",
+                desc = "一页快速体验 AwLoadingView",
+                activity = LoadingDemoActivity::class.java
+            ),
+            DemoEntry(
                 title = "组件总览",
                 desc = "一页快速体验常用控件与交互（输入、进度、Dialog、布局等）",
                 activity = ShowcaseActivity::class.java
@@ -53,11 +83,6 @@ class MainActivity : AppCompatActivity() {
                 title = "下拉刷新 + 列表",
                 desc = "AwSwipeRefreshLayout + AwLoadMoreAdapter + setOnRefreshWithStop（上拉分页与下拉回第一页）",
                 activity = SwipeRefreshListDemoActivity::class.java
-            ),
-            DemoEntry(
-                title = "轮播 Banner",
-                desc = "演示 AwBannerView（自动滚动、指示器、点击回调）",
-                activity = BannerDemoActivity::class.java
             ),
             DemoEntry(
                 title = "分段控制 Segmented",
@@ -80,7 +105,10 @@ class MainActivity : AppCompatActivity() {
             }
             adapter.submitList(
                 allEntries.filter {
-                    it.title.contains(q, ignoreCase = true) || it.desc.contains(q, ignoreCase = true)
+                    it.title.contains(q, ignoreCase = true) || it.desc.contains(
+                        q,
+                        ignoreCase = true
+                    )
                 }
             )
         }

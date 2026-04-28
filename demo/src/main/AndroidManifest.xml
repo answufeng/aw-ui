@@ -15,6 +15,27 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".AwBottomTabBarDemoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ViewPagerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".TitleBarDemoActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".BadgeDemoActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".BannerDemoActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".CircleProgressDemoActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".LoadingDemoActivity"
+            android:exported="false"/>
+        <activity
             android:name=".ShowcaseActivity"
             android:exported="false" />
         <activity

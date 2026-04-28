@@ -12,36 +12,39 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:titleBar_showDivider="true"
-        app:titleBar_title="AwBannerView Demo" />
+        app:titleBar_title="AwCircleProgressBar Demo" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="24dp">
 
-        <com.answufeng.ui.widget.AwBannerView
-            android:id="@+id/demo_banner"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            app:banner_autoStart="true"
-            app:banner_infiniteLoop="true"
-            app:banner_showIndicators="true" />
+        <com.answufeng.ui.widget.AwCircleProgressBar
+            android:id="@+id/demo_progress"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            app:circleProgress_progress="32"
+            app:circleProgress_progressColor="#FF6B3D"
+            app:circleProgress_showText="true"
+            app:circleProgress_strokeWidth="10dp"
+            app:circleProgress_textColor="@color/text_primary" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_toggle_auto"
+            android:id="@+id/btn_increase"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="开始 / 停止自动轮播" />
+            android:layout_marginTop="24dp"
+            android:text="增加进度" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_jump_third"
+            android:id="@+id/btn_reset"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="跳到第 3 页" />
+            android:text="重置为 0" />
     </LinearLayout>
 
 </LinearLayout>

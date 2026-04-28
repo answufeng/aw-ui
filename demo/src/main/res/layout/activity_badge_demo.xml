@@ -12,36 +12,46 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:titleBar_showDivider="true"
-        app:titleBar_title="AwBannerView Demo" />
+        app:titleBar_title="AwBadgeView Demo" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="24dp">
 
-        <com.answufeng.ui.widget.AwBannerView
-            android:id="@+id/demo_banner"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            app:banner_autoStart="true"
-            app:banner_infiniteLoop="true"
-            app:banner_showIndicators="true" />
+        <FrameLayout
+            android:layout_width="96dp"
+            android:layout_height="96dp">
+
+            <ImageView
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_message" />
+
+            <com.answufeng.ui.widget.AwBadgeView
+                android:id="@+id/demo_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|top"
+                app:badge_count="0" />
+        </FrameLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_toggle_auto"
+            android:id="@+id/btn_next_state"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="开始 / 停止自动轮播" />
+            android:text="切换角标状态" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_jump_third"
+            android:id="@+id/btn_clear"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="跳到第 3 页" />
+            android:text="清空角标" />
     </LinearLayout>
 
 </LinearLayout>

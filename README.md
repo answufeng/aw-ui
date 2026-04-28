@@ -94,15 +94,24 @@ stateLayout.showContent()
 
 按场景分组；具体 API 以源码 **KDoc** 为准（此处仅作索引）。
 
+### 组件文档（精选四个常用 + 两个基础）
+
+- [`AwTitleBar`](aw-ui/doc/AwTitleBar.md)
+- [`AwBannerView`](aw-ui/doc/AwBannerView.md)
+- [`AwBottomTabBar`](aw-ui/doc/AwBottomTabBar.md)
+- [`AwCircleProgressBar`](aw-ui/doc/AwCircleProgressBar.md)
+- [`AwLoadingView`](aw-ui/doc/AwLoadingView.md)
+- [`AwBadgeView`](aw-ui/doc/AwBadgeView.md)
+
 | 分类 | 组件 |
 |------|------|
-| 状态与布局 | `AwStateLayout`、`AwTitleBar`、`AwFlowLayout`、`AwSearchView`、`AwTagView` |
+| 状态与布局 | `AwStateLayout`、[`AwTitleBar`](aw-ui/doc/AwTitleBar.md)、`AwFlowLayout`、`AwSearchView`、`AwTagView` |
 | 列表与刷新 | `AwSimpleAdapter`、`AwMultiTypeAdapter`、`AwLoadMoreAdapter`、`AwSwipeRefreshLayout`、`AwDividerDecoration`、`AwItemAnimator` |
 | 输入与表单 | `AwSmartEditText`、`AwCodeInputView`、`AwPasswordInputView`、`AwFormValidator` |
-| 分段与底栏 | `AwSegmentedControl`、`AwBottomTabBar` |
+| 分段与底栏 | `AwSegmentedControl`、[`AwBottomTabBar`](aw-ui/doc/AwBottomTabBar.md) |
 | 弹窗与提示 | `AwDialog`、`LoadingDialog`、`AwActionSheetDialog`、`AwBottomSheet`、`AwTooltipView` |
-| 进度与加载 | `AwCircleProgressBar`、`AwSkeletonView`、`AwCountDownView`、`AwLoadingView` 等 |
-| 视觉与动效 | `AwBannerView`、`AwRoundImageView`、`AwRoundLayout`、`AwExpandableLayout`、`AwBadgeView`、`Anim` |
+| 进度与加载 | [`AwCircleProgressBar`](aw-ui/doc/AwCircleProgressBar.md)、`AwSkeletonView`、`AwCountDownView`、[`AwLoadingView`](aw-ui/doc/AwLoadingView.md) 等 |
+| 视觉与动效 | [`AwBannerView`](aw-ui/doc/AwBannerView.md)、`AwRoundImageView`、`AwRoundLayout`、`AwExpandableLayout`、[`AwBadgeView`](aw-ui/doc/AwBadgeView.md)、`Anim` |
 | 其他 | `AwMarqueeTextView`、`AwSwitchButton`、`ViewBindingDelegate`、`DimenExt`、`DiffCallbacks` |
 
 ---

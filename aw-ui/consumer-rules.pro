@@ -108,7 +108,7 @@
     public void showError(...);
 }
 
--keepclassmembers class com.answufeng.ui.titlebar.AwTitleBar {
+-keepclassmembers class com.answufeng.ui.widget.AwTitleBar {
     public void setOnBackClickListener(...);
     public void setRightText(...);
     public void setRightIcon(...);

@@ -6,245 +6,195 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.View
 import com.answufeng.ui.R
 import kotlin.math.min
 
-/**
- * 圆形进度条，支持动画进度和可选的中心百分比文字。
- *
- * 绘制一个背景圆环和一个表示当前进度的前景弧线。
- * 进度变化默认使用 [ValueAnimator] 进行动画过渡。
- *
- * ### XML 使用
- * ```xml
- * <com.answufeng.ui.widget.AwCircleProgressBar
- *     android:layout_width="120dp"
- *     android:layout_height="120dp"
- *     app:circleProgress_progress="65"
- *     app:circleProgress_max="100"
- *     app:circleProgress_strokeWidth="8dp"
- *     app:circleProgress_progressColor="#4CAF50"
- *     app:circleProgress_bgColor="#E0E0E0"
- *     app:circleProgress_showText="true" />
- * ```
- *
- * ### 代码使用
- * ```kotlin
- * circleProgressBar.progress = 75f
- * circleProgressBar.progressWithAnimation = 75f
- * ```
- *
- * @property progress 当前进度值（0 到 [max]），默认 0。
- * @property max 最大进度值，默认 100。
- * @property strokeWidth 圆环描边宽度（像素）。
- * @property progressColor 进度弧线颜色。
- * @property bgColor 背景圆环颜色。
- * @property showText 是否在中心显示百分比文字。
- * @property textColor 中心文字颜色。
- * @property textSize 中心文字大小（像素）。
- *
- * | XML 属性 | 描述 | 默认值 |
- * |---|---|---|
- * | `circleProgress_progress` | 初始进度 | 0 |
- * | `circleProgress_max` | 最大值 | 100 |
- * | `circleProgress_strokeWidth` | 圆环描边宽度 | 8dp |
- * | `circleProgress_progressColor` | 弧线颜色 | #4CAF50 |
- * | `circleProgress_bgColor` | 背景圆环颜色 | #E0E0E0 |
- * | `circleProgress_showText` | 显示百分比文字 | true |
- */
 class AwCircleProgressBar @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private val bgPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    private val rectF = RectF()
+    private val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
         strokeCap = Paint.Cap.ROUND
     }
-
     private val progressPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
         strokeCap = Paint.Cap.ROUND
     }
-
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         textAlign = Paint.Align.CENTER
     }
 
-    private val rectF = RectF()
+    private var animator: ValueAnimator? = null
 
-    /**
-     * 最大进度值。
-     */
     var max: Float = 100f
         set(value) {
-            field = value.coerceAtLeast(0f)
+            field = value.coerceAtLeast(1f)
+            progress = progress.coerceIn(0f, field)
             invalidate()
         }
 
-    /**
-     * 当前进度值（0 到 [max]）。
-     */
     var progress: Float = 0f
         set(value) {
             field = value.coerceIn(0f, max)
             invalidate()
         }
 
-    /**
-     * 圆环描边宽度（像素）。
-     */
-    var strokeWidth: Float
-        get() = bgPaint.strokeWidth
+    var strokeWidthPx: Float = 8f.dp()
         set(value) {
-            bgPaint.strokeWidth = value
-            progressPaint.strokeWidth = value
+            field = value.coerceAtLeast(1f.dp())
+            backgroundPaint.strokeWidth = field
+            progressPaint.strokeWidth = field
+            requestLayout()
             invalidate()
         }
 
-    /**
-     * 进度弧线颜色。
-     */
-    var progressColor: Int
-        get() = progressPaint.color
+    var progressColor: Int = Color.parseColor("#4CAF50")
         set(value) {
+            field = value
             progressPaint.color = value
             invalidate()
         }
 
-    /**
-     * 背景圆环颜色。
-     */
-    var bgColor: Int
-        get() = bgPaint.color
+    var trackColor: Int = Color.parseColor("#E0E0E0")
         set(value) {
-            bgPaint.color = value
+            field = value
+            backgroundPaint.color = value
             invalidate()
         }
 
-    /**
-     * 是否在中心显示百分比文字。
-     */
     var showText: Boolean = true
         set(value) {
             field = value
             invalidate()
         }
 
-    /**
-     * 中心文字颜色。
-     */
-    var textColor: Int
-        get() = textPaint.color
+    var textColor: Int = Color.DKGRAY
         set(value) {
+            field = value
             textPaint.color = value
             invalidate()
         }
 
-    /**
-     * 中心文字大小（像素）。
-     */
-    var textSize: Float
-        get() = textPaint.textSize
+    var textSizePx: Float = 14f.sp()
         set(value) {
-            textPaint.textSize = value
+            field = value.coerceAtLeast(8f.sp())
+            textPaint.textSize = field
             invalidate()
         }
 
-    private var animator: ValueAnimator? = null
+    var startAngle: Float = -90f
+        set(value) {
+            field = value
+            invalidate()
+        }
+
+    var progressSuffix: String = "%"
+        set(value) {
+            field = value
+            invalidate()
+        }
 
     init {
-        val density = resources.displayMetrics.density
         val ta = context.obtainStyledAttributes(attrs, R.styleable.AwCircleProgressBar)
-        progress = ta.getFloat(R.styleable.AwCircleProgressBar_circleProgress_progress, 0f)
         max = ta.getFloat(R.styleable.AwCircleProgressBar_circleProgress_max, 100f)
-        val defaultStroke = 8f * density
-        strokeWidth = ta.getDimension(R.styleable.AwCircleProgressBar_circleProgress_strokeWidth, defaultStroke)
+        progress = ta.getFloat(R.styleable.AwCircleProgressBar_circleProgress_progress, 0f)
+        strokeWidthPx = ta.getDimension(R.styleable.AwCircleProgressBar_circleProgress_strokeWidth, 8f.dp())
         progressColor = ta.getColor(R.styleable.AwCircleProgressBar_circleProgress_progressColor, Color.parseColor("#4CAF50"))
-        bgColor = ta.getColor(R.styleable.AwCircleProgressBar_circleProgress_bgColor, Color.parseColor("#E0E0E0"))
+        trackColor = ta.getColor(R.styleable.AwCircleProgressBar_circleProgress_bgColor, Color.parseColor("#E0E0E0"))
         showText = ta.getBoolean(R.styleable.AwCircleProgressBar_circleProgress_showText, true)
+        textColor = ta.getColor(R.styleable.AwCircleProgressBar_circleProgress_textColor, Color.DKGRAY)
+        textSizePx = ta.getDimension(R.styleable.AwCircleProgressBar_circleProgress_textSize, 14f.sp())
+        startAngle = ta.getFloat(R.styleable.AwCircleProgressBar_circleProgress_startAngle, -90f)
+        progressSuffix = ta.getString(R.styleable.AwCircleProgressBar_circleProgress_suffix) ?: "%"
         ta.recycle()
-
-        textPaint.color = Color.DKGRAY
-        textPaint.textSize = 14f * density
     }
 
-    /**
-     * 以动画方式设置 [progress]。
-     *
-     * @param target 目标进度值。
-     * @param duration 动画时长（毫秒），默认 800。
-     */
-    fun setProgressWithAnimation(target: Float, duration: Long = 800) {
+    fun setProgressWithAnimation(target: Float, duration: Long = 800L) {
         animator?.cancel()
         animator = ValueAnimator.ofFloat(progress, target.coerceIn(0f, max)).apply {
             this.duration = duration
-            addUpdateListener { animation ->
-                progress = animation.animatedValue as Float
-            }
+            addUpdateListener { progress = it.animatedValue as Float }
             start()
         }
     }
 
+    fun setProgressAndMax(progress: Float, max: Float) {
+        this.max = max
+        this.progress = progress
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val desired = (strokeWidth * 2 + 40 * resources.displayMetrics.density).toInt()
-        val w = resolveSize(desired, widthMeasureSpec)
-        val h = resolveSize(desired, heightMeasureSpec)
-        val size = min(w, h)
+        val desired = (strokeWidthPx * 2 + 96f.dp()).toInt()
+        val resolvedWidth = resolveSize(desired, widthMeasureSpec)
+        val resolvedHeight = resolveSize(desired, heightMeasureSpec)
+        val size = min(resolvedWidth, resolvedHeight)
         setMeasuredDimension(size, size)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        val halfStroke = strokeWidth / 2f
+        val halfStroke = strokeWidthPx / 2f
         rectF.set(halfStroke, halfStroke, width - halfStroke, height - halfStroke)
 
-        canvas.drawArc(rectF, 0f, 360f, false, bgPaint)
+        canvas.drawArc(rectF, 0f, 360f, false, backgroundPaint)
 
-        val sweepAngle = if (max > 0f) (progress / max) * 360f else 0f
+        val sweepAngle = (progress / max) * 360f
         if (sweepAngle > 0f) {
-            canvas.drawArc(rectF, -90f, sweepAngle, false, progressPaint)
+            canvas.drawArc(rectF, startAngle, sweepAngle, false, progressPaint)
         }
 
-        if (showText && max > 0f) {
-            val percent = (progress / max * 100).toInt()
-            val text = "$percent%"
-            val y = height / 2f - (textPaint.descent() + textPaint.ascent()) / 2f
-            canvas.drawText(text, width / 2f, y, textPaint)
+        if (showText) {
+            val text = "${((progress / max) * 100).toInt()}$progressSuffix"
+            val baseline = height / 2f - (textPaint.descent() + textPaint.ascent()) / 2f
+            canvas.drawText(text, width / 2f, baseline, textPaint)
         }
     }
 
     override fun onSaveInstanceState(): Parcelable {
         return Bundle().apply {
-            putParcelable("superState", super.onSaveInstanceState())
-            putFloat("progress", progress)
-            putFloat("max", max)
+            putParcelable(KEY_SUPER_STATE, super.onSaveInstanceState())
+            putFloat(KEY_PROGRESS, progress)
+            putFloat(KEY_MAX, max)
         }
     }
 
     override fun onRestoreInstanceState(state: Parcelable?) {
-        if (state is Bundle) {
-            val superState: Parcelable? = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                state.getParcelable("superState", Parcelable::class.java)
-            } else {
-                @Suppress("DEPRECATION")
-                state.getParcelable("superState")
-            }
-            super.onRestoreInstanceState(superState)
-            progress = state.getFloat("progress", 0f)
-            max = state.getFloat("max", 100f)
-        } else {
+        if (state !is Bundle) {
             super.onRestoreInstanceState(state)
+            return
         }
+        val superState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            state.getParcelable(KEY_SUPER_STATE, Parcelable::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            state.getParcelable(KEY_SUPER_STATE)
+        }
+        super.onRestoreInstanceState(superState)
+        max = state.getFloat(KEY_MAX, 100f)
+        progress = state.getFloat(KEY_PROGRESS, 0f)
     }
 
     override fun onDetachedFromWindow() {
         animator?.cancel()
         super.onDetachedFromWindow()
+    }
+
+    private fun Float.dp(): Float = this * resources.displayMetrics.density
+    private fun Float.sp(): Float = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, this, resources.displayMetrics)
+
+    companion object {
+        private const val KEY_SUPER_STATE = "superState"
+        private const val KEY_PROGRESS = "progress"
+        private const val KEY_MAX = "max"
     }
 }

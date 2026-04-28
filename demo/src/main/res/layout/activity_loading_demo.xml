@@ -12,36 +12,37 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:titleBar_showDivider="true"
-        app:titleBar_title="AwBannerView Demo" />
+        app:titleBar_title="AwLoadingView Demo" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="24dp">
 
-        <com.answufeng.ui.widget.AwBannerView
-            android:id="@+id/demo_banner"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            app:banner_autoStart="true"
-            app:banner_infiniteLoop="true"
-            app:banner_showIndicators="true" />
+        <com.answufeng.ui.widget.AwLoadingView
+            android:id="@+id/demo_loading"
+            android:layout_width="160dp"
+            android:layout_height="72dp"
+            app:loading_size="48dp"
+            app:loading_style="circular"
+            app:loading_tint="#FF6B3D" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_toggle_auto"
+            android:id="@+id/btn_switch_style"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="开始 / 停止自动轮播" />
+            android:layout_marginTop="24dp"
+            android:text="切换样式" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_jump_third"
+            android:id="@+id/btn_toggle_animation"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="跳到第 3 页" />
+            android:text="开始 / 停止动画" />
     </LinearLayout>
 
 </LinearLayout>

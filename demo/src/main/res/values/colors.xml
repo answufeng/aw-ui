@@ -22,4 +22,23 @@
 
     <color name="card_background">#FFFFFF</color>
     <color name="card_border">#E2E8F0</color>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Background Colors -->
+    <color name="background_light">#F5F5F5</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#333333</color>
+    <color name="text_secondary">#666666</color>
+    <color name="text_hint">#999999</color>
+
+
+    <!-- Material Design Colors -->
+    <color name="primary_color">#FF5722</color>
+    <color name="primary_dark_color">#E64A19</color>
+    <color name="accent_color">#FF9800</color>
+
+
 </resources>

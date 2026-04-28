@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="tab_selected_default">#FF3B82</color>
+
+    <!-- Tab Bar Colors -->
+    <color name="tab_selected_default">#FF5722</color>
     <color name="tab_normal_default">#999999</color>
-    <color name="tab_badge_default">#FF3B82</color>
+    <color name="tab_badge_default">#FF0000</color>
+
 </resources>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light"
+    android:orientation="vertical"
+    tools:context=".ViewPagerActivity">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:elevation="2dp"
+        app:title="ViewPager 联动"
+        app:titleCentered="true"
+        app:titleTextAppearance="@style/ToolbarTitleStyle" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:strokeColor="#E8EAF1"
+        app:strokeWidth="1dp">
+
+        <TextView
+            android:id="@+id/tv_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="左右滑动页面，观察底部指示器和选中状态同步。"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:layout_weight="1" />
+
+    <com.answufeng.ui.widget.AwBottomTabBar
+        android:id="@+id/tabBar"
+        android:layout_width="match_parent"
+        android:layout_height="68dp"
+        app:background_color="@color/white"
+        app:enable_ripple="true"
+        app:indicator_color="#FF6B3D"
+        app:indicator_corner_radius="2dp"
+        app:indicator_height="3dp"
+        app:indicator_style="line"
+        app:indicator_width_mode="follow_text"
+        app:tab_auto_tint="true"
+        app:tab_icon_size="24dp"
+        app:tab_layout_mode="scrollable"
+        app:tab_min_width="72dp"
+        app:tab_normal_color="#7A7F8F"
+        app:tab_selected_color="#FF6B3D"
+        app:tab_selected_scale="1.08"
+        app:tab_text_size="12sp"
+        app:tabbar_elevation="10dp" />
+
+</LinearLayout>
