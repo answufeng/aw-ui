@@ -10,11 +10,11 @@ import android.view.Gravity
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import com.answufeng.ui.R
+import androidx.core.content.ContextCompat
 import com.google.android.material.color.MaterialColors
 
 /**
@@ -42,7 +42,6 @@ import com.google.android.material.color.MaterialColors
  * @property onCancel 按下取消按钮时的回调
  */
 class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSheetDialog) {
-
     /** 操作表顶部显示的可选标题 */
     var title: String? = null
 
@@ -64,25 +63,42 @@ class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSh
     private val density = context.resources.displayMetrics.density
 
     private val surfaceColor: Int by lazy {
-        MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurface, Color.WHITE)
+        try {
+            MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurface, Color.WHITE)
+        } catch (_: Exception) {
+            Color.WHITE
+        }
     }
     private val onSurfaceColor: Int by lazy {
-        MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurface, Color.BLACK)
+        try {
+            MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurface, Color.BLACK)
+        } catch (_: Exception) {
+            Color.BLACK
+        }
     }
     private val secondaryColor: Int by lazy {
-        MaterialColors.getColor(context, android.R.attr.textColorSecondary, Color.parseColor("#8E8E93"))
+        try {
+            MaterialColors.getColor(context, android.R.attr.textColorSecondary, ContextCompat.getColor(context, R.color.aw_color_action_sheet_secondary))
+        } catch (_: Exception) {
+            ContextCompat.getColor(context, R.color.aw_color_action_sheet_secondary)
+        }
     }
     private val primaryColor: Int by lazy {
-        MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimary, Color.parseColor("#007AFF"))
+        try {
+            MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimary, ContextCompat.getColor(context, R.color.aw_color_action_sheet_primary))
+        } catch (_: Exception) {
+            ContextCompat.getColor(context, R.color.aw_color_action_sheet_primary)
+        }
     }
     private val separatorColor: Int by lazy {
         val ta = context.obtainStyledAttributes(intArrayOf(android.R.attr.listDivider))
-        val color = try {
-            (ta.getDrawable(0) as? android.graphics.drawable.ColorDrawable)?.color
-                ?: Color.parseColor("#C6C6C8")
-        } finally {
-            ta.recycle()
-        }
+        val color =
+            try {
+                (ta.getDrawable(0) as? android.graphics.drawable.ColorDrawable)?.color
+                    ?: ContextCompat.getColor(context, R.color.aw_color_action_sheet_separator)
+            } finally {
+                ta.recycle()
+            }
         color
     }
 
@@ -90,22 +106,25 @@ class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSh
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
 
-        val container = ScrollView(context).apply {
-            isFillViewport = true
-            setBackgroundColor(Color.TRANSPARENT)
-        }
+        val container =
+            ScrollView(context).apply {
+                isFillViewport = true
+                setBackgroundColor(Color.TRANSPARENT)
+            }
 
-        val rootLayout = LinearLayout(context).apply {
-            orientation = LinearLayout.VERTICAL
-            gravity = Gravity.BOTTOM
-            val pad = (12 * density).toInt()
-            setPadding(pad, pad, pad, pad)
-        }
+        val rootLayout =
+            LinearLayout(context).apply {
+                orientation = LinearLayout.VERTICAL
+                gravity = Gravity.BOTTOM
+                val pad = (12 * density).toInt()
+                setPadding(pad, pad, pad, pad)
+            }
 
-        val sheetLayout = LinearLayout(context).apply {
-            orientation = LinearLayout.VERTICAL
-            background = createRoundedBackground(12f * density, surfaceColor)
-        }
+        val sheetLayout =
+            LinearLayout(context).apply {
+                orientation = LinearLayout.VERTICAL
+                background = createRoundedBackground(12f * density, surfaceColor)
+            }
 
         title?.let {
             sheetLayout.addView(createTitleView(it))
@@ -122,17 +141,19 @@ class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSh
         rootLayout.addView(sheetLayout)
 
         val cancelView = createCancelView(cancelText)
-        val cancelLayout = LinearLayout(context).apply {
-            orientation = LinearLayout.VERTICAL
-            val margin = (8 * density).toInt()
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                topMargin = margin
+        val cancelLayout =
+            LinearLayout(context).apply {
+                orientation = LinearLayout.VERTICAL
+                val margin = (8 * density).toInt()
+                layoutParams =
+                    LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                    ).apply {
+                        topMargin = margin
+                    }
+                addView(cancelView)
             }
-            addView(cancelView)
-        }
         rootLayout.addView(cancelLayout)
 
         container.addView(rootLayout)
@@ -224,27 +245,32 @@ class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSh
             val padV = (14 * density).toInt()
             val padH = (16 * density).toInt()
             setPadding(padH, padV, padH, padV)
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            )
+            layoutParams =
+                LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                )
         }
     }
 
-    private fun createItemView(label: String, index: Int): TextView {
+    private fun createItemView(
+        label: String,
+        index: Int,
+    ): TextView {
         val isDestructive = index == destructiveIndex
         return TextView(context).apply {
             text = label
-            setTextColor(if (isDestructive) Color.parseColor("#FF3B30") else primaryColor)
+            setTextColor(if (isDestructive) ContextCompat.getColor(context, R.color.aw_color_action_sheet_destructive) else primaryColor)
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
             gravity = Gravity.CENTER
             val padV = (14 * density).toInt()
             val padH = (16 * density).toInt()
             setPadding(padH, padV, padH, padV)
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            )
+            layoutParams =
+                LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                )
             setOnClickListener {
                 onSelect?.invoke(index)
                 dismiss()
@@ -262,10 +288,11 @@ class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSh
             val padH = (16 * density).toInt()
             setPadding(padH, padV, padH, padV)
             background = createRoundedBackground(12f * density, surfaceColor)
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            )
+            layoutParams =
+                LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                )
             setOnClickListener {
                 onCancel?.invoke()
                 dismiss()
@@ -276,14 +303,18 @@ class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSh
     private fun createSeparator(): View {
         return View(context).apply {
             setBackgroundColor(separatorColor)
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                (0.5 * density).toInt()
-            )
+            layoutParams =
+                LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    (0.5 * density).toInt(),
+                )
         }
     }
 
-    private fun createRoundedBackground(radius: Float, color: Int): GradientDrawable {
+    private fun createRoundedBackground(
+        radius: Float,
+        color: Int,
+    ): GradientDrawable {
         return GradientDrawable().apply {
             this.cornerRadius = radius
             setColor(color)

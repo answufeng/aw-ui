@@ -22,11 +22,11 @@ dependencyResolutionManagement {
 
 // app/build.gradle.kts
 dependencies {
-    implementation("com.github.answufeng:aw-ui:1.0.2")
+    implementation("com.github.answufeng:aw-ui:1.0.3")
 }
 ```
 
-`implementation` 中的 **版本号与 Git / JitPack 的 tag 一致**（上例为 `1.0.2`）。
+`implementation` 中的 **版本号与 Git / JitPack 的 tag 一致**（上例为 `1.0.3`）。
 
 ### 2) 打开 ViewBinding（推荐）
 
@@ -94,25 +94,38 @@ stateLayout.showContent()
 
 按场景分组；具体 API 以源码 **KDoc** 为准（此处仅作索引）。
 
-### 组件文档（精选四个常用 + 两个基础）
+### 组件文档
 
-- [`AwTitleBar`](aw-ui/doc/AwTitleBar.md)
-- [`AwBannerView`](aw-ui/doc/AwBannerView.md)
-- [`AwBottomTabBar`](aw-ui/doc/AwBottomTabBar.md)
-- [`AwCircleProgressBar`](aw-ui/doc/AwCircleProgressBar.md)
-- [`AwLoadingView`](aw-ui/doc/AwLoadingView.md)
-- [`AwBadgeView`](aw-ui/doc/AwBadgeView.md)
+| 分类 | 组件 | 文档 |
+|------|------|------|
+| 标题栏 | `AwTitleBar` | [文档](aw-ui/doc/AwTitleBar.md) |
+| 搜索栏 | `AwSearchView` | [文档](aw-ui/doc/AwSearchView.md) |
+| 底部导航 | `AwBottomTabBar` | [文档](aw-ui/doc/AwBottomTabBar.md) |
+| 分段控制 | `AwSegmentedControl` | [文档](aw-ui/doc/AwSegmentedControl.md) |
+| 标签选择 | `AwTagView` | [文档](aw-ui/doc/AwTagView.md) |
+| 流式布局 | `AwFlowLayout` | [文档](aw-ui/doc/AwFlowLayout.md) |
+| 轮播图 | `AwBannerView` | [文档](aw-ui/doc/AwBannerView.md) |
+| 角标 | `AwBadgeView` | [文档](aw-ui/doc/AwBadgeView.md) |
+| 开关按钮 | `AwSwitchButton` | [文档](aw-ui/doc/AwSwitchButton.md) |
+| 骨架屏 | `AwSkeletonView` | [文档](aw-ui/doc/AwSkeletonView.md) |
+| 圆形进度 | `AwCircleProgressBar` | [文档](aw-ui/doc/AwCircleProgressBar.md) |
+| 加载指示 | `AwLoadingView` | [文档](aw-ui/doc/AwLoadingView.md) |
+| 圆角图片 | `AwRoundImageView` | [文档](aw-ui/doc/AwRoundImageView.md) |
+| 圆角容器 | `AwRoundLayout` | [文档](aw-ui/doc/AwRoundLayout.md) |
+| 展开/收起 | `AwExpandableLayout` | [文档](aw-ui/doc/AwExpandableLayout.md) |
+| 跑马灯 | `AwMarqueeTextView` | [文档](aw-ui/doc/AwMarqueeTextView.md) |
+| 验证码输入 | `AwCodeInputView` | [文档](aw-ui/doc/AwCodeInputView.md) |
+| 倒计时 | `AwCountDownView` | [文档](aw-ui/doc/AwCountDownView.md) |
+| 下拉刷新 | `AwSwipeRefreshLayout` | [文档](aw-ui/doc/AwSwipeRefreshLayout.md) |
+
+### 其他模块
 
 | 分类 | 组件 |
 |------|------|
-| 状态与布局 | `AwStateLayout`、[`AwTitleBar`](aw-ui/doc/AwTitleBar.md)、`AwFlowLayout`、`AwSearchView`、`AwTagView` |
-| 列表与刷新 | `AwSimpleAdapter`、`AwMultiTypeAdapter`、`AwLoadMoreAdapter`、`AwSwipeRefreshLayout`、`AwDividerDecoration`、`AwItemAnimator` |
-| 输入与表单 | `AwSmartEditText`、`AwCodeInputView`、`AwPasswordInputView`、`AwFormValidator` |
-| 分段与底栏 | `AwSegmentedControl`、[`AwBottomTabBar`](aw-ui/doc/AwBottomTabBar.md) |
-| 弹窗与提示 | `AwDialog`、`LoadingDialog`、`AwActionSheetDialog`、`AwBottomSheet`、`AwTooltipView` |
-| 进度与加载 | [`AwCircleProgressBar`](aw-ui/doc/AwCircleProgressBar.md)、`AwSkeletonView`、`AwCountDownView`、[`AwLoadingView`](aw-ui/doc/AwLoadingView.md) 等 |
-| 视觉与动效 | [`AwBannerView`](aw-ui/doc/AwBannerView.md)、`AwRoundImageView`、`AwRoundLayout`、`AwExpandableLayout`、[`AwBadgeView`](aw-ui/doc/AwBadgeView.md)、`Anim` |
-| 其他 | `AwMarqueeTextView`、`AwSwitchButton`、`ViewBindingDelegate`、`DimenExt`、`DiffCallbacks` |
+| 状态与布局 | `AwStateLayout` |
+| 列表与刷新 | `AwSimpleAdapter`、`AwMultiTypeAdapter`、`AwLoadMoreAdapter`、`AwDividerDecoration`、`AwItemAnimator` |
+| 弹窗与提示 | `AwDialog`、`LoadingDialog`、`AwActionSheetDialog` |
+| 工具 | `AwFormValidator`、`ViewBindingDelegate`、`DimenExt`、`DiffCallbacks`、`Anim` |
 
 ---
 
@@ -150,19 +163,17 @@ stateLayout.showError { retry() }
 </details>
 
 <details>
-<summary><strong>SwipeRefresh + stopRefreshing</strong></summary>
+<summary><strong>SwipeRefresh</strong></summary>
 
 ```kotlin
-import com.answufeng.ui.widget.setOnRefreshWithStop
-
-swipeRefresh.setOnRefreshWithStop { stopRefreshing ->
-    loadData { stopRefreshing() }
+swipeRefresh.refreshListener = {
+    loadData {
+        swipeRefresh.finishRefresh()
+    }
 }
 ```
 
 </details>
-
-与 `AwLoadMoreAdapter` 同页时注意与「下拉刷新中刷新首屏」的竞态，见 demo `SwipeRefreshListDemoActivity`。
 
 <details>
 <summary><strong>ViewBinding / 尺寸</strong></summary>

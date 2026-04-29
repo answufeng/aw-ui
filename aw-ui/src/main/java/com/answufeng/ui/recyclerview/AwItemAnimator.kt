@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView
  * 使用方式：`recyclerView.itemAnimator = AwItemAnimator()`
  */
 class AwItemAnimator : DefaultItemAnimator() {
-
     private val pendingAnimations = mutableListOf<RecyclerView.ViewHolder>()
     private val runningAnimations = mutableListOf<RecyclerView.ViewHolder>()
 
@@ -38,21 +37,23 @@ class AwItemAnimator : DefaultItemAnimator() {
         animatorSet.duration = getRemoveDuration()
         animatorSet.interpolator = DecelerateInterpolator()
 
-        animatorSet.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationStart(animation: Animator) {
-                runningAnimations.add(holder)
-            }
+        animatorSet.addListener(
+            object : AnimatorListenerAdapter() {
+                override fun onAnimationStart(animation: Animator) {
+                    runningAnimations.add(holder)
+                }
 
-            override fun onAnimationEnd(animation: Animator) {
-                animatorSet.removeAllListeners()
-                runningAnimations.remove(holder)
-                dispatchRemoveFinished(holder)
-            }
+                override fun onAnimationEnd(animation: Animator) {
+                    animatorSet.removeAllListeners()
+                    runningAnimations.remove(holder)
+                    dispatchRemoveFinished(holder)
+                }
 
-            override fun onAnimationCancel(animation: Animator) {
-                runningAnimations.remove(holder)
-            }
-        })
+                override fun onAnimationCancel(animation: Animator) {
+                    runningAnimations.remove(holder)
+                }
+            },
+        )
 
         animatorSet.start()
         return true
@@ -72,22 +73,24 @@ class AwItemAnimator : DefaultItemAnimator() {
             animatorSet.duration = getAddDuration()
             animatorSet.interpolator = OvershootInterpolator(1f)
 
-            animatorSet.addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationStart(animation: Animator) {
-                    dispatchAddStarting(holder)
-                }
+            animatorSet.addListener(
+                object : AnimatorListenerAdapter() {
+                    override fun onAnimationStart(animation: Animator) {
+                        dispatchAddStarting(holder)
+                    }
 
-                override fun onAnimationEnd(animation: Animator) {
-                    animatorSet.removeAllListeners()
-                    dispatchAddFinished(holder)
-                }
+                    override fun onAnimationEnd(animation: Animator) {
+                        animatorSet.removeAllListeners()
+                        dispatchAddFinished(holder)
+                    }
 
-                override fun onAnimationCancel(animation: Animator) {
-                    holder.itemView.alpha = 1f
-                    holder.itemView.scaleX = 1f
-                    holder.itemView.scaleY = 1f
-                }
-            })
+                    override fun onAnimationCancel(animation: Animator) {
+                        holder.itemView.alpha = 1f
+                        holder.itemView.scaleX = 1f
+                        holder.itemView.scaleY = 1f
+                    }
+                },
+            )
 
             animatorSet.start()
         }

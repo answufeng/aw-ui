@@ -42,7 +42,10 @@ fun interface StateTransition {
      * @param view     即将显示的视图
      * @param duration 动画时长（毫秒）
      */
-    fun transition(view: View, duration: Long)
+    fun transition(
+        view: View,
+        duration: Long,
+    )
 
     companion object {
         /** 无动画 */
@@ -51,28 +54,30 @@ fun interface StateTransition {
 
         /** 淡入动画（alpha 0 → 1） */
         @JvmField
-        val FADE = StateTransition { view, duration ->
-            view.alpha = 0f
-            view.animate()
-                .alpha(1f)
-                .setDuration(duration)
-                .start()
-        }
+        val FADE =
+            StateTransition { view, duration ->
+                view.alpha = 0f
+                view.animate()
+                    .alpha(1f)
+                    .setDuration(duration)
+                    .start()
+            }
 
         /** 交叉淡入动画（alpha 0 → 1 + 轻微缩放 0.92 → 1） */
         @JvmField
-        val CROSS_FADE = StateTransition { view, duration ->
-            view.alpha = 0f
-            view.scaleX = 0.92f
-            view.scaleY = 0.92f
-            view.animate()
-                .alpha(1f)
-                .scaleX(1f)
-                .scaleY(1f)
-                .setDuration(duration)
-                .setInterpolator(DecelerateInterpolator())
-                .start()
-        }
+        val CROSS_FADE =
+            StateTransition { view, duration ->
+                view.alpha = 0f
+                view.scaleX = 0.92f
+                view.scaleY = 0.92f
+                view.animate()
+                    .alpha(1f)
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setDuration(duration)
+                    .setInterpolator(DecelerateInterpolator())
+                    .start()
+            }
 
         /**
          * 从底部滑入动画（translationY + alpha）。
@@ -82,28 +87,30 @@ fun interface StateTransition {
          * @return 从底部滑入的过渡动画实例
          */
         @JvmStatic
-        fun slideFromBottom(): StateTransition = StateTransition { view, duration ->
-            view.alpha = 0f
-            val startSlide: () -> Unit = {
-                val h = view.height
-                val offsetY = if (h > 0) {
-                    h.toFloat()
-                } else {
-                    96f * view.resources.displayMetrics.density
+        fun slideFromBottom(): StateTransition =
+            StateTransition { view, duration ->
+                view.alpha = 0f
+                val startSlide: () -> Unit = {
+                    val h = view.height
+                    val offsetY =
+                        if (h > 0) {
+                            h.toFloat()
+                        } else {
+                            96f * view.resources.displayMetrics.density
+                        }
+                    view.translationY = offsetY
+                    view.animate()
+                        .alpha(1f)
+                        .translationY(0f)
+                        .setDuration(duration)
+                        .start()
                 }
-                view.translationY = offsetY
-                view.animate()
-                    .alpha(1f)
-                    .translationY(0f)
-                    .setDuration(duration)
-                    .start()
+                if (view.height > 0) {
+                    startSlide()
+                } else {
+                    view.doOnLayout { startSlide() }
+                }
             }
-            if (view.height > 0) {
-                startSlide()
-            } else {
-                view.doOnLayout { startSlide() }
-            }
-        }
     }
 }
 
@@ -151,296 +158,320 @@ fun interface StateTransition {
  *
  * 状态视图使用懒加载策略——首次切换到某状态时才 inflate 对应布局。
  */
-class AwStateLayout @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr) {
+class AwStateLayout
+    @JvmOverloads
+    constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0,
+    ) : FrameLayout(context, attrs, defStyleAttr) {
+        /** 当前页面状态 */
+        var currentState: State = State.CONTENT
+            private set
 
-    /** 当前页面状态 */
-    var currentState: State = State.CONTENT
-        private set
+        /** 支持的四种页面状态 + 自定义状态 */
+        enum class State { CONTENT, LOADING, EMPTY, ERROR, CUSTOM }
 
-    /** 支持的四种页面状态 + 自定义状态 */
-    enum class State { CONTENT, LOADING, EMPTY, ERROR, CUSTOM }
-
-    /** 状态变更监听器 */
-    fun interface OnStateChangeListener {
-        /**
-         * 状态发生变更时回调。
-         *
-         * @param oldState 变更前的状态
-         * @param newState 变更后的状态
-         */
-        fun onStateChanged(oldState: State, newState: State)
-    }
-
-    private var contentView: View? = null
-    private var loadingView: View? = null
-    private var emptyView: View? = null
-    private var errorView: View? = null
-    private var stateChangeListener: OnStateChangeListener? = null
-
-    @LayoutRes private var loadingLayoutRes: Int = R.layout.aw_state_loading
-    @LayoutRes private var emptyLayoutRes: Int = R.layout.aw_state_empty
-    @LayoutRes private var errorLayoutRes: Int = R.layout.aw_state_error
-
-    private var onRetryListener: (() -> Unit)? = null
-
-    /** 是否启用状态切换的淡入淡出动画，默认 true */
-    var enableAnimation: Boolean = true
-
-    /** 动画时长（毫秒），默认 200ms */
-    var animationDuration: Long = 200L
-
-    /** 状态切换过渡动画策略，默认 [StateTransition.FADE] */
-    var transition: StateTransition = StateTransition.FADE
-
-    init {
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.AwStateLayout)
-        loadingLayoutRes = ta.getResourceId(R.styleable.AwStateLayout_loadingLayout, R.layout.aw_state_loading)
-        emptyLayoutRes = ta.getResourceId(R.styleable.AwStateLayout_emptyLayout, R.layout.aw_state_empty)
-        errorLayoutRes = ta.getResourceId(R.styleable.AwStateLayout_errorLayout, R.layout.aw_state_error)
-        enableAnimation = ta.getBoolean(R.styleable.AwStateLayout_enableAnimation, true)
-        animationDuration = ta.getInt(R.styleable.AwStateLayout_animationDuration, 200).toLong()
-        ta.recycle()
-    }
-
-    override fun onFinishInflate() {
-        super.onFinishInflate()
-        if (childCount > 0) {
-            contentView = getChildAt(0)
+        /** 状态变更监听器 */
+        fun interface OnStateChangeListener {
+            /**
+             * 状态发生变更时回调。
+             *
+             * @param oldState 变更前的状态
+             * @param newState 变更后的状态
+             */
+            fun onStateChanged(
+                oldState: State,
+                newState: State,
+            )
         }
-    }
 
-    override fun onSaveInstanceState(): Parcelable {
-        return Bundle().apply {
-            putParcelable("superState", super.onSaveInstanceState())
-            putInt("state", currentState.ordinal)
+        private var contentView: View? = null
+        private var loadingView: View? = null
+        private var emptyView: View? = null
+        private var errorView: View? = null
+        private var stateChangeListener: OnStateChangeListener? = null
+
+        @LayoutRes private var loadingLayoutRes: Int = R.layout.aw_state_loading
+
+        @LayoutRes private var emptyLayoutRes: Int = R.layout.aw_state_empty
+
+        @LayoutRes private var errorLayoutRes: Int = R.layout.aw_state_error
+
+        private var onRetryListener: (() -> Unit)? = null
+
+        /** 是否启用状态切换的淡入淡出动画，默认 true */
+        var enableAnimation: Boolean = true
+
+        /** 动画时长（毫秒），默认 200ms */
+        var animationDuration: Long = 200L
+
+        /** 状态切换过渡动画策略，默认 [StateTransition.FADE] */
+        var transition: StateTransition = StateTransition.FADE
+
+        init {
+            val ta = context.obtainStyledAttributes(attrs, R.styleable.AwStateLayout)
+            loadingLayoutRes = ta.getResourceId(R.styleable.AwStateLayout_loadingLayout, R.layout.aw_state_loading)
+            emptyLayoutRes = ta.getResourceId(R.styleable.AwStateLayout_emptyLayout, R.layout.aw_state_empty)
+            errorLayoutRes = ta.getResourceId(R.styleable.AwStateLayout_errorLayout, R.layout.aw_state_error)
+            enableAnimation = ta.getBoolean(R.styleable.AwStateLayout_enableAnimation, true)
+            animationDuration = ta.getInt(R.styleable.AwStateLayout_animationDuration, 200).toLong()
+            ta.recycle()
         }
-    }
 
-    override fun onRestoreInstanceState(state: Parcelable?) {
-        if (state is Bundle) {
-            val superState: Parcelable? = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                state.getParcelable("superState", Parcelable::class.java)
+        override fun onFinishInflate() {
+            super.onFinishInflate()
+            if (childCount > 0) {
+                contentView = getChildAt(0)
+            }
+        }
+
+        override fun onSaveInstanceState(): Parcelable {
+            return Bundle().apply {
+                putParcelable("superState", super.onSaveInstanceState())
+                putInt("state", currentState.ordinal)
+            }
+        }
+
+        override fun onRestoreInstanceState(state: Parcelable?) {
+            if (state is Bundle) {
+                val superState: Parcelable? =
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        state.getParcelable("superState", Parcelable::class.java)
+                    } else {
+                        @Suppress("DEPRECATION")
+                        state.getParcelable("superState")
+                    }
+                super.onRestoreInstanceState(superState)
+                val savedOrdinal = state.getInt("state", State.CONTENT.ordinal)
+                val restoredState = State.entries.getOrElse(savedOrdinal) { State.CONTENT }
+                if (restoredState != currentState) {
+                    switchState(restoredState)
+                }
             } else {
-                @Suppress("DEPRECATION")
-                state.getParcelable("superState")
+                super.onRestoreInstanceState(state)
             }
-            super.onRestoreInstanceState(superState)
-            val savedOrdinal = state.getInt("state", State.CONTENT.ordinal)
-            val restoredState = State.entries.getOrElse(savedOrdinal) { State.CONTENT }
-            if (restoredState != currentState) {
-                switchState(restoredState)
+        }
+
+        /** 切换到内容状态，显示第一个子 View */
+        fun showContent(force: Boolean = false) {
+            switchState(State.CONTENT, force)
+        }
+
+        /** 切换到加载中状态 */
+        fun showLoading(force: Boolean = false) {
+            switchState(State.LOADING, force)
+        }
+
+        /** 切换到空数据状态 */
+        fun showEmpty(force: Boolean = false) {
+            switchState(State.EMPTY, force)
+        }
+
+        /**
+         * 切换到错误状态。
+         *
+         * 错误布局中 id 为 `btnRetry` 的 View 会自动绑定 [onRetry] 回调。
+         *
+         * @param onRetry 点击重试按钮的回调，null 表示不处理
+         */
+        fun showError(onRetry: (() -> Unit)? = null, force: Boolean = false) {
+            this.onRetryListener = onRetry
+            switchState(State.ERROR, force)
+        }
+
+        // ==================== 自定义状态视图 ====================
+
+        /** 通过布局资源 ID 设置自定义加载中视图（会在下次 showLoading 时重新 inflate） */
+        fun setLoadingView(
+            @LayoutRes layoutRes: Int,
+        ) {
+            loadingLayoutRes = layoutRes
+            loadingView?.let { removeView(it) }
+            loadingView = null
+        }
+
+        /** 通过布局资源 ID 设置自定义空数据视图 */
+        fun setEmptyView(
+            @LayoutRes layoutRes: Int,
+        ) {
+            emptyLayoutRes = layoutRes
+            emptyView?.let { removeView(it) }
+            emptyView = null
+        }
+
+        /** 通过布局资源 ID 设置自定义错误视图 */
+        fun setErrorView(
+            @LayoutRes layoutRes: Int,
+        ) {
+            errorLayoutRes = layoutRes
+            errorView?.let { removeView(it) }
+            errorView = null
+        }
+
+        /** 直接设置加载中视图实例 */
+        fun setLoadingView(view: View) {
+            loadingView?.let { removeView(it) }
+            loadingView = view
+        }
+
+        /** 直接设置空数据视图实例 */
+        fun setEmptyView(view: View) {
+            emptyView?.let { removeView(it) }
+            emptyView = view
+        }
+
+        /** 直接设置错误视图实例 */
+        fun setErrorView(view: View) {
+            errorView?.let { removeView(it) }
+            errorView = view
+        }
+
+        private val customStates = mutableMapOf<String, View>()
+
+        fun registerState(
+            stateName: String,
+            viewProvider: (Context) -> View,
+        ) {
+            if (!customStates.containsKey(stateName)) {
+                customStates[stateName] = viewProvider(context)
             }
-        } else {
-            super.onRestoreInstanceState(state)
         }
-    }
 
-    /** 切换到内容状态，显示第一个子 View */
-    fun showContent() {
-        switchState(State.CONTENT)
-    }
-
-    /** 切换到加载中状态 */
-    fun showLoading() {
-        switchState(State.LOADING)
-    }
-
-    /** 切换到空数据状态 */
-    fun showEmpty() {
-        switchState(State.EMPTY)
-    }
-
-    /**
-     * 切换到错误状态。
-     *
-     * 错误布局中 id 为 `btnRetry` 的 View 会自动绑定 [onRetry] 回调。
-     *
-     * @param onRetry 点击重试按钮的回调，null 表示不处理
-     */
-    fun showError(onRetry: (() -> Unit)? = null) {
-        this.onRetryListener = onRetry
-        switchState(State.ERROR)
-    }
-
-    // ==================== 自定义状态视图 ====================
-
-    /** 通过布局资源 ID 设置自定义加载中视图（会在下次 showLoading 时重新 inflate） */
-    fun setLoadingView(@LayoutRes layoutRes: Int) {
-        loadingLayoutRes = layoutRes
-        loadingView?.let { removeView(it) }
-        loadingView = null
-    }
-
-    /** 通过布局资源 ID 设置自定义空数据视图 */
-    fun setEmptyView(@LayoutRes layoutRes: Int) {
-        emptyLayoutRes = layoutRes
-        emptyView?.let { removeView(it) }
-        emptyView = null
-    }
-
-    /** 通过布局资源 ID 设置自定义错误视图 */
-    fun setErrorView(@LayoutRes layoutRes: Int) {
-        errorLayoutRes = layoutRes
-        errorView?.let { removeView(it) }
-        errorView = null
-    }
-
-    /** 直接设置加载中视图实例 */
-    fun setLoadingView(view: View) {
-        loadingView?.let { removeView(it) }
-        loadingView = view
-    }
-
-    /** 直接设置空数据视图实例 */
-    fun setEmptyView(view: View) {
-        emptyView?.let { removeView(it) }
-        emptyView = view
-    }
-
-    /** 直接设置错误视图实例 */
-    fun setErrorView(view: View) {
-        errorView?.let { removeView(it) }
-        errorView = view
-    }
-
-    private val customStates = mutableMapOf<String, View>()
-
-    fun registerState(stateName: String, viewProvider: (Context) -> View) {
-        if (!customStates.containsKey(stateName)) {
-            customStates[stateName] = viewProvider(context)
-        }
-    }
-
-    fun showCustomState(stateName: String) {
-        val view = customStates[stateName] ?: return
-        hideAllStateViews()
-        if (view.parent == null) addView(view)
-        view.visibility = VISIBLE
-        if (enableAnimation) transition.transition(view, animationDuration)
-        val oldState = currentState
-        currentState = State.CUSTOM
-        stateChangeListener?.onStateChanged(oldState, State.CUSTOM)
-    }
-
-    private fun hideAllStateViews() {
-        contentView?.visibility = GONE
-        loadingView?.visibility = GONE
-        emptyView?.visibility = GONE
-        errorView?.visibility = GONE
-        for (view in customStates.values) {
-            view.visibility = GONE
-        }
-    }
-
-    /** 直接设置内容视图实例 */
-    fun setContentView(view: View) {
-        contentView?.let { removeView(it) }
-        contentView = view
-        if (currentState == State.CONTENT) {
+        fun showCustomState(stateName: String) {
+            val view = customStates[stateName] ?: return
+            hideAllStateViews()
             if (view.parent == null) addView(view)
             view.visibility = VISIBLE
+            if (enableAnimation) transition.transition(view, animationDuration)
+            val oldState = currentState
+            currentState = State.CUSTOM
+            stateChangeListener?.onStateChanged(oldState, State.CUSTOM)
         }
-    }
 
-    /**
-     * 设置状态变更监听器。
-     *
-     * ```kotlin
-     * stateLayout.setOnStateChangeListener { oldState, newState ->
-     *     Log.d("AwStateLayout", "$oldState -> $newState")
-     * }
-     * ```
-     *
-     * @param listener 状态变更回调，null 表示移除监听
-     */
-    fun setOnStateChangeListener(listener: OnStateChangeListener?) {
-        stateChangeListener = listener
-    }
-
-    private fun switchState(state: State) {
-        if (currentState == state) return
-        val oldState = currentState
-        currentState = state
-        if (state != State.CUSTOM) {
+        private fun hideAllStateViews() {
+            contentView?.visibility = GONE
+            loadingView?.visibility = GONE
+            emptyView?.visibility = GONE
+            errorView?.visibility = GONE
             for (view in customStates.values) {
                 view.visibility = GONE
             }
         }
-        stateChangeListener?.onStateChanged(oldState, state)
-        announceStateForAccessibility(state)
-        showOrHide(contentView, state == State.CONTENT)
-        showOrHide(state, State.LOADING) { ensureLoadingView() }
-        showOrHide(state, State.EMPTY) { ensureEmptyView() }
-        showOrHide(state, State.ERROR) { ensureErrorView() }
-    }
 
-    private fun showOrHide(view: View?, show: Boolean) {
-        view ?: return
-        if (show) {
-            if (view.visibility != VISIBLE) {
+        /** 直接设置内容视图实例 */
+        fun setContentView(view: View) {
+            contentView?.let { removeView(it) }
+            contentView = view
+            if (currentState == State.CONTENT) {
+                if (view.parent == null) addView(view)
                 view.visibility = VISIBLE
-                if (enableAnimation) transition.transition(view, animationDuration)
-            }
-        } else {
-            view.visibility = GONE
-        }
-    }
-
-    private inline fun showOrHide(current: State, target: State, create: () -> View?) {
-        if (current == target) {
-            val view = create() ?: return
-            val isNewlyAdded = view.parent == null
-            if (isNewlyAdded) addView(view)
-            if (isNewlyAdded || view.visibility != VISIBLE) {
-                view.visibility = VISIBLE
-                if (enableAnimation) transition.transition(view, animationDuration)
-            }
-        } else {
-            when (target) {
-                State.LOADING -> loadingView
-                State.EMPTY -> emptyView
-                State.ERROR -> errorView
-                else -> null
-            }?.visibility = GONE
-        }
-    }
-
-    private fun announceStateForAccessibility(state: State) {
-        val message = when (state) {
-            State.CONTENT -> context.getString(R.string.aw_state_content)
-            State.LOADING -> context.getString(R.string.aw_state_loading)
-            State.EMPTY -> context.getString(R.string.aw_state_empty)
-            State.ERROR -> context.getString(R.string.aw_state_error)
-            State.CUSTOM -> context.getString(R.string.aw_state_custom)
-        }
-        announceForAccessibility(message)
-    }
-
-    private fun ensureLoadingView(): View? {
-        if (loadingView == null) {
-            loadingView = LayoutInflater.from(context).inflate(loadingLayoutRes, this, false)
-        }
-        return loadingView
-    }
-
-    private fun ensureEmptyView(): View? {
-        if (emptyView == null) {
-            emptyView = LayoutInflater.from(context).inflate(emptyLayoutRes, this, false)
-        }
-        return emptyView
-    }
-
-    private fun ensureErrorView(): View? {
-        if (errorView == null) {
-            errorView = LayoutInflater.from(context).inflate(errorLayoutRes, this, false)
-            errorView?.findViewById<View>(R.id.btnRetry)?.setOnClickListener {
-                onRetryListener?.invoke()
             }
         }
-        return errorView
+
+        /**
+         * 设置状态变更监听器。
+         *
+         * ```kotlin
+         * stateLayout.setOnStateChangeListener { oldState, newState ->
+         *     Log.d("AwStateLayout", "$oldState -> $newState")
+         * }
+         * ```
+         *
+         * @param listener 状态变更回调，null 表示移除监听
+         */
+        fun setOnStateChangeListener(listener: OnStateChangeListener?) {
+            stateChangeListener = listener
+        }
+
+        private fun switchState(state: State, force: Boolean = false) {
+            if (!force && currentState == state) return
+            val oldState = currentState
+            currentState = state
+            if (state != State.CUSTOM) {
+                for (view in customStates.values) {
+                    view.visibility = GONE
+                }
+            }
+            stateChangeListener?.onStateChanged(oldState, state)
+            announceStateForAccessibility(state)
+            showOrHide(contentView, state == State.CONTENT)
+            showOrHide(state, State.LOADING) { ensureLoadingView() }
+            showOrHide(state, State.EMPTY) { ensureEmptyView() }
+            showOrHide(state, State.ERROR) { ensureErrorView() }
+        }
+
+        private fun showOrHide(
+            view: View?,
+            show: Boolean,
+        ) {
+            view ?: return
+            if (show) {
+                if (view.visibility != VISIBLE) {
+                    view.visibility = VISIBLE
+                    if (enableAnimation) transition.transition(view, animationDuration)
+                }
+            } else {
+                view.visibility = GONE
+            }
+        }
+
+        private inline fun showOrHide(
+            current: State,
+            target: State,
+            create: () -> View?,
+        ) {
+            if (current == target) {
+                val view = create() ?: return
+                val isNewlyAdded = view.parent == null
+                if (isNewlyAdded) addView(view)
+                if (isNewlyAdded || view.visibility != VISIBLE) {
+                    view.visibility = VISIBLE
+                    if (enableAnimation) transition.transition(view, animationDuration)
+                }
+            } else {
+                when (target) {
+                    State.LOADING -> loadingView
+                    State.EMPTY -> emptyView
+                    State.ERROR -> errorView
+                    else -> null
+                }?.visibility = GONE
+            }
+        }
+
+        private fun announceStateForAccessibility(state: State) {
+            val message =
+                when (state) {
+                    State.CONTENT -> context.getString(R.string.aw_state_content)
+                    State.LOADING -> context.getString(R.string.aw_state_loading)
+                    State.EMPTY -> context.getString(R.string.aw_state_empty)
+                    State.ERROR -> context.getString(R.string.aw_state_error)
+                    State.CUSTOM -> context.getString(R.string.aw_state_custom)
+                }
+            announceForAccessibility(message)
+        }
+
+        private fun ensureLoadingView(): View? {
+            if (loadingView == null) {
+                loadingView = LayoutInflater.from(context).inflate(loadingLayoutRes, this, false)
+            }
+            return loadingView
+        }
+
+        private fun ensureEmptyView(): View? {
+            if (emptyView == null) {
+                emptyView = LayoutInflater.from(context).inflate(emptyLayoutRes, this, false)
+            }
+            return emptyView
+        }
+
+        private fun ensureErrorView(): View? {
+            if (errorView == null) {
+                errorView = LayoutInflater.from(context).inflate(errorLayoutRes, this, false)
+                errorView?.findViewById<View>(R.id.btnRetry)?.setOnClickListener {
+                    onRetryListener?.invoke()
+                }
+            }
+            return errorView
+        }
     }
-}

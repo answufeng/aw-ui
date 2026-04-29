@@ -9,10 +9,18 @@ import androidx.recyclerview.widget.DiffUtil
  *
  * @return DiffUtil.ItemCallback<String> 实例，直接比较字符串内容
  */
-fun stringDiffCallback(): DiffUtil.ItemCallback<String> = object : DiffUtil.ItemCallback<String>() {
-    override fun areItemsTheSame(oldItem: String, newItem: String): Boolean = oldItem == newItem
-    override fun areContentsTheSame(oldItem: String, newItem: String): Boolean = oldItem == newItem
-}
+fun stringDiffCallback(): DiffUtil.ItemCallback<String> =
+    object : DiffUtil.ItemCallback<String>() {
+        override fun areItemsTheSame(
+            oldItem: String,
+            newItem: String,
+        ): Boolean = oldItem == newItem
+
+        override fun areContentsTheSame(
+            oldItem: String,
+            newItem: String,
+        ): Boolean = oldItem == newItem
+    }
 
 /**
  * 适用于基于数据对象 id 属性比较的 DiffUtil 回调类。
@@ -21,13 +29,17 @@ fun stringDiffCallback(): DiffUtil.ItemCallback<String> = object : DiffUtil.Item
  * @param idSelector 获取数据唯一标识的函数
  */
 class IdDiffCallback<T : Any>(
-    private val idSelector: (T) -> Any
+    private val idSelector: (T) -> Any,
 ) : DiffUtil.ItemCallback<T>() {
-    override fun areItemsTheSame(oldItem: T, newItem: T): Boolean =
-        idSelector(oldItem) == idSelector(newItem)
+    override fun areItemsTheSame(
+        oldItem: T,
+        newItem: T,
+    ): Boolean = idSelector(oldItem) == idSelector(newItem)
 
-    override fun areContentsTheSame(oldItem: T, newItem: T): Boolean =
-        oldItem == newItem
+    override fun areContentsTheSame(
+        oldItem: T,
+        newItem: T,
+    ): Boolean = oldItem == newItem
 }
 
 /**
@@ -39,18 +51,27 @@ class IdDiffCallback<T : Any>(
  */
 class SimpleDiffCallback<T : Any>(
     private val itemId: (T) -> Any,
-    private val contentSame: (T, T) -> Boolean = { old, new -> old == new }
+    private val contentSame: (T, T) -> Boolean = { old, new -> old == new },
 ) : DiffUtil.ItemCallback<T>() {
-    override fun areItemsTheSame(oldItem: T, newItem: T): Boolean =
-        itemId(oldItem) == itemId(newItem)
+    override fun areItemsTheSame(
+        oldItem: T,
+        newItem: T,
+    ): Boolean = itemId(oldItem) == itemId(newItem)
 
-    override fun areContentsTheSame(oldItem: T, newItem: T): Boolean =
-        contentSame(oldItem, newItem)
+    override fun areContentsTheSame(
+        oldItem: T,
+        newItem: T,
+    ): Boolean = contentSame(oldItem, newItem)
 
-    override fun getChangePayload(oldItem: T, newItem: T): Any? {
+    override fun getChangePayload(
+        oldItem: T,
+        newItem: T,
+    ): Any? {
         return if (areItemsTheSame(oldItem, newItem) && !areContentsTheSame(oldItem, newItem)) {
             newItem
-        } else null
+        } else {
+            null
+        }
     }
 }
 
@@ -61,8 +82,7 @@ class SimpleDiffCallback<T : Any>(
  * @param idSelector 获取数据唯一标识的函数
  * @return DiffUtil.ItemCallback<T> 实例
  */
-fun <T : Any> idDiffCallback(idSelector: (T) -> Any): DiffUtil.ItemCallback<T> =
-    IdDiffCallback(idSelector)
+fun <T : Any> idDiffCallback(idSelector: (T) -> Any): DiffUtil.ItemCallback<T> = IdDiffCallback(idSelector)
 
 /**
  * 创建自定义比较逻辑的 DiffUtil 回调。
@@ -74,5 +94,5 @@ fun <T : Any> idDiffCallback(idSelector: (T) -> Any): DiffUtil.ItemCallback<T> =
  */
 fun <T : Any> simpleDiffCallback(
     itemId: (T) -> Any,
-    contentSame: (T, T) -> Boolean = { old, new -> old == new }
+    contentSame: (T, T) -> Boolean = { old, new -> old == new },
 ): DiffUtil.ItemCallback<T> = SimpleDiffCallback(itemId, contentSame)

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
 import com.answufeng.ui.R
+import androidx.core.content.ContextCompat
 import com.google.android.material.color.MaterialColors
 
 /**
@@ -59,12 +60,14 @@ import com.google.android.material.color.MaterialColors
 class AwLoadMoreAdapter<VB : ViewBinding, T>(
     private val inflate: (LayoutInflater, ViewGroup, Boolean) -> VB,
     diffCallback: DiffUtil.ItemCallback<T>,
-    private val bind: (VB, T, Int) -> Unit
+    private val bind: (VB, T, Int) -> Unit,
 ) : ListAdapter<T, RecyclerView.ViewHolder>(diffCallback) {
-
     /** 加载更多状态 */
     enum class LoadState {
-        IDLE, LOADING, NO_MORE, FAILED
+        IDLE,
+        LOADING,
+        NO_MORE,
+        FAILED,
     }
 
     private var loadState = LoadState.IDLE
@@ -98,7 +101,10 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
         return super.getItemCount() + if (showFooter()) 1 else 0
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): RecyclerView.ViewHolder {
         return if (viewType == VIEW_TYPE_ITEM) {
             val binding = inflate(LayoutInflater.from(parent.context), parent, false)
             val holder = ItemViewHolder(binding)
@@ -112,7 +118,9 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
                 val pos = holder.bindingAdapterPosition
                 if (pos != RecyclerView.NO_POSITION && pos < currentList.size) {
                     onItemLongClick?.invoke(currentList[pos], pos) ?: false
-                } else false
+                } else {
+                    false
+                }
             }
             holder
         } else {
@@ -121,7 +129,10 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int,
+    ) {
         if (holder is ItemViewHolder<*>) {
             val item = currentList[position]
             bind(holder.binding as VB, item, position)
@@ -139,26 +150,32 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         scrollListener?.let { recyclerView.removeOnScrollListener(it) }
-        val listener = object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
-                if (dy <= 0) return
-                if (loadState != LoadState.IDLE) return
+        val listener =
+            object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(
+                    rv: RecyclerView,
+                    dx: Int,
+                    dy: Int,
+                ) {
+                    if (dy <= 0) return
+                    if (loadState != LoadState.IDLE) return
+                    if (currentList.isEmpty()) return
 
-                val layoutManager = rv.layoutManager as? LinearLayoutManager ?: return
-                val lastVisible = layoutManager.findLastVisibleItemPosition()
-                val total = layoutManager.itemCount
+                    val layoutManager = rv.layoutManager as? LinearLayoutManager ?: return
+                    val lastVisible = layoutManager.findLastVisibleItemPosition()
+                    val total = layoutManager.itemCount
 
-                if (lastVisible >= total - 1 - preloadOffset) {
-                    // 在 onScrolled 内直接 notify 会触发非法状态，延后到 post；此时必为 IDLE，尚无 footer，需 insert 而非 change
-                    loadState = LoadState.LOADING
-                    val footerPos = currentList.size
-                    rv.post {
-                        notifyItemInserted(footerPos)
-                        onLoadMore?.invoke()
+                    if (lastVisible >= total - 1 - preloadOffset) {
+                        // 在 onScrolled 内直接 notify 会触发非法状态，延后到 post；此时必为 IDLE，尚无 footer，需 insert 而非 change
+                        loadState = LoadState.LOADING
+                        val footerPos = currentList.size
+                        rv.post {
+                            notifyItemInserted(footerPos)
+                            onLoadMore?.invoke()
+                        }
                     }
                 }
             }
-        }
         scrollListener = listener
         recyclerView.addOnScrollListener(listener)
     }
@@ -184,11 +201,17 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
         super.submitList(list)
     }
 
-    fun appendList(list: List<T>, commitCallback: Runnable? = null) {
+    fun appendList(
+        list: List<T>,
+        commitCallback: Runnable? = null,
+    ) {
         loadMore(list, commitCallback)
     }
 
-    fun refreshAll(list: List<T>, commitCallback: Runnable? = null) {
+    fun refreshAll(
+        list: List<T>,
+        commitCallback: Runnable? = null,
+    ) {
         if (showFooter()) {
             notifyItemRemoved(currentList.size)
         }
@@ -203,7 +226,10 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
      *
      * @param list 新增数据
      */
-    fun loadMore(list: List<T>, commitCallback: Runnable? = null) {
+    fun loadMore(
+        list: List<T>,
+        commitCallback: Runnable? = null,
+    ) {
         val combined = currentList.toMutableList().apply { addAll(list) }
         // 先去掉底部 footer 再 submitList。否则与 AsyncListDiffer 的增量更新交叠，会触发 Inconsistency / footer 错位
         if (showFooter()) {
@@ -219,8 +245,11 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
     fun noMore() {
         val hadFooter = showFooter()
         loadState = LoadState.NO_MORE
-        if (hadFooter) notifyItemChanged(currentList.size)
-        else notifyItemInserted(currentList.size)
+        if (hadFooter) {
+            notifyItemChanged(currentList.size)
+        } else {
+            notifyItemInserted(currentList.size)
+        }
     }
 
     /**
@@ -231,8 +260,11 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
     fun loadFailed() {
         val hadFooter = showFooter()
         loadState = LoadState.FAILED
-        if (hadFooter) notifyItemChanged(currentList.size)
-        else notifyItemInserted(currentList.size)
+        if (hadFooter) {
+            notifyItemChanged(currentList.size)
+        } else {
+            notifyItemInserted(currentList.size)
+        }
     }
 
     /**
@@ -282,7 +314,7 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
             loadingText: String,
             noMoreText: String,
             failedText: String,
-            onRetry: () -> Unit
+            onRetry: () -> Unit,
         ) {
             when (state) {
                 LoadState.LOADING -> {
@@ -315,33 +347,45 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
             fun create(parent: ViewGroup): FooterViewHolder {
                 val context = parent.context
                 val density = context.resources.displayMetrics.density
-                val textColor = MaterialColors.getColor(
-                    context, android.R.attr.textColorSecondary, 0xFF999999.toInt()
-                )
-
-                val container = android.widget.LinearLayout(context).apply {
-                    orientation = android.widget.LinearLayout.HORIZONTAL
-                    gravity = android.view.Gravity.CENTER
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        (48 * density).toInt()
-                    )
-                    setPadding(0, (8 * density).toInt(), 0, (8 * density).toInt())
-                }
-
-                val progress = ProgressBar(context).apply {
-                    id = R.id.loadMoreProgress
-                    val size = (24 * density).toInt()
-                    layoutParams = android.widget.LinearLayout.LayoutParams(size, size).apply {
-                        marginEnd = (8 * density).toInt()
+                val textColor =
+                    try {
+                        MaterialColors.getColor(
+                            context,
+                            android.R.attr.textColorSecondary,
+                            ContextCompat.getColor(context, R.color.aw_color_loading_default),
+                        )
+                    } catch (_: Exception) {
+                        ContextCompat.getColor(context, R.color.aw_color_loading_default)
                     }
-                }
 
-                val text = TextView(context).apply {
-                    id = R.id.loadMoreText
-                    textSize = 14f
-                    setTextColor(textColor)
-                }
+                val container =
+                    android.widget.LinearLayout(context).apply {
+                        orientation = android.widget.LinearLayout.HORIZONTAL
+                        gravity = android.view.Gravity.CENTER
+                        layoutParams =
+                            ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                (48 * density).toInt(),
+                            )
+                        setPadding(0, (8 * density).toInt(), 0, (8 * density).toInt())
+                    }
+
+                val progress =
+                    ProgressBar(context).apply {
+                        id = R.id.loadMoreProgress
+                        val size = (24 * density).toInt()
+                        layoutParams =
+                            android.widget.LinearLayout.LayoutParams(size, size).apply {
+                                marginEnd = (8 * density).toInt()
+                            }
+                    }
+
+                val text =
+                    TextView(context).apply {
+                        id = R.id.loadMoreText
+                        textSize = 14f
+                        setTextColor(textColor)
+                    }
 
                 container.addView(progress)
                 container.addView(text)
@@ -354,7 +398,7 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
 fun <VB : ViewBinding, T> awLoadMoreAdapter(
     diffCallback: DiffUtil.ItemCallback<T>,
     inflate: (LayoutInflater, ViewGroup, Boolean) -> VB,
-    bind: (VB, T, Int) -> Unit
+    bind: (VB, T, Int) -> Unit,
 ): AwLoadMoreAdapter<VB, T> {
     return AwLoadMoreAdapter(inflate, diffCallback, bind)
 }

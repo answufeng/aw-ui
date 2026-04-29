@@ -98,6 +98,18 @@
         <attr name="banner_showIndicators" format="boolean" />
         <attr name="banner_autoStart" format="boolean" />
         <attr name="banner_infiniteLoop" format="boolean" />
+        <attr name="banner_indicatorSize" format="dimension" />
+        <attr name="banner_indicatorSpacing" format="dimension" />
+        <attr name="banner_indicatorShape" format="enum">
+            <enum name="circle" value="0" />
+            <enum name="rect" value="1" />
+        </attr>
+        <attr name="banner_indicatorGravity" format="enum">
+            <enum name="center" value="0" />
+            <enum name="start" value="1" />
+            <enum name="end" value="2" />
+        </attr>
+        <attr name="banner_indicatorMarginBottom" format="dimension" />
     </declare-styleable>
 
     <!-- AwCircleProgressBar 自定义属性 -->
@@ -153,12 +165,6 @@
         <attr name="round_strokeWidth" format="dimension" />
     </declare-styleable>
 
-    <!-- AwSmartEditText 自定义属性 -->
-    <declare-styleable name="AwSmartEditText">
-        <attr name="smart_maxLength" format="integer" />
-        <attr name="smart_errorColor" format="color" />
-    </declare-styleable>
-
     <!-- AwCodeInputView 自定义属性 -->
     <declare-styleable name="AwCodeInputView">
         <attr name="code_length" format="integer" />
@@ -168,13 +174,6 @@
         <attr name="code_boxStrokeWidth" format="dimension" />
         <attr name="code_textColor" format="color" />
         <attr name="code_textSize" format="dimension" />
-    </declare-styleable>
-
-    <!-- AwPasswordInputView 自定义属性 -->
-    <declare-styleable name="AwPasswordInputView">
-        <attr name="password_hint" format="string" />
-        <attr name="password_showToggle" format="boolean" />
-        <attr name="password_showStrength" format="boolean" />
     </declare-styleable>
 
     <!-- AwSegmentedControl 自定义属性 -->
@@ -222,20 +221,38 @@
         <attr name="switch_trackCheckedColor" format="color" />
         <attr name="switch_thumbColor" format="color" />
         <attr name="switch_thumbCheckedColor" format="color" />
+        <attr name="switch_thumbShadowEnabled" format="boolean" />
     </declare-styleable>
 
     <!-- AwCountDownView 自定义属性 -->
     <declare-styleable name="AwCountDownView">
         <attr name="countdown_seconds" format="integer" />
         <attr name="countDownStrokeColor" format="color" />
-        <attr name="countDownTextColor" format="color" />
+        <attr name="countDownProgressColor" format="color" />
         <attr name="countDownTrackColor" format="color" />
+        <attr name="countDownTextColor" format="color" />
         <attr name="countDownStrokeWidth" format="dimension" />
         <attr name="countDownTextSize" format="dimension" />
+        <attr name="countDown_finishText" format="string" />
+        <attr name="countDown_suffixText" format="string" />
+        <attr name="countDown_initialText" format="string" />
+        <attr name="countDown_runningTextFormat" format="string" />
+        <attr name="countDown_displayMode" format="enum">
+            <enum name="circle" value="0" />
+            <enum name="text" value="1" />
+        </attr>
         <attr name="countDown_timeMode" format="enum">
             <enum name="seconds" value="0" />
             <enum name="mmss" value="1" />
         </attr>
+        <attr name="countDown_autoStartOnClick" format="boolean" />
+        <attr name="countDown_disabledTextColor" format="color" />
+        <attr name="countDown_textBorderColor" format="color" />
+        <attr name="countDown_textBorderWidth" format="dimension" />
+        <attr name="countDown_textBgColor" format="color" />
+        <attr name="countDown_textCornerRadius" format="dimension" />
+        <attr name="countDown_textPaddingH" format="dimension" />
+        <attr name="countDown_textPaddingV" format="dimension" />
     </declare-styleable>
 
     <!-- AwSkeletonView 自定义属性 -->
@@ -254,17 +271,50 @@
         <attr name="roundImg_borderColor" format="color" />
     </declare-styleable>
 
-    <!-- AwTooltipView 自定义属性 -->
-    <declare-styleable name="AwTooltipView">
-        <attr name="tooltip_text" format="string" />
-        <attr name="tooltip_arrowPosition" format="enum">
-            <enum name="left" value="0" />
-            <enum name="top" value="1" />
-            <enum name="right" value="2" />
-            <enum name="bottom" value="3" />
+    <!-- AwSearchView 自定义属性 -->
+    <declare-styleable name="AwSearchView">
+        <attr name="search_hint" format="string" />
+        <attr name="search_bgColor" format="color" />
+        <attr name="search_iconColor" format="color" />
+        <attr name="search_textColor" format="color" />
+        <attr name="search_hintTextColor" format="color" />
+        <attr name="search_searchIcon" format="reference" />
+        <attr name="search_clearIcon" format="reference" />
+        <attr name="search_cornerRadius" format="dimension" />
+        <attr name="search_height" format="dimension" />
+    </declare-styleable>
+
+    <!-- AwSwipeRefreshLayout 自定义属性 -->
+    <declare-styleable name="AwSwipeRefreshLayout">
+        <attr name="refreshStyle" format="enum">
+            <enum name="system" value="0" />
+            <enum name="flower" value="1" />
+            <enum name="arrow" value="2" />
+            <enum name="text" value="3" />
         </attr>
-        <attr name="tooltip_bgColor" format="color" />
-        <attr name="tooltip_textColor" format="color" />
+        <attr name="refreshTintColor" format="color" />
+        <attr name="refreshText" format="string" />
+        <attr name="refreshTextColor" format="color" />
+        <attr name="refreshTextSize" format="dimension" />
+        <attr name="customRefreshHeaderLayout" format="reference" />
+    </declare-styleable>
+
+    <!-- AwTagView 自定义属性 -->
+    <declare-styleable name="AwTagView">
+        <attr name="tag_textColor" format="color" />
+        <attr name="tag_selectedTextColor" format="color" />
+        <attr name="tag_bgColor" format="color" />
+        <attr name="tag_selectedBgColor" format="color" />
+        <attr name="tag_textSize" format="dimension" />
+        <attr name="tag_paddingH" format="dimension" />
+        <attr name="tag_paddingV" format="dimension" />
+        <attr name="tag_cornerRadius" format="dimension" />
+        <attr name="tag_selectionMode" format="enum">
+            <enum name="none" value="0" />
+            <enum name="single" value="1" />
+            <enum name="multi" value="2" />
+        </attr>
+        <attr name="tag_maxSelectCount" format="integer" />
     </declare-styleable>
 
 

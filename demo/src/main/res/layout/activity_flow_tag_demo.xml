@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light"
+    android:orientation="vertical">
+
+    <com.answufeng.ui.widget.AwTitleBar
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:titleBar_showBack="true"
+        app:titleBar_showDivider="true"
+        app:titleBar_title="FlowLayout &amp; TagView" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="AwFlowLayout 基础用法"
+                style="@style/Text.AwUi.Subtitle"
+                android:layout_marginBottom="12dp" />
+
+            <com.answufeng.ui.widget.AwFlowLayout
+                android:id="@+id/flow_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:flow_horizontalSpacing="8dp"
+                app:flow_verticalSpacing="8dp"
+                app:flow_gravity="start" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="AwTagView 单选模式"
+                style="@style/Text.AwUi.Subtitle"
+                android:layout_marginBottom="12dp" />
+
+            <com.answufeng.ui.widget.AwTagView
+                android:id="@+id/tag_view_single"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tag_selectionMode="single"
+                app:tag_textColor="#333333"
+                app:tag_selectedTextColor="#FFFFFF"
+                app:tag_bgColor="#F0F0F0"
+                app:tag_selectedBgColor="#4F46E5"
+                app:tag_cornerRadius="16dp"
+                app:tag_paddingH="16dp"
+                app:tag_paddingV="8dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="AwTagView 多选模式（最多3个）"
+                style="@style/Text.AwUi.Subtitle"
+                android:layout_marginBottom="12dp" />
+
+            <com.answufeng.ui.widget.AwTagView
+                android:id="@+id/tag_view_multi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tag_selectionMode="multi"
+                app:tag_maxSelectCount="3"
+                app:tag_textColor="#333333"
+                app:tag_selectedTextColor="#FFFFFF"
+                app:tag_bgColor="#F0F0F0"
+                app:tag_selectedBgColor="#22C55E"
+                app:tag_cornerRadius="4dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="AwTagView 不可选模式"
+                style="@style/Text.AwUi.Subtitle"
+                android:layout_marginBottom="12dp" />
+
+            <com.answufeng.ui.widget.AwTagView
+                android:id="@+id/tag_view_none"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tag_selectionMode="none"
+                app:tag_textColor="#FFFFFF"
+                app:tag_bgColor="#FF9800"
+                app:tag_cornerRadius="12dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_clear_selection"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="清除所有选中" />
+
+            <TextView
+                android:id="@+id/tv_log"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:minHeight="80dp"
+                android:background="@color/surface_variant"
+                android:padding="12dp"
+                android:text="操作日志将显示在这里..."
+                android:lineSpacingExtra="4dp"
+                style="@style/Text.AwUi.Body" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

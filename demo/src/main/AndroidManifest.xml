@@ -15,6 +15,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".CategoryDemoActivity"
+            android:exported="false" />
+        <activity
             android:name=".AwBottomTabBarDemoActivity"
             android:exported="false" />
         <activity
@@ -46,6 +49,36 @@
             android:exported="false" />
         <activity
             android:name=".SegmentedControlDemoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CodeInputDemoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CountDownDemoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ExpandableDemoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FlowTagDemoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MarqueeDemoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RoundImageDemoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RoundLayoutDemoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SearchDemoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SkeletonDemoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SwitchDemoActivity"
             android:exported="false" />
     </application>
 </manifest>

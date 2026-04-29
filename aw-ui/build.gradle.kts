@@ -31,7 +31,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -59,4 +59,4 @@ dependencies {
     api(libs.viewpager2)
 }
 
-apply(from = "${rootDir}/gradle/publish.gradle.kts")
+apply(from = "$rootDir/gradle/publish.gradle.kts")

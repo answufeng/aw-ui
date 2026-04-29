@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light"
+    android:orientation="vertical">
+
+    <com.answufeng.ui.widget.AwTitleBar
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:titleBar_showDivider="true"
+        app:titleBar_title="AwRoundLayout Demo" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="统一圆角"
+                style="@style/Text.AwUi.Subtitle"
+                android:layout_marginBottom="12dp" />
+
+            <com.answufeng.ui.widget.AwRoundLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:round_radius="16dp"
+                app:round_strokeColor="#E0E0E0"
+                app:round_strokeWidth="1dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:padding="16dp"
+                    android:text="四角统一 16dp 圆角，带 1dp 描边"
+                    style="@style/Text.AwUi.Body" />
+            </com.answufeng.ui.widget.AwRoundLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="仅顶部圆角"
+                style="@style/Text.AwUi.Subtitle"
+                android:layout_marginBottom="12dp" />
+
+            <com.answufeng.ui.widget.AwRoundLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:round_topLeftRadius="24dp"
+                app:round_topRightRadius="24dp"
+                app:round_bottomLeftRadius="0dp"
+                app:round_bottomRightRadius="0dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#4F46E5"
+                    android:padding="16dp"
+                    android:textColor="#FFFFFF"
+                    android:text="仅顶部圆角 24dp，底部直角"
+                    style="@style/Text.AwUi.Body" />
+            </com.answufeng.ui.widget.AwRoundLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="对角圆角"
+                style="@style/Text.AwUi.Subtitle"
+                android:layout_marginBottom="12dp" />
+
+            <com.answufeng.ui.widget.AwRoundLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:round_topLeftRadius="24dp"
+                app:round_topRightRadius="0dp"
+                app:round_bottomLeftRadius="0dp"
+                app:round_bottomRightRadius="24dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#22C55E"
+                    android:padding="16dp"
+                    android:textColor="#FFFFFF"
+                    android:text="左上和右下圆角 24dp"
+                    style="@style/Text.AwUi.Body" />
+            </com.answufeng.ui.widget.AwRoundLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="带图片的圆角容器"
+                style="@style/Text.AwUi.Subtitle"
+                android:layout_marginBottom="12dp" />
+
+            <com.answufeng.ui.widget.AwRoundLayout
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                app:round_radius="16dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@android:drawable/ic_menu_report_image" />
+            </com.answufeng.ui.widget.AwRoundLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

@@ -13,8 +13,8 @@
 
 ## 文件位置
 
-- 组件实现：[AwCircleProgressBar.kt](E:/workspace/ASProjects/AutoKs/viewtest/src/main/java/com/answufeng/ui/widget/AwCircleProgressBar.kt)
-- 自定义属性：[attrs.xml](E:/workspace/ASProjects/AutoKs/viewtest/src/main/res/values/attrs.xml)
+- 组件实现：[AwCircleProgressBar.kt](../src/main/java/com/answufeng/ui/widget/AwCircleProgressBar.kt)
+- 自定义属性：[attrs.xml](../src/main/res/values/attrs.xml)
 
 ## 快速开始
 

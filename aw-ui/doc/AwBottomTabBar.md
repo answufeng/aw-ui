@@ -20,10 +20,8 @@
 
 ## 文件位置
 
-- 组件实现：[AwBottomTabBar.kt](E:/workspace/ASProjects/AutoKs/viewtest/src/main/java/com/answufeng/ui/widget/AwBottomTabBar.kt)
-- 自定义属性：[attrs.xml](E:/workspace/ASProjects/AutoKs/viewtest/src/main/res/values/attrs.xml)
-- 主示例页：[MainActivity.kt](E:/workspace/ASProjects/AutoKs/viewtest/src/main/java/com/ail/ail_image/viewtest/MainActivity.kt)
-- ViewPager 示例页：[ViewPagerActivity.kt](E:/workspace/ASProjects/AutoKs/viewtest/src/main/java/com/ail/ail_image/viewtest/ViewPagerActivity.kt)
+- 组件实现：[AwBottomTabBar.kt](../src/main/java/com/answufeng/ui/widget/AwBottomTabBar.kt)
+- 自定义属性：[attrs.xml](../src/main/res/values/attrs.xml)
 
 ## 快速开始
 

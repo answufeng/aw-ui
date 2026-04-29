@@ -66,9 +66,8 @@ class AwSimpleAdapter<VB : ViewBinding, T>(
     private val inflate: (LayoutInflater, ViewGroup?, Boolean) -> VB,
     private val diffCallback: DiffUtil.ItemCallback<T>,
     private val bind: (VB, T, Int) -> Unit,
-    private val bindWithPayload: ((VB, T, Int, List<Any>) -> Unit)? = null
+    private val bindWithPayload: ((VB, T, Int, List<Any>) -> Unit)? = null,
 ) : ListAdapter<T, RecyclerView.ViewHolder>(diffCallback) {
-
     private var onItemClick: ((T, Int) -> Unit)? = null
     private var onItemLongClick: ((T, Int) -> Boolean)? = null
     private var emptyView: View? = null
@@ -77,13 +76,25 @@ class AwSimpleAdapter<VB : ViewBinding, T>(
     /** ViewBinding 持有的 ViewHolder */
     private class BindingViewHolder<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(binding.root)
 
-    private val dataObserver = object : RecyclerView.AdapterDataObserver() {
-        override fun onChanged() = toggleEmptyView()
-        override fun onItemRangeInserted(positionStart: Int, itemCount: Int) = toggleEmptyView()
-        override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) = toggleEmptyView()
-    }
+    private val dataObserver =
+        object : RecyclerView.AdapterDataObserver() {
+            override fun onChanged() = toggleEmptyView()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            override fun onItemRangeInserted(
+                positionStart: Int,
+                itemCount: Int,
+            ) = toggleEmptyView()
+
+            override fun onItemRangeRemoved(
+                positionStart: Int,
+                itemCount: Int,
+            ) = toggleEmptyView()
+        }
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): RecyclerView.ViewHolder {
         val binding = inflate(LayoutInflater.from(parent.context), parent, false)
         val holder = BindingViewHolder(binding)
         holder.itemView.setOnClickListener {
@@ -103,13 +114,20 @@ class AwSimpleAdapter<VB : ViewBinding, T>(
         return holder
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int,
+    ) {
         val binding = (holder as BindingViewHolder<VB>).binding
         val item = getItem(position)
         bind(binding, item, position)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int,
+        payloads: MutableList<Any>,
+    ) {
         if (payloads.isNotEmpty() && bindWithPayload != null) {
             val binding = (holder as BindingViewHolder<VB>).binding
             bindWithPayload?.invoke(binding, getItem(position), position, payloads)
@@ -168,7 +186,7 @@ class AwSimpleAdapter<VB : ViewBinding, T>(
 fun <VB : ViewBinding, T> awSimpleAdapter(
     diffCallback: DiffUtil.ItemCallback<T>,
     inflate: (LayoutInflater, ViewGroup?, Boolean) -> VB,
-    bind: (VB, T, Int) -> Unit
+    bind: (VB, T, Int) -> Unit,
 ): AwSimpleAdapter<VB, T> {
     return AwSimpleAdapter(inflate, diffCallback, bind)
 }

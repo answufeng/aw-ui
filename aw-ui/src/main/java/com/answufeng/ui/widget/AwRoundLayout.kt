@@ -44,154 +44,177 @@ import com.answufeng.ui.R
  * | `round_strokeColor` | 描边颜色 | 透明 |
  * | `round_strokeWidth` | 描边宽度 | 0 |
  */
-class AwRoundLayout @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr) {
+class AwRoundLayout
+    @JvmOverloads
+    constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0,
+    ) : FrameLayout(context, attrs, defStyleAttr) {
+        private val clipPath = Path()
+        private val strokePath = Path()
+        private val radii = FloatArray(8)
+        private var pathDirty = true
 
-    private val clipPath = Path()
-    private val strokePath = Path()
-    private val radii = FloatArray(8)
-    private var pathDirty = true
+        /** 是否使用 ViewOutlineProvider 实现圆角裁切（统一圆角时为 true，独立圆角时回退为 false） */
+        private var useOutlineProvider = true
 
-    /** 是否使用 ViewOutlineProvider 实现圆角裁切（统一圆角时为 true，独立圆角时回退为 false） */
-    private var useOutlineProvider = true
+        private val strokePaint =
+            Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                style = Paint.Style.STROKE
+            }
+        private val strokeRect = RectF()
 
-    private val strokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.STROKE
-    }
-    private val strokeRect = RectF()
+        /** 描边颜色，默认透明（不绘制） */
+        @ColorInt
+        var strokeColor: Int = Color.TRANSPARENT
+            set(value) {
+                field = value
+                strokePaint.color = value
+                invalidate()
+            }
 
-    /** 描边颜色，默认透明（不绘制） */
-    @ColorInt
-    var strokeColor: Int = Color.TRANSPARENT
-        set(value) {
-            field = value
-            strokePaint.color = value
-            invalidate()
-        }
+        /** 描边宽度（px），默认 0（不绘制） */
+        var strokeWidth: Float = 0f
+            set(value) {
+                field = value
+                strokePaint.strokeWidth = value
+                invalidate()
+            }
 
-    /** 描边宽度（px），默认 0（不绘制） */
-    var strokeWidth: Float = 0f
-        set(value) {
-            field = value
-            strokePaint.strokeWidth = value
-            invalidate()
-        }
+        init {
+            val ta = context.obtainStyledAttributes(attrs, R.styleable.AwRoundLayout)
+            val allRadius = ta.getDimension(R.styleable.AwRoundLayout_round_radius, 0f)
+            val tl = ta.getDimension(R.styleable.AwRoundLayout_round_topLeftRadius, allRadius)
+            val tr = ta.getDimension(R.styleable.AwRoundLayout_round_topRightRadius, allRadius)
+            val bl = ta.getDimension(R.styleable.AwRoundLayout_round_bottomLeftRadius, allRadius)
+            val br = ta.getDimension(R.styleable.AwRoundLayout_round_bottomRightRadius, allRadius)
+            strokeColor = ta.getColor(R.styleable.AwRoundLayout_round_strokeColor, Color.TRANSPARENT)
+            strokeWidth = ta.getDimension(R.styleable.AwRoundLayout_round_strokeWidth, 0f)
+            ta.recycle()
 
-    init {
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.AwRoundLayout)
-        val allRadius = ta.getDimension(R.styleable.AwRoundLayout_round_radius, 0f)
-        val tl = ta.getDimension(R.styleable.AwRoundLayout_round_topLeftRadius, allRadius)
-        val tr = ta.getDimension(R.styleable.AwRoundLayout_round_topRightRadius, allRadius)
-        val bl = ta.getDimension(R.styleable.AwRoundLayout_round_bottomLeftRadius, allRadius)
-        val br = ta.getDimension(R.styleable.AwRoundLayout_round_bottomRightRadius, allRadius)
-        strokeColor = ta.getColor(R.styleable.AwRoundLayout_round_strokeColor, Color.TRANSPARENT)
-        strokeWidth = ta.getDimension(R.styleable.AwRoundLayout_round_strokeWidth, 0f)
-        ta.recycle()
+            setRadii(tl, tr, br, bl)
 
-        setRadii(tl, tr, br, bl)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            outlineProvider = object : ViewOutlineProvider() {
-                @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-                override fun getOutline(view: View, outline: Outline) {
-                    if (useOutlineProvider) {
-                        outline.setRoundRect(0, 0, view.width, view.height, radii[0])
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                outlineProvider =
+                    object : ViewOutlineProvider() {
+                        @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+                        override fun getOutline(
+                            view: View,
+                            outline: Outline,
+                        ) {
+                            if (useOutlineProvider) {
+                                outline.setRoundRect(0, 0, view.width, view.height, radii[0])
+                            }
+                        }
                     }
+                clipToOutline = true
+            }
+        }
+
+        /**
+         * 分别设置四个角的圆角半径（px）。
+         *
+         * @param topLeft     左上角半径
+         * @param topRight    右上角半径
+         * @param bottomRight 右下角半径
+         * @param bottomLeft  左下角半径
+         */
+        fun setRadii(
+            topLeft: Float,
+            topRight: Float,
+            bottomRight: Float,
+            bottomLeft: Float,
+        ) {
+            radii[0] = topLeft
+            radii[1] = topLeft
+            radii[2] = topRight
+            radii[3] = topRight
+            radii[4] = bottomRight
+            radii[5] = bottomRight
+            radii[6] = bottomLeft
+            radii[7] = bottomLeft
+            pathDirty = true
+            // 检查是否所有圆角半径相同，若不同则回退到 clipPath 方式
+            useOutlineProvider = topLeft == topRight && topRight == bottomRight && bottomRight == bottomLeft
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                clipToOutline = useOutlineProvider
+            }
+            invalidate()
+        }
+
+        /**
+         * 设置统一圆角半径（四角相同）。
+         *
+         * @param radius 圆角半径（px）
+         */
+        fun setRadius(radius: Float) {
+            setRadii(radius, radius, radius, radius)
+        }
+
+        /**
+         * 设置描边样式。
+         *
+         * @param color 描边颜色
+         * @param width 描边宽度（px）
+         */
+        fun setStroke(
+            @ColorInt color: Int,
+            width: Float,
+        ) {
+            strokeColor = color
+            strokeWidth = width
+        }
+
+        override fun onSizeChanged(
+            w: Int,
+            h: Int,
+            oldw: Int,
+            oldh: Int,
+        ) {
+            super.onSizeChanged(w, h, oldw, oldh)
+            pathDirty = true
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                invalidateOutline()
+            } else {
+                invalidate()
+            }
+        }
+
+        override fun dispatchDraw(canvas: Canvas) {
+            if (useOutlineProvider && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                super.dispatchDraw(canvas)
+                // 描边绘制在子 View 之上
+                if (strokeWidth > 0f && strokeColor != Color.TRANSPARENT) {
+                    val half = strokeWidth / 2f
+                    strokeRect.set(half, half, width - half, height - half)
+                    strokePath.reset()
+                    strokePath.addRoundRect(strokeRect, radii, Path.Direction.CW)
+                    canvas.drawPath(strokePath, strokePaint)
+                }
+            } else {
+                if (pathDirty) {
+                    clipPath.reset()
+                    clipPath.addRoundRect(
+                        RectF(0f, 0f, width.toFloat(), height.toFloat()),
+                        radii,
+                        Path.Direction.CW,
+                    )
+                    pathDirty = false
+                }
+                canvas.save()
+                canvas.clipPath(clipPath)
+                super.dispatchDraw(canvas)
+                canvas.restore()
+
+                // 描边绘制在子 View 之上，使用 Path 支持四角独立圆角
+                if (strokeWidth > 0f && strokeColor != Color.TRANSPARENT) {
+                    val half = strokeWidth / 2f
+                    strokeRect.set(half, half, width - half, height - half)
+                    strokePath.reset()
+                    strokePath.addRoundRect(strokeRect, radii, Path.Direction.CW)
+                    canvas.drawPath(strokePath, strokePaint)
                 }
             }
-            clipToOutline = true
         }
     }
-
-    /**
-     * 分别设置四个角的圆角半径（px）。
-     *
-     * @param topLeft     左上角半径
-     * @param topRight    右上角半径
-     * @param bottomRight 右下角半径
-     * @param bottomLeft  左下角半径
-     */
-    fun setRadii(topLeft: Float, topRight: Float, bottomRight: Float, bottomLeft: Float) {
-        radii[0] = topLeft; radii[1] = topLeft
-        radii[2] = topRight; radii[3] = topRight
-        radii[4] = bottomRight; radii[5] = bottomRight
-        radii[6] = bottomLeft; radii[7] = bottomLeft
-        pathDirty = true
-        // 检查是否所有圆角半径相同，若不同则回退到 clipPath 方式
-        useOutlineProvider = topLeft == topRight && topRight == bottomRight && bottomRight == bottomLeft
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            clipToOutline = useOutlineProvider
-        }
-        invalidate()
-    }
-
-    /**
-     * 设置统一圆角半径（四角相同）。
-     *
-     * @param radius 圆角半径（px）
-     */
-    fun setRadius(radius: Float) {
-        setRadii(radius, radius, radius, radius)
-    }
-
-    /**
-     * 设置描边样式。
-     *
-     * @param color 描边颜色
-     * @param width 描边宽度（px）
-     */
-    fun setStroke(@ColorInt color: Int, width: Float) {
-        strokeColor = color
-        strokeWidth = width
-    }
-
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        pathDirty = true
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            invalidateOutline()
-        } else {
-            invalidate()
-        }
-    }
-
-    override fun dispatchDraw(canvas: Canvas) {
-        if (useOutlineProvider && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            super.dispatchDraw(canvas)
-            // 描边绘制在子 View 之上
-            if (strokeWidth > 0f && strokeColor != Color.TRANSPARENT) {
-                val half = strokeWidth / 2f
-                strokeRect.set(half, half, width - half, height - half)
-                strokePath.reset()
-                strokePath.addRoundRect(strokeRect, radii, Path.Direction.CW)
-                canvas.drawPath(strokePath, strokePaint)
-            }
-        } else {
-            if (pathDirty) {
-                clipPath.reset()
-                clipPath.addRoundRect(
-                    RectF(0f, 0f, width.toFloat(), height.toFloat()),
-                    radii,
-                    Path.Direction.CW
-                )
-                pathDirty = false
-            }
-            canvas.save()
-            canvas.clipPath(clipPath)
-            super.dispatchDraw(canvas)
-            canvas.restore()
-
-            // 描边绘制在子 View 之上，使用 Path 支持四角独立圆角
-            if (strokeWidth > 0f && strokeColor != Color.TRANSPARENT) {
-                val half = strokeWidth / 2f
-                strokeRect.set(half, half, width - half, height - half)
-                strokePath.reset()
-                strokePath.addRoundRect(strokeRect, radii, Path.Direction.CW)
-                canvas.drawPath(strokePath, strokePaint)
-            }
-        }
-    }
-}

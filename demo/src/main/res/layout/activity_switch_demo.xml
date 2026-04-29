@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light"
+    android:orientation="vertical">
+
+    <com.answufeng.ui.widget.AwTitleBar
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:titleBar_showBack="true"
+        app:titleBar_showDivider="true"
+        app:titleBar_title="AwSwitchButton" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="默认样式"
+                style="@style/Text.AwUi.Subtitle"
+                android:layout_marginBottom="12dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.answufeng.ui.widget.AwSwitchButton
+                    android:id="@+id/switch_default"
+                    android:layout_width="52dp"
+                    android:layout_height="28dp" />
+
+                <TextView
+                    android:id="@+id/tv_switch_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="OFF"
+                    style="@style/Text.AwUi.Body" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="自定义颜色"
+                style="@style/Text.AwUi.Subtitle"
+                android:layout_marginBottom="12dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.answufeng.ui.widget.AwSwitchButton
+                    android:id="@+id/switch_green"
+                    android:layout_width="52dp"
+                    android:layout_height="28dp"
+                    app:switch_trackCheckedColor="#22C55E" />
+
+                <com.answufeng.ui.widget.AwSwitchButton
+                    android:id="@+id/switch_red"
+                    android:layout_width="52dp"
+                    android:layout_height="28dp"
+                    android:layout_marginStart="24dp"
+                    app:switch_trackCheckedColor="#EF4444"
+                    app:switch_checked="true" />
+
+                <com.answufeng.ui.widget.AwSwitchButton
+                    android:id="@+id/switch_orange"
+                    android:layout_width="52dp"
+                    android:layout_height="28dp"
+                    android:layout_marginStart="24dp"
+                    app:switch_trackCheckedColor="#F97316" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="默认选中"
+                style="@style/Text.AwUi.Subtitle"
+                android:layout_marginBottom="12dp" />
+
+            <com.answufeng.ui.widget.AwSwitchButton
+                android:id="@+id/switch_checked"
+                android:layout_width="52dp"
+                android:layout_height="28dp"
+                app:switch_checked="true" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="关闭阴影"
+                style="@style/Text.AwUi.Subtitle"
+                android:layout_marginBottom="12dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.answufeng.ui.widget.AwSwitchButton
+                    android:id="@+id/switch_no_shadow"
+                    android:layout_width="52dp"
+                    android:layout_height="28dp"
+                    app:switch_thumbShadowEnabled="false" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="无阴影效果"
+                    style="@style/Text.AwUi.Body" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_log"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:minHeight="80dp"
+                android:background="@color/surface_variant"
+                android:padding="12dp"
+                android:text="操作日志将显示在这里..."
+                android:lineSpacingExtra="4dp"
+                style="@style/Text.AwUi.Body" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

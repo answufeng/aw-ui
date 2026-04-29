@@ -4,9 +4,9 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.view.View
-import android.view.Window
 import android.widget.TextView
 import com.answufeng.ui.R
+import com.answufeng.ui.widget.AwLoadingView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 /**
@@ -29,9 +29,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
  * ```
  */
 class AwDialog private constructor(
-    private val builder: Builder
+    private val builder: Builder,
 ) {
-
     private var dialog: Dialog? = null
 
     fun show() {
@@ -64,7 +63,6 @@ class AwDialog private constructor(
     fun isShowing(): Boolean = dialog?.isShowing == true
 
     class Builder(val context: Context) {
-
         internal var title: String? = null
             private set
         internal var message: String? = null
@@ -96,13 +94,19 @@ class AwDialog private constructor(
             return this
         }
 
-        fun positiveButton(text: String = "确定", onClick: () -> Unit = {}): Builder {
+        fun positiveButton(
+            text: String = "确定",
+            onClick: () -> Unit = {},
+        ): Builder {
             this.positiveText = text
             this.onPositiveClick = onClick
             return this
         }
 
-        fun negativeButton(text: String = "取消", onClick: () -> Unit = {}): Builder {
+        fun negativeButton(
+            text: String = "取消",
+            onClick: () -> Unit = {},
+        ): Builder {
             this.negativeText = text
             this.onNegativeClick = onClick
             return this
@@ -138,8 +142,11 @@ class AwDialog private constructor(
     }
 
     companion object {
-
-        fun showMessage(context: Context, title: String, message: String) {
+        fun showMessage(
+            context: Context,
+            title: String,
+            message: String,
+        ) {
             Builder(context)
                 .title(title)
                 .message(message)
@@ -150,7 +157,7 @@ class AwDialog private constructor(
             context: Context,
             title: String,
             message: String,
-            onConfirm: () -> Unit
+            onConfirm: () -> Unit,
         ) {
             Builder(context)
                 .title(title)
@@ -163,7 +170,9 @@ class AwDialog private constructor(
 }
 
 /**
- * 加载中对话框，显示旋转进度和提示文字。
+ * 加载中对话框，显示菊花旋转动画和提示文字，半透明深色背景。
+ *
+ * 默认使用 [AwLoadingView] 的 FLOWER 样式，窗口背景半透明遮罩。
  *
  * ```kotlin
  * AwLoadingDialog.show(context, "加载中...")
@@ -171,19 +180,23 @@ class AwDialog private constructor(
  * AwLoadingDialog(context).showLoading("请稍候")
  * ```
  */
-class AwLoadingDialog(context: Context) : Dialog(context) {
+class AwLoadingDialog(context: Context) : AwBaseDialog(context) {
+    override val cancelableOnTouchOutside: Boolean = false
 
     private var loadingMessage: String = "加载中..."
     private var messageTextView: TextView? = null
+    private var loadingView: AwLoadingView? = null
+
+    init {
+        customContentView =
+            android.view.LayoutInflater.from(context)
+                .inflate(R.layout.aw_dialog_loading, null)
+    }
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-        setContentView(R.layout.aw_state_loading)
-        setCancelable(true)
-        setCanceledOnTouchOutside(false)
-        window?.setBackgroundDrawableResource(android.R.color.transparent)
         messageTextView = findViewById(R.id.tvLoadingMessage)
+        loadingView = findViewById(R.id.loadingView)
     }
 
     override fun show() {
@@ -197,6 +210,16 @@ class AwLoadingDialog(context: Context) : Dialog(context) {
         return this
     }
 
+    fun setStyle(style: AwLoadingView.Style): AwLoadingDialog {
+        loadingView?.style = style
+        return this
+    }
+
+    fun setTintColor(color: Int): AwLoadingDialog {
+        loadingView?.setColorTint(color)
+        return this
+    }
+
     fun showLoading(message: String = "加载中...") {
         this.loadingMessage = message
         show()
@@ -207,7 +230,10 @@ class AwLoadingDialog(context: Context) : Dialog(context) {
     }
 
     companion object {
-        fun show(context: Context, message: String = "加载中..."): AwLoadingDialog {
+        fun show(
+            context: Context,
+            message: String = "加载中...",
+        ): AwLoadingDialog {
             return AwLoadingDialog(context).apply {
                 setLoadingMessage(message)
                 show()
@@ -218,6 +244,6 @@ class AwLoadingDialog(context: Context) : Dialog(context) {
 
 @Deprecated(
     message = "请使用 AwLoadingDialog 替代 LoadingDialog，保持命名一致性",
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.WARNING,
 )
 typealias LoadingDialog = AwLoadingDialog

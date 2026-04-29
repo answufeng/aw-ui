@@ -21,7 +21,7 @@ internal data class TypeRegistration(
     val clazz: KClass<*>,
     val create: (ViewGroup) -> ViewBinding,
     val bind: (ViewBinding, Any, Int) -> Unit,
-    val bindWithPayload: ((ViewBinding, Any, Int, List<Any>) -> Unit)? = null
+    val bindWithPayload: ((ViewBinding, Any, Int, List<Any>) -> Unit)? = null,
 )
 
 /**
@@ -82,30 +82,46 @@ internal data class TypeRegistration(
  */
 class AwMultiTypeAdapter(
     private val itemDiff: ((old: Any, new: Any) -> Boolean)? = null,
-    private val contentDiff: ((old: Any, new: Any) -> Boolean)? = null
+    private val contentDiff: ((old: Any, new: Any) -> Boolean)? = null,
 ) : RecyclerView.Adapter<AwMultiTypeAdapter.BindingHolder>() {
-
     @PublishedApi
     internal val registrations = mutableListOf<TypeRegistration>()
 
-    private val differ: AsyncListDiffer<Any> = AsyncListDiffer(this, object : DiffUtil.ItemCallback<Any>() {
-        override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
-            if (itemDiff == null) return oldItem === newItem
-            return oldItem::class == newItem::class && itemDiff.invoke(oldItem, newItem)
-        }
+    private val differ: AsyncListDiffer<Any> =
+        AsyncListDiffer(
+            this,
+            object : DiffUtil.ItemCallback<Any>() {
+                override fun areItemsTheSame(
+                    oldItem: Any,
+                    newItem: Any,
+                ): Boolean {
+                    if (itemDiff == null) return oldItem === newItem
+                    return oldItem::class == newItem::class && itemDiff.invoke(oldItem, newItem)
+                }
 
-        override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
-            return (contentDiff ?: itemDiff)?.invoke(oldItem, newItem) ?: (oldItem == newItem)
-        }
+                override fun areContentsTheSame(
+                    oldItem: Any,
+                    newItem: Any,
+                ): Boolean {
+                    return (contentDiff ?: itemDiff)?.invoke(oldItem, newItem) ?: (oldItem == newItem)
+                }
 
-        override fun getChangePayload(oldItem: Any, newItem: Any): Any? {
-            return if (contentDiff != null && itemDiff != null) {
-                if (!contentDiff.invoke(oldItem, newItem) && itemDiff.invoke(oldItem, newItem)) {
-                    newItem
-                } else null
-            } else null
-        }
-    })
+                override fun getChangePayload(
+                    oldItem: Any,
+                    newItem: Any,
+                ): Any? {
+                    return if (contentDiff != null && itemDiff != null) {
+                        if (!contentDiff.invoke(oldItem, newItem) && itemDiff.invoke(oldItem, newItem)) {
+                            newItem
+                        } else {
+                            null
+                        }
+                    } else {
+                        null
+                    }
+                }
+            },
+        )
 
     /** ViewBinding 持有的 ViewHolder */
     class BindingHolder(val binding: ViewBinding) : RecyclerView.ViewHolder(binding.root)
@@ -124,22 +140,25 @@ class AwMultiTypeAdapter(
     inline fun <reified T : Any, reified VB : ViewBinding> register(
         noinline inflate: (LayoutInflater, ViewGroup, Boolean) -> VB,
         noinline bind: (VB, T, Int) -> Unit,
-        noinline bindWithPayload: ((VB, T, Int, List<Any>) -> Unit)? = null
+        noinline bindWithPayload: ((VB, T, Int, List<Any>) -> Unit)? = null,
     ) {
-        registrations.add(TypeRegistration(
-            clazz = T::class,
-            create = { parent -> inflate(LayoutInflater.from(parent.context), parent, false) },
-            bind = { binding, item, pos ->
-                @Suppress("UNCHECKED_CAST")
-                bind(binding as VB, item as T, pos)
-            },
-            bindWithPayload = bindWithPayload?.let { payloadBind ->
-                { binding, item, pos, payloads ->
+        registrations.add(
+            TypeRegistration(
+                clazz = T::class,
+                create = { parent -> inflate(LayoutInflater.from(parent.context), parent, false) },
+                bind = { binding, item, pos ->
                     @Suppress("UNCHECKED_CAST")
-                    payloadBind(binding as VB, item as T, pos, payloads)
-                }
-            }
-        ))
+                    bind(binding as VB, item as T, pos)
+                },
+                bindWithPayload =
+                    bindWithPayload?.let { payloadBind ->
+                        { binding, item, pos, payloads ->
+                            @Suppress("UNCHECKED_CAST")
+                            payloadBind(binding as VB, item as T, pos, payloads)
+                        }
+                    },
+            ),
+        )
     }
 
     /**
@@ -151,7 +170,10 @@ class AwMultiTypeAdapter(
      * @param newItems        新的数据列表
      * @param commitCallback  Diff 完成后的回调（可选）
      */
-    fun submitList(newItems: List<Any>, commitCallback: Runnable? = null) {
+    fun submitList(
+        newItems: List<Any>,
+        commitCallback: Runnable? = null,
+    ) {
         differ.submitList(newItems, commitCallback)
     }
 
@@ -170,15 +192,25 @@ class AwMultiTypeAdapter(
         return index
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindingHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): BindingHolder {
         return BindingHolder(registrations[viewType].create(parent))
     }
 
-    override fun onBindViewHolder(holder: BindingHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: BindingHolder,
+        position: Int,
+    ) {
         registrations[holder.itemViewType].bind(holder.binding, differ.currentList[position], position)
     }
 
-    override fun onBindViewHolder(holder: BindingHolder, position: Int, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(
+        holder: BindingHolder,
+        position: Int,
+        payloads: MutableList<Any>,
+    ) {
         if (payloads.isNotEmpty()) {
             val reg = registrations[holder.itemViewType]
             if (reg.bindWithPayload != null) {
@@ -215,10 +247,14 @@ class AwMultiTypeAdapterBuilder {
     internal val registrations = mutableListOf<TypeRegistration>()
 
     /** 设置 item 相同性判断 */
-    fun itemDiff(block: (old: Any, new: Any) -> Boolean) { itemDiff = block }
+    fun itemDiff(block: (old: Any, new: Any) -> Boolean) {
+        itemDiff = block
+    }
 
     /** 设置内容相同性判断 */
-    fun contentDiff(block: (old: Any, new: Any) -> Boolean) { contentDiff = block }
+    fun contentDiff(block: (old: Any, new: Any) -> Boolean) {
+        contentDiff = block
+    }
 
     /**
      * 注册一种数据类型，使用 ViewBinding inflate 方法引用。
@@ -232,22 +268,25 @@ class AwMultiTypeAdapterBuilder {
     inline fun <reified T : Any, reified VB : ViewBinding> register(
         noinline inflate: (LayoutInflater, ViewGroup, Boolean) -> VB,
         noinline bind: (VB, T, Int) -> Unit,
-        noinline bindWithPayload: ((VB, T, Int, List<Any>) -> Unit)? = null
+        noinline bindWithPayload: ((VB, T, Int, List<Any>) -> Unit)? = null,
     ) {
-        registrations.add(TypeRegistration(
-            clazz = T::class,
-            create = { parent -> inflate(LayoutInflater.from(parent.context), parent, false) },
-            bind = { binding, item, pos ->
-                @Suppress("UNCHECKED_CAST")
-                bind(binding as VB, item as T, pos)
-            },
-            bindWithPayload = bindWithPayload?.let { payloadBind ->
-                { binding, item, pos, payloads ->
+        registrations.add(
+            TypeRegistration(
+                clazz = T::class,
+                create = { parent -> inflate(LayoutInflater.from(parent.context), parent, false) },
+                bind = { binding, item, pos ->
                     @Suppress("UNCHECKED_CAST")
-                    payloadBind(binding as VB, item as T, pos, payloads)
-                }
-            }
-        ))
+                    bind(binding as VB, item as T, pos)
+                },
+                bindWithPayload =
+                    bindWithPayload?.let { payloadBind ->
+                        { binding, item, pos, payloads ->
+                            @Suppress("UNCHECKED_CAST")
+                            payloadBind(binding as VB, item as T, pos, payloads)
+                        }
+                    },
+            ),
+        )
     }
 
     fun build(): AwMultiTypeAdapter {

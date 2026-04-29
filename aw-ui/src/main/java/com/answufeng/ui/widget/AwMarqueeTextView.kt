@@ -21,141 +21,157 @@ import com.answufeng.ui.R
  *     app:marquee_direction="left_to_right" />
  * ```
  */
-class AwMarqueeTextView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : AppCompatTextView(context, attrs, defStyleAttr) {
+class AwMarqueeTextView
+    @JvmOverloads
+    constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0,
+    ) : AppCompatTextView(context, attrs, defStyleAttr) {
+        enum class Direction {
+            LEFT_TO_RIGHT,
+            RIGHT_TO_LEFT,
+        }
 
-    enum class Direction {
-        LEFT_TO_RIGHT,
-        RIGHT_TO_LEFT
-    }
+        var speed: Float = 1f
 
-    var speed: Float = 1f
+        var pauseDuration: Long = 1000L
 
-    var pauseDuration: Long = 1000L
+        var direction: Direction = Direction.RIGHT_TO_LEFT
+            set(value) {
+                field = value
+                resetScroll()
+            }
 
-    var direction: Direction = Direction.RIGHT_TO_LEFT
-        set(value) {
-            field = value
+        private var textWidth: Float = 0f
+        private var currentOffset: Float = 0f
+        private var isScrolling: Boolean = false
+        private var scrollAnimator: ValueAnimator? = null
+
+        /** 一轮滚动结束并暂停后再次开跑，便于 [removeCallbacks] 防止泄漏 */
+        private val resumeAfterPauseRunnable =
+            Runnable {
+                if (isScrolling && isAttachedToWindow) {
+                    startScrollCycle()
+                }
+            }
+
+        init {
+            val ta = context.obtainStyledAttributes(attrs, R.styleable.AwMarqueeTextView)
+            speed = ta.getFloat(R.styleable.AwMarqueeTextView_marquee_speed, 1f)
+            pauseDuration = ta.getInt(R.styleable.AwMarqueeTextView_marquee_pauseDuration, 1000).toLong()
+            direction =
+                when (ta.getInt(R.styleable.AwMarqueeTextView_marquee_direction, 1)) {
+                    0 -> Direction.LEFT_TO_RIGHT
+                    else -> Direction.RIGHT_TO_LEFT
+                }
+            ta.recycle()
+
+            isSingleLine = true
+        }
+
+        override fun onAttachedToWindow() {
+            super.onAttachedToWindow()
+            startScrolling()
+        }
+
+        override fun onDetachedFromWindow() {
+            super.onDetachedFromWindow()
+            stopScrolling()
+        }
+
+        override fun onSizeChanged(
+            w: Int,
+            h: Int,
+            oldw: Int,
+            oldh: Int,
+        ) {
+            super.onSizeChanged(w, h, oldw, oldh)
+            recalculate()
+        }
+
+        override fun onTextChanged(
+            text: CharSequence?,
+            start: Int,
+            before: Int,
+            count: Int,
+        ) {
+            super.onTextChanged(text, start, before, count)
+            recalculate()
+        }
+
+        override fun onDraw(canvas: Canvas) {
+            if (textWidth <= width || !isScrolling) {
+                super.onDraw(canvas)
+                return
+            }
+
+            canvas.save()
+            if (direction == Direction.RIGHT_TO_LEFT) {
+                canvas.translate(-currentOffset, 0f)
+            } else {
+                canvas.translate(currentOffset, 0f)
+            }
+            super.onDraw(canvas)
+            canvas.restore()
+        }
+
+        private fun recalculate() {
+            paint.textSize = textSize
+            textWidth = paint.measureText(text.toString())
             resetScroll()
         }
 
-    private var textWidth: Float = 0f
-    private var currentOffset: Float = 0f
-    private var isScrolling: Boolean = false
-    private var scrollAnimator: ValueAnimator? = null
+        private fun resetScroll() {
+            removeCallbacks(resumeAfterPauseRunnable)
+            scrollAnimator?.cancel()
+            scrollAnimator = null
+            currentOffset = 0f
+            invalidate()
+        }
 
-    /** 一轮滚动结束并暂停后再次开跑，便于 [removeCallbacks] 防止泄漏 */
-    private val resumeAfterPauseRunnable = Runnable {
-        if (isScrolling && isAttachedToWindow) {
+        private fun startScrolling() {
+            if (textWidth <= width) return
+            isScrolling = true
             startScrollCycle()
         }
-    }
 
-    init {
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.AwMarqueeTextView)
-        speed = ta.getFloat(R.styleable.AwMarqueeTextView_marquee_speed, 1f)
-        pauseDuration = ta.getInt(R.styleable.AwMarqueeTextView_marquee_pauseDuration, 1000).toLong()
-        direction = when (ta.getInt(R.styleable.AwMarqueeTextView_marquee_direction, 1)) {
-            0 -> Direction.LEFT_TO_RIGHT
-            else -> Direction.RIGHT_TO_LEFT
-        }
-        ta.recycle()
-
-        isSingleLine = true
-    }
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        startScrolling()
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        stopScrolling()
-    }
-
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        recalculate()
-    }
-
-    override fun onTextChanged(text: CharSequence?, start: Int, before: Int, count: Int) {
-        super.onTextChanged(text, start, before, count)
-        recalculate()
-    }
-
-    override fun onDraw(canvas: Canvas) {
-        if (textWidth <= width || !isScrolling) {
-            super.onDraw(canvas)
-            return
+        private fun stopScrolling() {
+            isScrolling = false
+            removeCallbacks(resumeAfterPauseRunnable)
+            scrollAnimator?.cancel()
+            scrollAnimator = null
         }
 
-        canvas.save()
-        if (direction == Direction.RIGHT_TO_LEFT) {
-            canvas.translate(-currentOffset, 0f)
-        } else {
-            canvas.translate(currentOffset, 0f)
-        }
-        super.onDraw(canvas)
-        canvas.restore()
-    }
+        private fun startScrollCycle() {
+            if (!isScrolling || !isAttachedToWindow) return
 
-    private fun recalculate() {
-        paint.textSize = textSize
-        textWidth = paint.measureText(text.toString())
-        resetScroll()
-    }
+            val overflow = textWidth - width
+            if (overflow <= 0f) return
 
-    private fun resetScroll() {
-        removeCallbacks(resumeAfterPauseRunnable)
-        scrollAnimator?.cancel()
-        scrollAnimator = null
-        currentOffset = 0f
-        invalidate()
-    }
+            val durationPerPx = 16L / speed.coerceAtLeast(0.1f)
+            val scrollDuration = (overflow * durationPerPx).toLong().coerceAtLeast(1L)
 
-    private fun startScrolling() {
-        if (textWidth <= width) return
-        isScrolling = true
-        startScrollCycle()
-    }
-
-    private fun stopScrolling() {
-        isScrolling = false
-        removeCallbacks(resumeAfterPauseRunnable)
-        scrollAnimator?.cancel()
-        scrollAnimator = null
-    }
-
-    private fun startScrollCycle() {
-        if (!isScrolling || !isAttachedToWindow) return
-
-        val overflow = textWidth - width
-        if (overflow <= 0f) return
-
-        val durationPerPx = 16L / speed.coerceAtLeast(0.1f)
-        val scrollDuration = (overflow * durationPerPx).toLong().coerceAtLeast(1L)
-
-        scrollAnimator?.cancel()
-        scrollAnimator = ValueAnimator.ofFloat(0f, overflow).apply {
-            duration = scrollDuration
-            addUpdateListener { animator ->
-                currentOffset = animator.animatedValue as Float
-                invalidate()
-            }
-            addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    if (!isScrolling || !isAttachedToWindow) return
-                    scrollAnimator = null
-                    currentOffset = 0f
-                    invalidate()
-                    postDelayed(resumeAfterPauseRunnable, pauseDuration)
+            scrollAnimator?.cancel()
+            scrollAnimator =
+                ValueAnimator.ofFloat(0f, overflow).apply {
+                    duration = scrollDuration
+                    addUpdateListener { animator ->
+                        currentOffset = animator.animatedValue as Float
+                        invalidate()
+                    }
+                    addListener(
+                        object : AnimatorListenerAdapter() {
+                            override fun onAnimationEnd(animation: Animator) {
+                                if (!isScrolling || !isAttachedToWindow) return
+                                scrollAnimator = null
+                                currentOffset = 0f
+                                invalidate()
+                                postDelayed(resumeAfterPauseRunnable, pauseDuration)
+                            }
+                        },
+                    )
+                    start()
                 }
-            })
-            start()
         }
     }
-}

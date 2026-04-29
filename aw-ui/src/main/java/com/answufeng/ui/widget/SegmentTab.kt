@@ -7,7 +7,7 @@ import androidx.annotation.DrawableRes
  */
 data class SegmentTab(
     val label: String = "",
-    @DrawableRes val iconRes: Int = 0
+    @DrawableRes val iconRes: Int = 0,
 ) {
     val hasIcon: Boolean get() = iconRes != 0
     val hasLabel: Boolean get() = label.isNotEmpty()

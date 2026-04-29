@@ -4,31 +4,47 @@
     style="@style/Card.AwUi"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:foreground="?attr/selectableItemBackground"
+    android:layout_marginBottom="8dp"
     android:clickable="true"
     android:focusable="true"
-    android:layout_marginBottom="12dp">
+    android:foreground="?attr/selectableItemBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="14dp">
 
-        <TextView
-            android:id="@+id/tvTitle"
-            style="@style/Text.AwUi.Subtitle"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/app_name" />
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvDesc"
-            style="@style/Text.AwUi.Body"
-            android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tvTitle"
+                style="@style/Text.AwUi.Subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/tvDesc"
+                style="@style/Text.AwUi.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="?android:attr/textColorSecondary" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/app_name" />
+            android:importantForAccessibility="no"
+            android:src="@drawable/aw_ic_back"
+            android:rotation="180"
+            android:alpha="0.3" />
+
     </LinearLayout>
-
 </com.google.android.material.card.MaterialCardView>

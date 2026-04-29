@@ -1,7 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Tab Bar Colors -->
+    <color name="aw_color_search_bg">#F5F5F5</color>
+    <color name="aw_color_subtitle">#99000000</color>
+    <color name="aw_color_title_divider">#14000000</color>
+    <color name="aw_color_loading_default">#999999</color>
+    <color name="aw_color_swipe_refresh">#999999</color>
+    <color name="aw_color_banner_indicator">#80FFFFFF</color>
+    <color name="aw_color_progress">#4CAF50</color>
+    <color name="aw_color_progress_track">#E0E0E0</color>
+    <color name="aw_color_skeleton_base">#E0E0E0</color>
+    <color name="aw_color_skeleton_highlight">#F5F5F5</color>
+    <color name="aw_color_switch_track">#CCCCCC</color>
+    <color name="aw_color_switch_checked">#4CAF50</color>
+    <color name="aw_color_tag_bg">#F0F0F0</color>
+    <color name="aw_countdown_disabled">#BBBBBB</color>
+    <color name="aw_color_code_input_stroke">#CCCCCC</color>
+    <color name="aw_color_seg_text">#99000000</color>
+    <color name="aw_color_seg_selected_text">#FF000000</color>
+    <color name="aw_color_seg_container_bg">#1A000000</color>
+    <color name="aw_color_ripple">#33000000</color>
+    <color name="aw_color_badge_text">#FFFFFF</color>
+    <color name="aw_color_action_sheet_secondary">#8E8E93</color>
+    <color name="aw_color_action_sheet_primary">#007AFF</color>
+    <color name="aw_color_action_sheet_separator">#C6C6C8</color>
+    <color name="aw_color_action_sheet_destructive">#FF3B30</color>
+
     <color name="tab_selected_default">#FF5722</color>
     <color name="tab_normal_default">#999999</color>
     <color name="tab_badge_default">#FF0000</color>

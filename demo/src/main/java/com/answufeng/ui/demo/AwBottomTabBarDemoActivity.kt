@@ -57,6 +57,8 @@ class AwBottomTabBarDemoActivity : AppCompatActivity() {
         setupTabBar()
         setupControls()
         refreshDebugInfo()
+
+        findViewById<com.answufeng.ui.widget.AwTitleBar>(R.id.top_bar).setOnBackClickListener { finish() }
     }
 
     private fun initViews() {

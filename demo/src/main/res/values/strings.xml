@@ -4,11 +4,11 @@
     <string name="demo_search_hint">搜索组件/页面</string>
     <string name="demo_playbook_action">演示清单</string>
     <string name="demo_playbook_title">演示清单</string>
-    <string name="demo_playbook_message">入口与组件对照见仓库 demo/DEMO_MATRIX.md。\n\n• 组件总览（Showcase）：输入、进度、Dialog、列表装饰等\n• 状态页：AwStateLayout 四态与重试\n• 下拉刷新列表：AwSwipeRefreshLayout + AwLoadMoreAdapter + setOnRefreshWithStop\n• 轮播：AwBannerView\n• 分段控制：AwSegmentedControl 专项页（文字/图标/指示器、ViewPager2 联动）\n\n发版前请配合 README「工程品质与发版检查」跑 lint + demo R8，并在真机核对无障碍与低内存场景。</string>
+    <string name="demo_playbook_message">入口与组件对照见仓库 demo/DEMO_MATRIX.md。\n\n• 组件总览（Showcase）：输入、进度、Dialog、列表装饰等\n• 状态页：AwStateLayout 四态与重试\n• 下拉刷新列表：AwSwipeRefreshLayout + AwLoadMoreAdapter\n• 轮播：AwBannerView\n• 分段控制：AwSegmentedControl 专项页（文字/图标/指示器、ViewPager2 联动）\n\n发版前请配合 README「工程品质与发版检查」跑 lint + demo R8，并在真机核对无障碍与低内存场景。</string>
     <string name="state_demo_transition_boot">过渡: 交叉（点按循环切换）</string>
     <string name="state_demo_transition_cycling">过渡: %1$s（点按循环：无 → 淡入 → 交叉 → 自底）</string>
     <string name="demo_swipe_refresh_title">下拉刷新列表</string>
-    <string name="demo_swipe_refresh_hint">本页为 AwLoadMoreAdapter 与 Swipe 组合样例：上拉加载 2、3 页，到底「没有更多」；下拉拉回第 1 页，并用 setOnRefreshWithStop 结束指示器。RecyclerView 须为单 child。</string>
+    <string name="demo_swipe_refresh_hint">本页为 AwLoadMoreAdapter 与 Swipe 组合样例：上拉加载 2、3 页，到底「没有更多」；下拉拉回第 1 页，调用 finishRefresh() 结束刷新。RecyclerView 须为单 child。</string>
     <string-array name="segment_items">
         <item>选项一</item>
         <item>选项二</item>

@@ -35,171 +35,195 @@ import kotlin.math.max
  * | `flow_maxLines` | 最大行数（0 = 不限制） | 0 |
  * | `flow_gravity` | 行内对齐方式（start/center/end） | start |
  */
-open class AwFlowLayout @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : ViewGroup(context, attrs, defStyleAttr) {
+open class AwFlowLayout
+    @JvmOverloads
+    constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0,
+    ) : ViewGroup(context, attrs, defStyleAttr) {
+        private val defaultSpacing = (8 * resources.displayMetrics.density).toInt()
 
-    private val defaultSpacing = (8 * resources.displayMetrics.density).toInt()
+        /** 子 View 水平间距（px） */
+        var horizontalSpacing: Int = defaultSpacing
+            set(value) {
+                field = value
+                requestLayout()
+            }
 
-    /** 子 View 水平间距（px） */
-    var horizontalSpacing: Int = defaultSpacing
-        set(value) { field = value; requestLayout() }
+        /** 子 View 垂直间距（px） */
+        var verticalSpacing: Int = defaultSpacing
+            set(value) {
+                field = value
+                requestLayout()
+            }
 
-    /** 子 View 垂直间距（px） */
-    var verticalSpacing: Int = defaultSpacing
-        set(value) { field = value; requestLayout() }
+        /** 最大行数限制，0 表示不限制 */
+        var maxLines: Int = 0
+            set(value) {
+                field = value
+                requestLayout()
+            }
 
-    /** 最大行数限制，0 表示不限制 */
-    var maxLines: Int = 0
-        set(value) { field = value; requestLayout() }
+        /** 行内对齐方式，支持 [Gravity.START]、[Gravity.CENTER_HORIZONTAL]、[Gravity.END] */
+        var flowGravity: Int = Gravity.START
+            set(value) {
+                field = value
+                requestLayout()
+            }
 
-    /** 行内对齐方式，支持 [Gravity.START]、[Gravity.CENTER_HORIZONTAL]、[Gravity.END] */
-    var flowGravity: Int = Gravity.START
-        set(value) { field = value; requestLayout() }
+        /** 记录每行的子 View 索引范围和行宽信息，用于 layout 阶段 gravity 计算 */
+        private data class LineInfo(val startIndex: Int, val endIndex: Int, val lineWidth: Int, val lineHeight: Int)
 
-    /** 记录每行的子 View 索引范围和行宽信息，用于 layout 阶段 gravity 计算 */
-    private data class LineInfo(val startIndex: Int, val endIndex: Int, val lineWidth: Int, val lineHeight: Int)
-    private val lines = mutableListOf<LineInfo>()
-    private val visibleIndices = mutableListOf<Int>()
-    private val visibleChildren = mutableListOf<android.view.View>()
+        private val lines = mutableListOf<LineInfo>()
+        private val visibleIndices = mutableListOf<Int>()
+        private val visibleChildren = mutableListOf<android.view.View>()
 
-    init {
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.AwFlowLayout)
-        horizontalSpacing = ta.getDimensionPixelSize(R.styleable.AwFlowLayout_flow_horizontalSpacing, defaultSpacing)
-        verticalSpacing = ta.getDimensionPixelSize(R.styleable.AwFlowLayout_flow_verticalSpacing, defaultSpacing)
-        maxLines = ta.getInt(R.styleable.AwFlowLayout_flow_maxLines, 0)
-        flowGravity = ta.getInt(R.styleable.AwFlowLayout_flow_gravity, Gravity.START)
-        ta.recycle()
-    }
-
-    override fun generateLayoutParams(attrs: AttributeSet?): LayoutParams {
-        return MarginLayoutParams(context, attrs)
-    }
-
-    override fun generateDefaultLayoutParams(): LayoutParams {
-        return MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-    }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val widthSize = MeasureSpec.getSize(widthMeasureSpec)
-        val widthMode = MeasureSpec.getMode(widthMeasureSpec)
-
-        var lineWidth = 0
-        var lineHeight = 0
-        var totalHeight = 0
-        var maxWidth = 0
-        var lineCount = 1
-        var lineStartIndex = 0
-        val maxLineWidth = widthSize - paddingStart - paddingEnd
-
-        lines.clear()
-        var breakDueToMaxLines = false
-
-        // 收集可见子 View 索引
-        visibleIndices.clear()
-        for (i in 0 until childCount) {
-            if (getChildAt(i).visibility != GONE) visibleIndices.add(i)
+        init {
+            val ta = context.obtainStyledAttributes(attrs, R.styleable.AwFlowLayout)
+            horizontalSpacing = ta.getDimensionPixelSize(R.styleable.AwFlowLayout_flow_horizontalSpacing, defaultSpacing)
+            verticalSpacing = ta.getDimensionPixelSize(R.styleable.AwFlowLayout_flow_verticalSpacing, defaultSpacing)
+            maxLines = ta.getInt(R.styleable.AwFlowLayout_flow_maxLines, 0)
+            flowGravity = ta.getInt(R.styleable.AwFlowLayout_flow_gravity, Gravity.START)
+            ta.recycle()
         }
 
-        for ((seq, i) in visibleIndices.withIndex()) {
-            val child = getChildAt(i)
-            measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0)
-            val lp = child.layoutParams as MarginLayoutParams
-            val cw = child.measuredWidth + lp.leftMargin + lp.rightMargin
-            val ch = child.measuredHeight + lp.topMargin + lp.bottomMargin
+        override fun generateLayoutParams(attrs: AttributeSet?): LayoutParams {
+            return MarginLayoutParams(context, attrs)
+        }
 
-            if (lineWidth + cw > maxLineWidth && lineWidth > 0) {
-                // 当前行结束，记录行信息
-                lines.add(LineInfo(lineStartIndex, seq - 1, lineWidth - horizontalSpacing, lineHeight))
-                totalHeight += lineHeight + verticalSpacing
-                maxWidth = max(maxWidth, lineWidth - horizontalSpacing)
-                lineCount++
+        override fun generateDefaultLayoutParams(): LayoutParams {
+            return MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        }
 
-                // 检查最大行数限制
-                if (maxLines > 0 && lineCount > maxLines) {
-                    // 超出行数的子 View 不参与布局，回退多余的 verticalSpacing
-                    totalHeight -= verticalSpacing
-                    breakDueToMaxLines = true
-                    break
+        override fun onMeasure(
+            widthMeasureSpec: Int,
+            heightMeasureSpec: Int,
+        ) {
+            val widthSize = MeasureSpec.getSize(widthMeasureSpec)
+            val widthMode = MeasureSpec.getMode(widthMeasureSpec)
+
+            var lineWidth = 0
+            var lineHeight = 0
+            var totalHeight = 0
+            var maxWidth = 0
+            var lineCount = 1
+            var lineStartIndex = 0
+            val maxLineWidth = widthSize - paddingStart - paddingEnd
+
+            lines.clear()
+            var breakDueToMaxLines = false
+
+            // 收集可见子 View 索引
+            visibleIndices.clear()
+            for (i in 0 until childCount) {
+                if (getChildAt(i).visibility != GONE) visibleIndices.add(i)
+            }
+
+            for ((seq, i) in visibleIndices.withIndex()) {
+                val child = getChildAt(i)
+                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0)
+                val lp = child.layoutParams as MarginLayoutParams
+                val cw = child.measuredWidth + lp.leftMargin + lp.rightMargin
+                val ch = child.measuredHeight + lp.topMargin + lp.bottomMargin
+
+                if (lineWidth + cw > maxLineWidth && lineWidth > 0) {
+                    // 当前行结束，记录行信息
+                    lines.add(LineInfo(lineStartIndex, seq - 1, lineWidth - horizontalSpacing, lineHeight))
+                    totalHeight += lineHeight + verticalSpacing
+                    maxWidth = max(maxWidth, lineWidth - horizontalSpacing)
+                    lineCount++
+
+                    // 检查最大行数限制
+                    if (maxLines > 0 && lineCount > maxLines) {
+                        // 超出行数的子 View 不参与布局，回退多余的 verticalSpacing
+                        totalHeight -= verticalSpacing
+                        breakDueToMaxLines = true
+                        break
+                    }
+
+                    lineWidth = cw + horizontalSpacing
+                    lineHeight = ch
+                    lineStartIndex = seq
+                } else {
+                    lineWidth += cw + horizontalSpacing
+                    lineHeight = max(lineHeight, ch)
                 }
 
-                lineWidth = cw + horizontalSpacing
-                lineHeight = ch
-                lineStartIndex = seq
-            } else {
-                lineWidth += cw + horizontalSpacing
-                lineHeight = max(lineHeight, ch)
-            }
-
-            // 最后一个元素，记录最后一行
-            if (seq == visibleIndices.size - 1) {
-                lines.add(LineInfo(lineStartIndex, seq, lineWidth - horizontalSpacing, lineHeight))
-            }
-        }
-        if (!breakDueToMaxLines) {
-            totalHeight += lineHeight
-        }
-        maxWidth = max(maxWidth, lineWidth - horizontalSpacing)
-
-        val finalWidth = if (widthMode == MeasureSpec.EXACTLY) widthSize else maxWidth + paddingStart + paddingEnd
-        val finalHeight = totalHeight + paddingTop + paddingBottom
-        setMeasuredDimension(finalWidth, resolveSize(finalHeight, heightMeasureSpec))
-    }
-
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        val parentWidth = r - l - paddingStart - paddingEnd
-        val isRtl = layoutDirection == View.LAYOUT_DIRECTION_RTL
-
-        // 收集可见子 View
-        visibleChildren.clear()
-        for (i in 0 until childCount) {
-            val child = getChildAt(i)
-            if (child.visibility != GONE) visibleChildren.add(child)
-        }
-
-        var y = paddingTop
-
-        for (line in lines) {
-            val startOffset = when (flowGravity) {
-                Gravity.END, Gravity.RIGHT -> parentWidth - line.lineWidth
-                Gravity.CENTER_HORIZONTAL, Gravity.CENTER -> (parentWidth - line.lineWidth) / 2
-                else -> if (isRtl) parentWidth - line.lineWidth else 0
-            }
-
-            if (isRtl) {
-                // RTL: 从右侧开始，向左排列
-                var x = paddingStart + startOffset + line.lineWidth
-                for (seq in line.startIndex..line.endIndex.coerceAtMost(visibleChildren.size - 1)) {
-                    val child = visibleChildren[seq]
-                    val lp = child.layoutParams as MarginLayoutParams
-                    x -= child.measuredWidth + lp.rightMargin
-                    child.layout(
-                        x + lp.leftMargin,
-                        y + lp.topMargin,
-                        x + lp.leftMargin + child.measuredWidth,
-                        y + lp.topMargin + child.measuredHeight
-                    )
-                    x -= lp.leftMargin + horizontalSpacing
-                }
-            } else {
-                // LTR: 从左侧开始，向右排列
-                var x = paddingStart + startOffset
-                for (seq in line.startIndex..line.endIndex.coerceAtMost(visibleChildren.size - 1)) {
-                    val child = visibleChildren[seq]
-                    val lp = child.layoutParams as MarginLayoutParams
-                    child.layout(
-                        x + lp.leftMargin,
-                        y + lp.topMargin,
-                        x + lp.leftMargin + child.measuredWidth,
-                        y + lp.topMargin + child.measuredHeight
-                    )
-                    x += child.measuredWidth + lp.leftMargin + lp.rightMargin + horizontalSpacing
+                // 最后一个元素，记录最后一行
+                if (seq == visibleIndices.size - 1) {
+                    lines.add(LineInfo(lineStartIndex, seq, lineWidth - horizontalSpacing, lineHeight))
                 }
             }
+            if (!breakDueToMaxLines) {
+                totalHeight += lineHeight
+            }
+            maxWidth = max(maxWidth, lineWidth - horizontalSpacing)
 
-            y += line.lineHeight + verticalSpacing
+            val finalWidth = if (widthMode == MeasureSpec.EXACTLY) widthSize else maxWidth + paddingStart + paddingEnd
+            val finalHeight = totalHeight + paddingTop + paddingBottom
+            setMeasuredDimension(finalWidth, resolveSize(finalHeight, heightMeasureSpec))
+        }
+
+        override fun onLayout(
+            changed: Boolean,
+            l: Int,
+            t: Int,
+            r: Int,
+            b: Int,
+        ) {
+            val parentWidth = r - l - paddingStart - paddingEnd
+            val isRtl = layoutDirection == View.LAYOUT_DIRECTION_RTL
+
+            // 收集可见子 View
+            visibleChildren.clear()
+            for (i in 0 until childCount) {
+                val child = getChildAt(i)
+                if (child.visibility != GONE) visibleChildren.add(child)
+            }
+
+            var y = paddingTop
+
+            for (line in lines) {
+                val startOffset =
+                    when (flowGravity) {
+                        Gravity.END, Gravity.RIGHT -> parentWidth - line.lineWidth
+                        Gravity.CENTER_HORIZONTAL, Gravity.CENTER -> (parentWidth - line.lineWidth) / 2
+                        else -> if (isRtl) parentWidth - line.lineWidth else 0
+                    }
+
+                if (isRtl) {
+                    // RTL: 从右侧开始，向左排列
+                    var x = paddingStart + startOffset + line.lineWidth
+                    for (seq in line.startIndex..line.endIndex.coerceAtMost(visibleChildren.size - 1)) {
+                        val child = visibleChildren[seq]
+                        val lp = child.layoutParams as MarginLayoutParams
+                        x -= child.measuredWidth + lp.rightMargin
+                        child.layout(
+                            x + lp.leftMargin,
+                            y + lp.topMargin,
+                            x + lp.leftMargin + child.measuredWidth,
+                            y + lp.topMargin + child.measuredHeight,
+                        )
+                        x -= lp.leftMargin + horizontalSpacing
+                    }
+                } else {
+                    // LTR: 从左侧开始，向右排列
+                    var x = paddingStart + startOffset
+                    for (seq in line.startIndex..line.endIndex.coerceAtMost(visibleChildren.size - 1)) {
+                        val child = visibleChildren[seq]
+                        val lp = child.layoutParams as MarginLayoutParams
+                        child.layout(
+                            x + lp.leftMargin,
+                            y + lp.topMargin,
+                            x + lp.leftMargin + child.measuredWidth,
+                            y + lp.topMargin + child.measuredHeight,
+                        )
+                        x += child.measuredWidth + lp.leftMargin + lp.rightMargin + horizontalSpacing
+                    }
+                }
+
+                y += line.lineHeight + verticalSpacing
+            }
         }
     }
-}

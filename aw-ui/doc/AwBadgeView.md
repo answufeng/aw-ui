@@ -12,8 +12,8 @@
 
 ## 文件位置
 
-- 组件实现：[AwBadgeView.kt](E:/workspace/ASProjects/AutoKs/viewtest/src/main/java/com/answufeng/ui/widget/AwBadgeView.kt)
-- 自定义属性：[attrs.xml](E:/workspace/ASProjects/AutoKs/viewtest/src/main/res/values/attrs.xml)
+- 组件实现：[AwBadgeView.kt](../src/main/java/com/answufeng/ui/widget/AwBadgeView.kt)
+- 自定义属性：[attrs.xml](../src/main/res/values/attrs.xml)
 
 ## 快速开始
 
@@ -68,11 +68,11 @@ badge.clear()
 
 - `app:badge_bgColor`
   - 类型：`color`
-  - 默认值：`colorError`（Material Design 错误色）
+  - 默认值：`Color.RED`
 
 - `app:badge_textColor`
   - 类型：`color`
-  - 默认值：`colorOnError`（白色）
+  - 默认值：`Color.WHITE`
 
 - `app:badge_textSize`
   - 类型：`dimension`

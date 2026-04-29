@@ -30,6 +30,8 @@ class ViewPagerActivity : AppCompatActivity() {
         initViews()
         setupWindowInsets()
         setupTabBar()
+
+        findViewById<com.answufeng.ui.widget.AwTitleBar>(R.id.top_bar).setOnBackClickListener { finish() }
     }
 
     private fun initViews() {

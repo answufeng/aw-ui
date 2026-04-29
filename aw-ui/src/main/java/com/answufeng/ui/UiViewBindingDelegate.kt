@@ -35,9 +35,7 @@ import kotlin.reflect.KClass
  *
  * @param binder 用于绑定视图的函数引用（如 `ActivityMainBinding::bind`）
  */
-fun <VB : ViewBinding> AppCompatActivity.viewBinding(
-    binder: KClass<VB>
-): ReadOnlyProperty<AppCompatActivity, VB> {
+fun <VB : ViewBinding> AppCompatActivity.viewBinding(binder: KClass<VB>): ReadOnlyProperty<AppCompatActivity, VB> {
     return ViewBindingDelegate(binder) { activity ->
         val inflater = LayoutInflater.from(activity)
         val method = binder.java.getMethod("inflate", LayoutInflater::class.java)
@@ -65,9 +63,7 @@ fun <VB : ViewBinding> AppCompatActivity.viewBinding(
  *
  * @param binder 用于绑定视图的函数引用（如 `FragmentMyBinding::bind`）
  */
-fun <VB : ViewBinding> Fragment.viewBinding(
-    binder: KClass<VB>
-): ReadOnlyProperty<Fragment, VB> {
+fun <VB : ViewBinding> Fragment.viewBinding(binder: KClass<VB>): ReadOnlyProperty<Fragment, VB> {
     return FragmentViewBindingDelegate(binder) { fragment ->
         val view = fragment.view ?: error("Fragment view is null")
         val method = binder.java.getMethod("bind", View::class.java)
@@ -94,9 +90,7 @@ fun <VB : ViewBinding> Fragment.viewBinding(
  *
  * @param binder 用于绑定视图的函数引用（如 `DialogMyBinding::bind`）
  */
-fun <VB : ViewBinding> DialogFragment.viewBinding(
-    binder: KClass<VB>
-): ReadOnlyProperty<DialogFragment, VB> {
+fun <VB : ViewBinding> DialogFragment.viewBinding(binder: KClass<VB>): ReadOnlyProperty<DialogFragment, VB> {
     return FragmentViewBindingDelegate(binder) { fragment ->
         val view = fragment.view ?: error("DialogFragment view is null")
         val method = binder.java.getMethod("bind", View::class.java)
@@ -107,13 +101,15 @@ fun <VB : ViewBinding> DialogFragment.viewBinding(
 
 private class ViewBindingDelegate<VB : ViewBinding>(
     private val binder: KClass<VB>,
-    private val bindingFactory: (AppCompatActivity) -> VB
+    private val bindingFactory: (AppCompatActivity) -> VB,
 ) : ReadOnlyProperty<AppCompatActivity, VB> {
-
     private var binding: VB? = null
 
     @Suppress("UNCHECKED_CAST")
-    override fun getValue(thisRef: AppCompatActivity, property: kotlin.reflect.KProperty<*>): VB {
+    override fun getValue(
+        thisRef: AppCompatActivity,
+        property: kotlin.reflect.KProperty<*>,
+    ): VB {
         return binding ?: run {
             val method = binder.java.getMethod("inflate", LayoutInflater::class.java)
             val inflater = LayoutInflater.from(thisRef)
@@ -125,16 +121,29 @@ private class ViewBindingDelegate<VB : ViewBinding>(
 
 private class FragmentViewBindingDelegate<VB : ViewBinding>(
     private val binder: KClass<VB>,
-    private val bindingFactory: (Fragment) -> VB
+    private val bindingFactory: (Fragment) -> VB,
 ) : ReadOnlyProperty<Fragment, VB> {
-
     private var binding: VB? = null
 
-    init {
-        // Fragment view destroyed 时清理引用
-    }
-
-    override fun getValue(thisRef: Fragment, property: kotlin.reflect.KProperty<*>): VB {
-        return binding ?: bindingFactory(thisRef).also { binding = it }
+    override fun getValue(
+        thisRef: Fragment,
+        property: kotlin.reflect.KProperty<*>,
+    ): VB {
+        binding?.let { return it }
+        val lifecycle = thisRef.viewLifecycleOwner.lifecycle
+        if (lifecycle.currentState == androidx.lifecycle.Lifecycle.State.DESTROYED) {
+            error("Cannot access ViewBinding after Fragment view has been destroyed")
+        }
+        val newBinding = bindingFactory(thisRef)
+        binding = newBinding
+        lifecycle.addObserver(
+            object : DefaultLifecycleObserver {
+                override fun onDestroy(owner: LifecycleOwner) {
+                    binding = null
+                    lifecycle.removeObserver(this)
+                }
+            },
+        )
+        return newBinding
     }
 }

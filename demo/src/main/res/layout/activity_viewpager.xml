@@ -9,26 +9,19 @@
     android:orientation="vertical"
     tools:context=".ViewPagerActivity">
 
-    <com.google.android.material.appbar.MaterialToolbar
+    <com.answufeng.ui.widget.AwTitleBar
+        android:id="@+id/top_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:elevation="2dp"
-        app:title="ViewPager 联动"
-        app:titleCentered="true"
-        app:titleTextAppearance="@style/ToolbarTitleStyle" />
+        app:titleBar_showBack="true"
+        app:titleBar_showDivider="true"
+        app:titleBar_title="ViewPager 联动" />
 
     <com.google.android.material.card.MaterialCardView
+        style="@style/Card.AwUi"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="0dp"
-        app:strokeColor="#E8EAF1"
-        app:strokeWidth="1dp">
+        android:layout_margin="16dp">
 
         <TextView
             android:id="@+id/tv_info"

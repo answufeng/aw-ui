@@ -7,7 +7,6 @@ import android.graphics.RectF
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 
@@ -38,17 +37,22 @@ class AwDividerDecoration(
     private val height: Int = 1,
     @ColorInt private val color: Int = 0xFFE0E0E0.toInt(),
     private val paddingStart: Int = 0,
-    private val paddingEnd: Int = 0
+    private val paddingEnd: Int = 0,
 ) : RecyclerView.ItemDecoration() {
-
-    private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        this.color = this@AwDividerDecoration.color
-        style = Paint.Style.FILL
-    }
+    private val paint =
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            this.color = this@AwDividerDecoration.color
+            style = Paint.Style.FILL
+        }
 
     private val tempRect = RectF()
 
-    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+    override fun getItemOffsets(
+        outRect: Rect,
+        view: View,
+        parent: RecyclerView,
+        state: RecyclerView.State,
+    ) {
         val position = parent.getChildAdapterPosition(view)
         // NO_POSITION 表示 ViewHolder 正在被移除或无效，跳过
         if (position == RecyclerView.NO_POSITION) return
@@ -84,7 +88,11 @@ class AwDividerDecoration(
         }
     }
 
-    override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
+    override fun onDraw(
+        c: Canvas,
+        parent: RecyclerView,
+        state: RecyclerView.State,
+    ) {
         when (parent.layoutManager) {
             is GridLayoutManager -> drawGrid(c, parent)
             is StaggeredGridLayoutManager -> drawStaggeredGrid(c, parent)
@@ -92,7 +100,10 @@ class AwDividerDecoration(
         }
     }
 
-    private fun drawLinear(c: Canvas, parent: RecyclerView) {
+    private fun drawLinear(
+        c: Canvas,
+        parent: RecyclerView,
+    ) {
         val left = parent.paddingStart + paddingStart
         val right = parent.width - parent.paddingEnd - paddingEnd
         val childCount = parent.childCount
@@ -107,7 +118,10 @@ class AwDividerDecoration(
         }
     }
 
-    private fun drawGrid(c: Canvas, parent: RecyclerView) {
+    private fun drawGrid(
+        c: Canvas,
+        parent: RecyclerView,
+    ) {
         val childCount = parent.childCount
         for (i in 0 until childCount) {
             val child = parent.getChildAt(i)
@@ -123,7 +137,10 @@ class AwDividerDecoration(
         }
     }
 
-    private fun drawStaggeredGrid(c: Canvas, parent: RecyclerView) {
+    private fun drawStaggeredGrid(
+        c: Canvas,
+        parent: RecyclerView,
+    ) {
         val childCount = parent.childCount
         for (i in 0 until childCount) {
             val child = parent.getChildAt(i)

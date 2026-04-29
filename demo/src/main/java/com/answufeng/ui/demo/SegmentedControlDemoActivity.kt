@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.answufeng.ui.demo.databinding.ActivitySegmentedControlDemoBinding
 import com.answufeng.ui.widget.SegmentTab
@@ -19,6 +21,13 @@ class SegmentedControlDemoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySegmentedControlDemoBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { view, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(view.paddingLeft, bars.top, view.paddingRight, view.bottom)
+            insets
+        }
+
         binding.titleBar.setOnBackClickListener { finish() }
 
         binding.segIconText.tabs = listOf(

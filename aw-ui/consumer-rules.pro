@@ -18,7 +18,7 @@
     public <init>(android.content.Context, android.util.AttributeSet, int);
 }
 
--keepclassmembers class com.answufeng.ui.titlebar.** {
+-keepclassmembers class com.answufeng.ui.widget.** {
     public <init>(android.content.Context);
     public <init>(android.content.Context, android.util.AttributeSet);
     public <init>(android.content.Context, android.util.AttributeSet, int);
@@ -49,14 +49,10 @@
 }
 
 # ===========================================================
-# BottomSheet / Dialog 组件（BottomSheetBehavior 回调）
+# Dialog 组件（BottomSheetBehavior 回调）
 # ===========================================================
 
--keepclassmembers class com.answufeng.ui.widget.AwBottomSheet$* {
-    *;
-}
-
--keepclassmembers class com.answufeng.ui.dialog.AwActionSheetDialog {
+-keepclassmembers class com.answufeng.ui.dialog.** {
     public <init>(...);
     public void setTitle(java.lang.String);
     public void setItems(java.util.List);

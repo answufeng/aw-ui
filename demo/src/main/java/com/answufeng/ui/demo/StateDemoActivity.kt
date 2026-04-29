@@ -2,6 +2,8 @@ package com.answufeng.ui.demo
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.answufeng.ui.demo.databinding.ActivityStateDemoBinding
 import com.answufeng.ui.statelayout.StateTransition
 
@@ -13,6 +15,12 @@ class StateDemoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityStateDemoBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { view, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(view.paddingLeft, bars.top, view.paddingRight, view.bottom)
+            insets
+        }
 
         binding.titleBar.setOnBackClickListener { finish() }
 
@@ -38,10 +46,10 @@ class StateDemoActivity : AppCompatActivity() {
         binding.btnLoading.setOnClickListener { binding.stateLayout.showLoading() }
         binding.btnEmpty.setOnClickListener { binding.stateLayout.showEmpty() }
         binding.btnError.setOnClickListener {
-            binding.stateLayout.showError {
+            binding.stateLayout.showError(onRetry = {
                 binding.stateLayout.showLoading()
                 binding.stateLayout.postDelayed({ binding.stateLayout.showContent() }, 900)
-            }
+            })
         }
 
         binding.stateLayout.showContent()
