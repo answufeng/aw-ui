@@ -379,7 +379,7 @@ class AwSegmentedControl
                 if (vp != null && vp.currentItem != clamped) {
                     ignoreViewPagerCallback = true
                     vp.setCurrentItem(clamped, animated)
-                    ignoreViewPagerCallback = false
+                    post { ignoreViewPagerCallback = false }
                 }
             }
         }

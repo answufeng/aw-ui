@@ -280,7 +280,7 @@ class AwBottomTabBar
                 refreshBadgeAppearance()
             }
 
-        var badgeMinWidth: Float = 16f.dpFloat
+        var badgeMinWidth: Float = 14f.dpFloat
             set(value) {
                 val newValue = value.coerceAtLeast(0f)
                 if (field == newValue) return
@@ -288,7 +288,15 @@ class AwBottomTabBar
                 refreshBadgeAppearance()
             }
 
-        var badgePadding: Float = 4f.dpFloat
+        var badgePadding: Float = 2f.dpFloat
+            set(value) {
+                val newValue = value.coerceAtLeast(0f)
+                if (field == newValue) return
+                field = newValue
+                refreshBadgeAppearance()
+            }
+
+        var badgeTextSize: Float = 9f.sp()
             set(value) {
                 val newValue = value.coerceAtLeast(0f)
                 if (field == newValue) return
@@ -386,8 +394,9 @@ class AwBottomTabBar
             indicatorAnimatorDuration = ta.getInteger(R.styleable.AwBottomTabBar_indicator_anim_duration, 300).toLong()
             badgeBackgroundColor = ta.getColor(R.styleable.AwBottomTabBar_badge_background_color, defaultBadgeBackgroundColor)
             badgeTextColor = ta.getColor(R.styleable.AwBottomTabBar_badge_text_color, defaultBadgeTextColor)
-            badgeMinWidth = ta.getDimension(R.styleable.AwBottomTabBar_badge_min_width, 16f.dpFloat)
-            badgePadding = ta.getDimension(R.styleable.AwBottomTabBar_badge_padding, 4f.dpFloat)
+            badgeMinWidth = ta.getDimension(R.styleable.AwBottomTabBar_badge_min_width, 14f.dpFloat)
+            badgePadding = ta.getDimension(R.styleable.AwBottomTabBar_badge_padding, 2f.dpFloat)
+            badgeTextSize = ta.getDimension(R.styleable.AwBottomTabBar_badge_text_size, 9f.sp())
             enableScrollSync = ta.getBoolean(R.styleable.AwBottomTabBar_enable_scroll_sync, true)
             tabBackgroundColor = ta.getColor(R.styleable.AwBottomTabBar_background_color, 0)
             enableRippleEffect = ta.getBoolean(R.styleable.AwBottomTabBar_enable_ripple, true)
@@ -665,8 +674,8 @@ class AwBottomTabBar
         }
 
         private fun addBadgeViews(parent: FrameLayout) {
-            val offset = 2.dp
-            val dotSize = 10.dp
+            val offset = 1.dp
+            val dotSize = 8.dp
 
             parent.addView(
                 View(context).apply {
@@ -675,8 +684,8 @@ class AwBottomTabBar
                     background = createBadgeDrawable()
                 },
                 FrameLayout.LayoutParams(dotSize, dotSize, Gravity.TOP or Gravity.END).apply {
-                    topMargin = -offset
-                    marginEnd = -offset
+                    topMargin = offset
+                    marginEnd = offset
                 },
             )
 
@@ -686,7 +695,7 @@ class AwBottomTabBar
                     visibility = GONE
                     gravity = Gravity.CENTER
                     typeface = Typeface.DEFAULT_BOLD
-                    setTextSize(TypedValue.COMPLEX_UNIT_SP, 10f)
+                    setTextSize(TypedValue.COMPLEX_UNIT_PX, badgeTextSize)
                     setTextColor(badgeTextColor)
                     background = createBadgeDrawable()
                     minWidth = badgeMinWidth.toInt()
@@ -694,8 +703,8 @@ class AwBottomTabBar
                     setPadding(badgePadding.toInt(), 0, badgePadding.toInt(), 0)
                 },
                 FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT, badgeMinWidth.toInt(), Gravity.TOP or Gravity.END).apply {
-                    topMargin = -offset
-                    marginEnd = -offset
+                    topMargin = offset
+                    marginEnd = offset
                 },
             )
         }
@@ -705,7 +714,6 @@ class AwBottomTabBar
                 shape = GradientDrawable.RECTANGLE
                 cornerRadius = badgeMinWidth / 2f
                 setColor(badgeBackgroundColor)
-                setStroke(1.dp, 0xFFFFFFFF.toInt())
             }
         }
 
@@ -1060,6 +1068,7 @@ class AwBottomTabBar
             textView?.apply {
                 background = createBadgeDrawable()
                 setTextColor(resolvedTextColor)
+                setTextSize(TypedValue.COMPLEX_UNIT_PX, badgeTextSize)
                 minWidth = badgeMinWidth.toInt()
                 minHeight = badgeMinWidth.toInt()
                 setPadding(badgePadding.toInt(), 0, badgePadding.toInt(), 0)

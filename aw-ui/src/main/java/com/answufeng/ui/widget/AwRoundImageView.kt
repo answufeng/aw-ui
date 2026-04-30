@@ -124,8 +124,8 @@ class AwRoundImageView
             setupShader()
         }
 
-        override fun setImageBitmap(bm: Bitmap?) {
-            super.setImageBitmap(bm)
+        override fun setImageDrawable(drawable: android.graphics.drawable.Drawable?) {
+            super.setImageDrawable(drawable)
             setupShader()
         }
 

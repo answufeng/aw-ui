@@ -51,6 +51,7 @@
         <attr name="badge_text_color" format="color" />
         <attr name="badge_min_width" format="dimension" />
         <attr name="badge_padding" format="dimension" />
+        <attr name="badge_text_size" format="dimension" />
         <attr name="enable_scroll_sync" format="boolean" />
         <attr name="background_color" format="color" />
         <attr name="enable_ripple" format="boolean" />

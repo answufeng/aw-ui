@@ -168,6 +168,14 @@ class AwExpandableLayout
             to: Int,
         ) {
             animator?.cancel()
+
+            if (from == to) {
+                isAnimating = false
+                layoutParams = layoutParams?.apply { height = to }
+                requestLayout()
+                return
+            }
+
             isAnimating = true
 
             if (from == 0) {
