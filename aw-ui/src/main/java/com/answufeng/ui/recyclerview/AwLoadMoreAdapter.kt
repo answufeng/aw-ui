@@ -76,14 +76,14 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
     private var onItemLongClick: ((T, Int) -> Boolean)? = null
     private var scrollListener: RecyclerView.OnScrollListener? = null
 
-    /** 加载中提示文字 */
-    var loadingText: String = "正在加载..."
+    /** 加载中提示文字；空串表示使用 [R.string.aw_load_more_loading]（随系统语言）。 */
+    var loadingText: String = ""
 
-    /** 无更多数据提示文字 */
-    var noMoreText: String = "—— 没有更多了 ——"
+    /** 无更多数据提示文字；空串表示使用 [R.string.aw_load_more_no_more]。 */
+    var noMoreText: String = ""
 
-    /** 加载失败提示文字 */
-    var failedText: String = "加载失败，点击重试"
+    /** 加载失败提示文字；空串表示使用 [R.string.aw_load_more_failed]。 */
+    var failedText: String = ""
 
     /** 距离底部还有多少个 item 时开始预加载，默认 3 */
     var preloadOffset: Int = 3
@@ -137,7 +137,13 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
             val item = currentList[position]
             bind(holder.binding as VB, item, position)
         } else if (holder is FooterViewHolder) {
-            holder.bind(loadState, loadingText, noMoreText, failedText) {
+            val ctx = holder.itemView.context
+            holder.bind(
+                loadState,
+                loadingText.ifEmpty { ctx.getString(R.string.aw_load_more_loading) },
+                noMoreText.ifEmpty { ctx.getString(R.string.aw_load_more_no_more) },
+                failedText.ifEmpty { ctx.getString(R.string.aw_load_more_failed) },
+            ) {
                 if (loadState == LoadState.FAILED) {
                     loadState = LoadState.LOADING
                     notifyItemChanged(currentList.size)

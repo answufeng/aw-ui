@@ -185,6 +185,8 @@ class AwCircleProgressBar
         }
 
         override fun onRestoreInstanceState(state: Parcelable?) {
+            animator?.cancel()
+            animator = null
             if (state !is Bundle) {
                 super.onRestoreInstanceState(state)
                 return

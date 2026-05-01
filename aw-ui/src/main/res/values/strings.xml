@@ -5,4 +5,13 @@
     <string name="aw_state_empty">No data</string>
     <string name="aw_state_error">Load failed</string>
     <string name="aw_state_custom">Custom view</string>
+    <string name="aw_search_hint">Search</string>
+    <string name="aw_swipe_refresh_pull_down">Pull down to refresh</string>
+    <string name="aw_swipe_refresh_refreshing">Refreshing…</string>
+    <string name="aw_swipe_refresh_release">Release to refresh</string>
+    <string name="aw_badge_a11y_dot">New notification</string>
+    <string name="aw_badge_a11y_count_format">%1$s new messages</string>
+    <string name="aw_load_more_loading">Loading…</string>
+    <string name="aw_load_more_no_more">No more data</string>
+    <string name="aw_load_more_failed">Load failed, tap to retry</string>
 </resources>

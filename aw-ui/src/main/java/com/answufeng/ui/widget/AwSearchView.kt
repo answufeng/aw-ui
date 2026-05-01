@@ -56,7 +56,7 @@ class AwSearchView
                 visibility = View.GONE
             }
 
-        var hint: String = "搜索"
+        var hint: String = context.getString(R.string.aw_search_hint)
             set(value) {
                 field = value
                 editText.hint = value
@@ -116,6 +116,7 @@ class AwSearchView
             set(value) {
                 field = value
                 container.layoutParams = container.layoutParams.apply { height = value }
+                container.requestLayout()
             }
 
         var onQueryChange: ((String) -> Unit)? = null
@@ -133,7 +134,7 @@ class AwSearchView
             var iconColor = defaultIconColor
             var textColor = defaultTextColor
             var hintColor = defaultHintColor
-            var hintStr = "搜索"
+            var hintStr = context.getString(R.string.aw_search_hint)
             var searchIconDrawableRes = 0
             var clearIconDrawableRes = 0
             var cornerRadiusDimen = 0f

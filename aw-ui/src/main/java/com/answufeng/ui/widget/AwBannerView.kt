@@ -38,7 +38,8 @@ class AwBannerView
         private val handler = Handler(Looper.getMainLooper())
         private lateinit var indicatorContainer: LinearLayout
         private lateinit var viewPager2: ViewPager2
-        private lateinit var viewPager: ViewPager
+        /** 僅在使用 [setPagerAdapter] 時建立，避免預設路徑同時掛載兩套 Pager。 */
+        private var legacyViewPager: ViewPager? = null
 
         private var pagerEngine = PagerEngine.VIEW_PAGER2
         private var lifecycleObserver: LifecycleEventObserver? = null
@@ -66,7 +67,7 @@ class AwBannerView
                 field = value
                 when (pagerEngine) {
                     PagerEngine.VIEW_PAGER2 -> viewPager2.adapter?.let { setAdapter(it, realItemCount) }
-                    PagerEngine.VIEW_PAGER -> viewPager.adapter?.let { setPagerAdapter(it, realItemCount) }
+                    PagerEngine.VIEW_PAGER -> legacyViewPager?.adapter?.let { setPagerAdapter(it, realItemCount) }
                 }
             }
 
@@ -133,7 +134,10 @@ class AwBannerView
                     if (isAutoScrolling && realItemCount > 1) {
                         when (pagerEngine) {
                             PagerEngine.VIEW_PAGER2 -> viewPager2.setCurrentItem(viewPager2.currentItem + 1, true)
-                            PagerEngine.VIEW_PAGER -> viewPager.currentItem = viewPager.currentItem + 1
+                            PagerEngine.VIEW_PAGER -> {
+                                val lp = legacyViewPager ?: return@Runnable
+                                lp.currentItem = lp.currentItem + 1
+                            }
                         }
                         handler.postDelayed(this, interval)
                     }
@@ -162,14 +166,6 @@ class AwBannerView
                     registerOnPageChangeCallback(pageChangeCallback)
                 }
             addView(viewPager2)
-
-            viewPager =
-                ViewPager(context).apply {
-                    layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-                    visibility = GONE
-                    addOnPageChangeListener(legacyPageChangeListener)
-                }
-            addView(viewPager)
 
             indicatorContainer =
                 LinearLayout(context).apply {
@@ -207,6 +203,19 @@ class AwBannerView
             ta.recycle()
         }
 
+        private fun ensureLegacyViewPager(): ViewPager {
+            legacyViewPager?.let { return it }
+            val vp =
+                ViewPager(context).apply {
+                    layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+                    visibility = GONE
+                    addOnPageChangeListener(legacyPageChangeListener)
+                }
+            addView(vp, 1)
+            legacyViewPager = vp
+            return vp
+        }
+
         @JvmOverloads
         fun setAdapter(
             adapter: RecyclerView.Adapter<*>,
@@ -215,7 +224,7 @@ class AwBannerView
             stopAutoScroll()
             pagerEngine = PagerEngine.VIEW_PAGER2
             viewPager2.visibility = VISIBLE
-            viewPager.visibility = GONE
+            legacyViewPager?.visibility = GONE
             viewPager2.adapter = adapter
             realItemCount = resolveRealCount(adapter.itemCount, knownItemCount)
             createIndicatorDots()
@@ -230,9 +239,10 @@ class AwBannerView
         ) {
             stopAutoScroll()
             pagerEngine = PagerEngine.VIEW_PAGER
-            viewPager.visibility = VISIBLE
+            val vp = ensureLegacyViewPager()
+            vp.visibility = VISIBLE
             viewPager2.visibility = GONE
-            viewPager.adapter = adapter
+            vp.adapter = adapter
             realItemCount = resolveRealCount(adapter.count, knownItemCount)
             createIndicatorDots()
             moveToInitialPosition()
@@ -291,14 +301,15 @@ class AwBannerView
                     viewPager2.setCurrentItem(target, smoothScroll)
                 }
                 PagerEngine.VIEW_PAGER -> {
+                    val vp = legacyViewPager ?: return
                     val target =
                         if (isInfiniteLoop && realItemCount > 1) {
-                            val base = viewPager.currentItem - (viewPager.currentItem % realItemCount)
+                            val base = vp.currentItem - (vp.currentItem % realItemCount)
                             base + index
                         } else {
                             index
                         }
-                    viewPager.setCurrentItem(target, smoothScroll)
+                    vp.setCurrentItem(target, smoothScroll)
                 }
             }
         }
@@ -307,7 +318,7 @@ class AwBannerView
             val current =
                 when (pagerEngine) {
                     PagerEngine.VIEW_PAGER2 -> viewPager2.currentItem
-                    PagerEngine.VIEW_PAGER -> viewPager.currentItem
+                    PagerEngine.VIEW_PAGER -> legacyViewPager?.currentItem ?: 0
                 }
             return toRealPosition(current)
         }
@@ -371,7 +382,7 @@ class AwBannerView
             if (realItemCount <= 1) {
                 when (pagerEngine) {
                     PagerEngine.VIEW_PAGER2 -> viewPager2.setCurrentItem(0, false)
-                    PagerEngine.VIEW_PAGER -> viewPager.setCurrentItem(0, false)
+                    PagerEngine.VIEW_PAGER -> legacyViewPager?.setCurrentItem(0, false)
                 }
                 return
             }
@@ -384,7 +395,7 @@ class AwBannerView
                 }
             when (pagerEngine) {
                 PagerEngine.VIEW_PAGER2 -> viewPager2.setCurrentItem(start, false)
-                PagerEngine.VIEW_PAGER -> viewPager.setCurrentItem(start, false)
+                PagerEngine.VIEW_PAGER -> legacyViewPager?.setCurrentItem(start, false)
             }
         }
 

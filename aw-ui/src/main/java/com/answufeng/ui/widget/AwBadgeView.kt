@@ -253,8 +253,8 @@ class AwBadgeView
             contentDescription =
                 when (mode) {
                     Mode.HIDDEN -> null
-                    Mode.DOT -> "有新提醒"
-                    Mode.COUNT -> "${displayText()}条新消息"
+                    Mode.DOT -> context.getString(R.string.aw_badge_a11y_dot)
+                    Mode.COUNT -> context.getString(R.string.aw_badge_a11y_count_format, displayText())
                     Mode.TEXT -> displayText()
                 }
             if (visibility == VISIBLE && isAttachedToWindow) {

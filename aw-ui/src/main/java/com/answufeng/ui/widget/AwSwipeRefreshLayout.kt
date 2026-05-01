@@ -60,7 +60,7 @@ class AwSwipeRefreshLayout
                 applyTintColor()
             }
 
-        var refreshText: String = "下拉刷新"
+        var refreshText: String = context.getString(R.string.aw_swipe_refresh_pull_down)
             set(value) {
                 field = value
                 (headerView as? TextRefreshHeaderView)?.text = value
@@ -134,7 +134,9 @@ class AwSwipeRefreshLayout
                     if (hasValue(R.styleable.AwSwipeRefreshLayout_refreshTintColor)) {
                         refreshTintColor = getColor(R.styleable.AwSwipeRefreshLayout_refreshTintColor, refreshTintColor)
                     }
-                    refreshText = getString(R.styleable.AwSwipeRefreshLayout_refreshText) ?: "下拉刷新"
+                    refreshText =
+                        getString(R.styleable.AwSwipeRefreshLayout_refreshText)
+                            ?: context.getString(R.string.aw_swipe_refresh_pull_down)
                     if (hasValue(R.styleable.AwSwipeRefreshLayout_refreshTextColor)) {
                         refreshTextColor = getColor(R.styleable.AwSwipeRefreshLayout_refreshTextColor, 0)
                     }
@@ -909,7 +911,7 @@ class AwSwipeRefreshLayout
                         if (textColor == 0) textView.setTextColor(value)
                     }
 
-                var text: String = "下拉刷新"
+                var text: String = context.getString(R.string.aw_swipe_refresh_pull_down)
                     set(value) {
                         field = value
                         updateDisplay()
@@ -960,8 +962,8 @@ class AwSwipeRefreshLayout
                 private fun updateDisplay() {
                     textView.text =
                         when {
-                            isRefreshing -> "正在刷新..."
-                            progress >= 1f -> "释放刷新"
+                            isRefreshing -> context.getString(R.string.aw_swipe_refresh_refreshing)
+                            progress >= 1f -> context.getString(R.string.aw_swipe_refresh_release)
                             else -> text
                         }
                 }
