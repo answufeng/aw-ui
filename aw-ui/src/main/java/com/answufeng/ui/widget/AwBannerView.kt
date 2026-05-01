@@ -132,14 +132,24 @@ class AwBannerView
             object : Runnable {
                 override fun run() {
                     if (isAutoScrolling && realItemCount > 1) {
-                        when (pagerEngine) {
-                            PagerEngine.VIEW_PAGER2 -> viewPager2.setCurrentItem(viewPager2.currentItem + 1, true)
+                        val shouldScheduleNext = when (pagerEngine) {
+                            PagerEngine.VIEW_PAGER2 -> {
+                                viewPager2.setCurrentItem(viewPager2.currentItem + 1, true)
+                                true
+                            }
                             PagerEngine.VIEW_PAGER -> {
-                                val lp = legacyViewPager ?: return@Runnable
-                                lp.currentItem = lp.currentItem + 1
+                                val lp = legacyViewPager
+                                if (lp != null) {
+                                    lp.currentItem = lp.currentItem + 1
+                                    true
+                                } else {
+                                    false
+                                }
                             }
                         }
-                        handler.postDelayed(this, interval)
+                        if (shouldScheduleNext) {
+                            handler.postDelayed(this, interval)
+                        }
                     }
                 }
             }
