@@ -8,6 +8,8 @@ import androidx.core.view.WindowInsetsCompat
 import com.answufeng.ui.dialog.AwActionSheetDialog
 import com.answufeng.ui.dialog.AwDialog
 import com.answufeng.ui.dialog.AwLoadingDialog
+import com.answufeng.ui.dialog.showAwConfirm
+import com.answufeng.ui.dialog.showAwMessage
 import com.answufeng.ui.widget.AwTitleBar
 
 class ShowcaseActivity : AppCompatActivity() {
@@ -63,6 +65,16 @@ class ShowcaseActivity : AppCompatActivity() {
         findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_loading_msg).setOnClickListener {
             val dialog = AwLoadingDialog.show(this, "正在提交数据…")
             findViewById<android.view.View>(R.id.main).postDelayed({ dialog?.dismiss() }, 2000)
+        }
+
+        findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_ext_message).setOnClickListener {
+            showAwMessage("快捷提示", "Context.showAwMessage() 一行代码弹出消息框。")
+        }
+
+        findViewById<com.google.android.material.button.MaterialButton>(R.id.btn_ext_confirm).setOnClickListener {
+            showAwConfirm("确认操作", "Context.showAwConfirm() 确认后执行回调。") {
+                toast("已确认")
+            }
         }
     }
 

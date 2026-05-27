@@ -28,7 +28,6 @@ import android.widget.HorizontalScrollView
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.DrawableRes
 import androidx.annotation.FloatRange
 import androidx.annotation.IntRange
 import androidx.core.content.ContextCompat
@@ -40,6 +39,16 @@ import com.answufeng.ui.R
 import com.answufeng.ui.dp
 import com.answufeng.ui.dpFloat
 
+/**
+ * 底部 Tab 导航栏，支持图标/文字、角标、指示器与 ViewPager2 联动。
+ *
+ * ### 推荐配置
+ * | 场景 | XML style | 说明 |
+ * |------|-----------|------|
+ * | 固定 3～5 Tab | `@style/Widget.AwBottomTabBar.FixedIconText` | 图标+文字+下划线 |
+ * | 多 Tab 可横滑 | `@style/Widget.AwBottomTabBar.ScrollableLine` | 滚动 Tab + 指示器 |
+ * | 纯图标底栏 | `@style/Widget.AwBottomTabBar.IconOnly` | 无指示器 |
+ */
 class AwBottomTabBar
     @JvmOverloads
     constructor(
@@ -68,13 +77,6 @@ class AwBottomTabBar
             SCROLLABLE,
         }
 
-        data class TabItem(
-            val title: String = "",
-            val icon: Drawable? = null,
-            @DrawableRes val iconRes: Int = 0,
-            @DrawableRes val titleRes: Int = 0,
-        )
-
         private enum class BadgeType {
             NONE,
             DOT,
@@ -94,7 +96,7 @@ class AwBottomTabBar
                 clipToPadding = false
             }
 
-        private val tabs = mutableListOf<TabItem>()
+        private val tabs = mutableListOf<AwBottomTabItem>()
         private val tabViews = mutableListOf<View>()
         private val badgeStates = mutableMapOf<Int, BadgeState>()
         private val badgeTextColors = mutableMapOf<Int, Int>()
@@ -373,7 +375,10 @@ class AwBottomTabBar
             layoutMode = LayoutMode.entries.getOrElse(ta.getInt(R.styleable.AwBottomTabBar_tab_layout_mode, 0)) { LayoutMode.FIXED }
             selectedColor = ta.getColor(R.styleable.AwBottomTabBar_tab_selected_color, defaultSelectedColor)
             normalColor = ta.getColor(R.styleable.AwBottomTabBar_tab_normal_color, defaultNormalColor)
-            indicatorStyle = IndicatorStyle.entries.getOrElse(ta.getInt(R.styleable.AwBottomTabBar_indicator_style, 1)) { IndicatorStyle.NONE }
+            indicatorStyle =
+                IndicatorStyle.entries.getOrElse(ta.getInt(R.styleable.AwBottomTabBar_indicator_style, 1)) {
+                    IndicatorStyle.NONE
+                }
             indicatorWidthMode =
                 IndicatorWidthMode.entries.getOrElse(ta.getInt(R.styleable.AwBottomTabBar_indicator_width_mode, 0)) {
                     IndicatorWidthMode.MATCH_TAB
@@ -411,7 +416,7 @@ class AwBottomTabBar
                 val iconArray = if (iconsRes != 0) context.resources.obtainTypedArray(iconsRes) else null
                 val initialItems =
                     titles.mapIndexed { index, title ->
-                        TabItem(title = title, icon = iconArray?.getDrawableOrNull(index))
+                        AwBottomTabItem(title = title, icon = iconArray?.getDrawableOrNull(index))
                     }
                 iconArray?.recycle()
                 tabs.clear()
@@ -440,7 +445,7 @@ class AwBottomTabBar
             refreshIndicatorPosition(false)
         }
 
-        fun setItems(items: List<TabItem>) {
+        fun setItems(items: List<AwBottomTabItem>) {
             tabs.clear()
             tabs.addAll(items)
             trimBadgeMaps()
@@ -449,13 +454,13 @@ class AwBottomTabBar
             rebuildTabs()
         }
 
-        fun addItem(item: TabItem) {
+        fun addItem(item: AwBottomTabItem) {
             insertItem(tabs.size, item)
         }
 
         fun insertItem(
             index: Int,
-            item: TabItem,
+            item: AwBottomTabItem,
         ) {
             val safeIndex = index.coerceIn(0, tabs.size)
             tabs.add(safeIndex, item)
@@ -469,7 +474,7 @@ class AwBottomTabBar
 
         fun updateItem(
             index: Int,
-            item: TabItem,
+            item: AwBottomTabItem,
         ): Boolean {
             if (index !in tabs.indices) return false
             tabs[index] = item
@@ -477,7 +482,7 @@ class AwBottomTabBar
             return true
         }
 
-        fun removeItem(index: Int): TabItem? {
+        fun removeItem(index: Int): AwBottomTabItem? {
             if (index !in tabs.indices) return null
             val removed = tabs.removeAt(index)
             shiftStateForRemove(index)
@@ -508,9 +513,9 @@ class AwBottomTabBar
 
         fun getItemCount(): Int = tabs.size
 
-        fun getItem(index: Int): TabItem? = tabs.getOrNull(index)
+        fun getItem(index: Int): AwBottomTabItem? = tabs.getOrNull(index)
 
-        fun getItems(): List<TabItem> = tabs.toList()
+        fun getItems(): List<AwBottomTabItem> = tabs.toList()
 
         fun containsItem(index: Int): Boolean = index in tabs.indices
 
@@ -557,7 +562,7 @@ class AwBottomTabBar
         }
 
         private fun createTabView(
-            item: TabItem,
+            item: AwBottomTabItem,
             index: Int,
         ): View {
             val content =
@@ -601,7 +606,7 @@ class AwBottomTabBar
             }
         }
 
-        private fun createIconOnlyContent(item: TabItem): FrameLayout {
+        private fun createIconOnlyContent(item: AwBottomTabItem): FrameLayout {
             return FrameLayout(context).apply {
                 clipChildren = false
                 clipToPadding = false
@@ -610,7 +615,7 @@ class AwBottomTabBar
             }
         }
 
-        private fun createTextOnlyContent(item: TabItem): FrameLayout {
+        private fun createTextOnlyContent(item: AwBottomTabItem): FrameLayout {
             return FrameLayout(context).apply {
                 clipChildren = false
                 clipToPadding = false
@@ -619,7 +624,7 @@ class AwBottomTabBar
             }
         }
 
-        private fun createIconTextContent(item: TabItem): LinearLayout {
+        private fun createIconTextContent(item: AwBottomTabItem): LinearLayout {
             return LinearLayout(context).apply {
                 orientation = LinearLayout.VERTICAL
                 gravity = Gravity.CENTER
@@ -644,7 +649,7 @@ class AwBottomTabBar
             }
         }
 
-        private fun createIconView(item: TabItem): ImageView {
+        private fun createIconView(item: AwBottomTabItem): ImageView {
             val actualIconHeight = if (iconHeight > 0f) iconHeight else iconSize
             return ImageView(context).apply {
                 layoutParams = FrameLayout.LayoutParams(iconSize.toInt(), actualIconHeight.toInt(), Gravity.CENTER)
@@ -654,7 +659,7 @@ class AwBottomTabBar
             }
         }
 
-        private fun createTextView(item: TabItem): TextView {
+        private fun createTextView(item: AwBottomTabItem): TextView {
             return TextView(context).apply {
                 text = resolveTitle(item)
                 setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize)
@@ -665,11 +670,11 @@ class AwBottomTabBar
             }
         }
 
-        private fun resolveTitle(item: TabItem): String {
+        private fun resolveTitle(item: AwBottomTabItem): String {
             return if (item.titleRes != 0) context.getString(item.titleRes) else item.title
         }
 
-        private fun resolveIcon(item: TabItem): Drawable? {
+        private fun resolveIcon(item: AwBottomTabItem): Drawable? {
             return item.icon ?: item.iconRes.takeIf { it != 0 }?.let { ContextCompat.getDrawable(context, it) }
         }
 

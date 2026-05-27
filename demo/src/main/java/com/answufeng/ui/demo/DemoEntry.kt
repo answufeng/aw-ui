@@ -5,6 +5,6 @@ import android.app.Activity
 data class DemoEntry(
     val title: String,
     val desc: String,
-    val activity: Class<out Activity>
+    val activity: Class<out Activity>,
+    val category: String = "",
 )
-

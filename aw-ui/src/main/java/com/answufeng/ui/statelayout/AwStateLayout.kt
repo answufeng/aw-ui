@@ -275,7 +275,10 @@ class AwStateLayout
          *
          * @param onRetry 点击重试按钮的回调，null 表示不处理
          */
-        fun showError(onRetry: (() -> Unit)? = null, force: Boolean = false) {
+        fun showError(
+            onRetry: (() -> Unit)? = null,
+            force: Boolean = false,
+        ) {
             this.onRetryListener = onRetry
             switchState(State.ERROR, force)
         }
@@ -384,7 +387,10 @@ class AwStateLayout
             stateChangeListener = listener
         }
 
-        private fun switchState(state: State, force: Boolean = false) {
+        private fun switchState(
+            state: State,
+            force: Boolean = false,
+        ) {
             if (!force && currentState == state) return
             val oldState = currentState
             currentState = state

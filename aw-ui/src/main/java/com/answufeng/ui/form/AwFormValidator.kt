@@ -10,24 +10,68 @@ interface Rule {
     fun validate(text: String): Boolean
 }
 
+/**
+ * 链式表单校验器。
+ *
+ * - [addField]：适用于 [TextView] / [EditText]
+ * - [addCustomField]：自定义取值（如 [com.answufeng.ui.widget.AwCodeInputView]）
+ */
 class AwFormValidator {
     private data class FieldEntry(
         val view: View,
         val rules: List<Rule>,
     )
 
+    private data class CustomFieldEntry(
+        val view: View,
+        val getter: () -> String,
+        val rules: List<Rule>,
+        val onError: (View, String?) -> Unit,
+    )
+
     private val fields = mutableListOf<FieldEntry>()
+    private val customFields = mutableListOf<CustomFieldEntry>()
 
     private val errors = mutableMapOf<View, String>()
 
     private var validityListener: ((Boolean) -> Unit)? = null
 
+    /**
+     * 注册 [TextView] / [EditText] 字段及规则。
+     * 非 TextView 请使用 [addCustomField]。
+     */
     fun addField(
         view: View,
         vararg rules: Rule,
     ): AwFormValidator {
         if (rules.isEmpty()) return this
+        require(view is TextView) {
+            "addField 仅支持 TextView/EditText，自定义控件请使用 addCustomField"
+        }
         fields.add(FieldEntry(view, rules.toList()))
+        return this
+    }
+
+    /**
+     * 注册自定义控件字段。
+     *
+     * @param getter 读取待校验文本
+     * @param onError 展示/清除错误，默认对 [EditText] 设置 [EditText.error]
+     */
+    fun addCustomField(
+        view: View,
+        getter: () -> String,
+        vararg rules: Rule,
+        onError: ((View, String?) -> Unit)? = null,
+    ): AwFormValidator {
+        if (rules.isEmpty()) return this
+        val displayError =
+            onError ?: { v, msg ->
+                if (v is EditText) {
+                    v.error = msg
+                }
+            }
+        customFields.add(CustomFieldEntry(view, getter, rules.toList(), displayError))
         return this
     }
 
@@ -37,20 +81,30 @@ class AwFormValidator {
 
         for (entry in fields) {
             val view = entry.view
-            if (view is TextView) {
-                val text = view.text.toString()
-                val failedRule = entry.rules.firstOrNull { !it.validate(text) }
-                if (failedRule != null) {
-                    allValid = false
-                    errors[view] = failedRule.errorMsg
-                    if (view is EditText) {
-                        view.error = failedRule.errorMsg
-                    }
-                } else {
-                    if (view is EditText) {
-                        view.error = null
-                    }
+            val text = (view as TextView).text.toString()
+            val failedRule = entry.rules.firstOrNull { !it.validate(text) }
+            if (failedRule != null) {
+                allValid = false
+                errors[view] = failedRule.errorMsg
+                if (view is EditText) {
+                    view.error = failedRule.errorMsg
                 }
+            } else {
+                if (view is EditText) {
+                    view.error = null
+                }
+            }
+        }
+
+        for (entry in customFields) {
+            val text = entry.getter()
+            val failedRule = entry.rules.firstOrNull { !it.validate(text) }
+            if (failedRule != null) {
+                allValid = false
+                errors[entry.view] = failedRule.errorMsg
+                entry.onError(entry.view, failedRule.errorMsg)
+            } else {
+                entry.onError(entry.view, null)
             }
         }
 
@@ -67,6 +121,9 @@ class AwFormValidator {
             if (view is EditText) {
                 view.error = null
             }
+        }
+        for (entry in customFields) {
+            entry.onError(entry.view, null)
         }
     }
 

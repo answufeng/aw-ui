@@ -4,7 +4,7 @@ package com.answufeng.ui
 
 import android.view.LayoutInflater
 import android.view.View
-import androidx.activity.ComponentActivity
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
@@ -13,17 +13,18 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.viewbinding.ViewBinding
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
+import kotlin.reflect.KProperty
 
 /**
  * Activity 的 ViewBinding 属性委托。
  *
- * 通过 `by viewBinding()` 在 Activity 中延迟初始化 ViewBinding，
- * 自动在 [ComponentActivity.setContentView] 之后绑定视图。
+ * - 若已在 [AppCompatActivity.setContentView] 之后访问：对内容根 View 执行 `bind`
+ * - 若尚未 setContentView：执行 `inflate`，需自行 `setContentView(binding.root)`
  *
- * ### 用法
+ * ### 用法（推荐：先 setContentView）
  * ```kotlin
  * class MainActivity : AppCompatActivity() {
- *     private val binding by viewBinding(ActivityMainBinding::bind)
+ *     private val binding by viewBinding(ActivityMainBinding::class)
  *
  *     override fun onCreate(savedInstanceState: Bundle?) {
  *         super.onCreate(savedInstanceState)
@@ -33,35 +34,22 @@ import kotlin.reflect.KClass
  * }
  * ```
  *
- * @param binder 用于绑定视图的函数引用（如 `ActivityMainBinding::bind`）
+ * ### 用法（inflate 路径）
+ * ```kotlin
+ * override fun onCreate(savedInstanceState: Bundle?) {
+ *     super.onCreate(savedInstanceState)
+ *     setContentView(binding.root)
+ * }
+ * ```
  */
 fun <VB : ViewBinding> AppCompatActivity.viewBinding(binder: KClass<VB>): ReadOnlyProperty<AppCompatActivity, VB> {
-    return ViewBindingDelegate(binder) { activity ->
-        val inflater = LayoutInflater.from(activity)
-        val method = binder.java.getMethod("inflate", LayoutInflater::class.java)
-        @Suppress("UNCHECKED_CAST")
-        method.invoke(null, inflater) as VB
-    }
+    return ActivityViewBindingDelegate(binder)
 }
 
 /**
  * Fragment 的 ViewBinding 属性委托。
  *
- * 通过 `by viewBinding()` 在 Fragment 中延迟初始化 ViewBinding，
- * 自动在 [Fragment.onViewCreated] 之后绑定视图，并在 [Fragment.onDestroyView] 时清理引用。
- *
- * ### 用法
- * ```kotlin
- * class MyFragment : Fragment(R.layout.fragment_my) {
- *     private val binding by viewBinding(FragmentMyBinding::bind)
- *
- *     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
- *         binding.tvTitle.text = "Hello"
- *     }
- * }
- * ```
- *
- * @param binder 用于绑定视图的函数引用（如 `FragmentMyBinding::bind`）
+ * 在 [Fragment.onViewCreated] 之后绑定视图，并在视图销毁时清理引用。
  */
 fun <VB : ViewBinding> Fragment.viewBinding(binder: KClass<VB>): ReadOnlyProperty<Fragment, VB> {
     return FragmentViewBindingDelegate(binder) { fragment ->
@@ -74,21 +62,6 @@ fun <VB : ViewBinding> Fragment.viewBinding(binder: KClass<VB>): ReadOnlyPropert
 
 /**
  * DialogFragment 的 ViewBinding 属性委托。
- *
- * 与 Fragment 用法相同，但针对 DialogFragment 的对话框视图生命周期优化。
- *
- * ### 用法
- * ```kotlin
- * class MyDialog : DialogFragment() {
- *     private val binding by viewBinding(DialogMyBinding::bind)
- *
- *     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
- *         binding.tvTitle.text = "Hello"
- *     }
- * }
- * ```
- *
- * @param binder 用于绑定视图的函数引用（如 `DialogMyBinding::bind`）
  */
 fun <VB : ViewBinding> DialogFragment.viewBinding(binder: KClass<VB>): ReadOnlyProperty<DialogFragment, VB> {
     return FragmentViewBindingDelegate(binder) { fragment ->
@@ -99,23 +72,48 @@ fun <VB : ViewBinding> DialogFragment.viewBinding(binder: KClass<VB>): ReadOnlyP
     }
 }
 
-private class ViewBindingDelegate<VB : ViewBinding>(
+private class ActivityViewBindingDelegate<VB : ViewBinding>(
     private val binder: KClass<VB>,
-    private val bindingFactory: (AppCompatActivity) -> VB,
 ) : ReadOnlyProperty<AppCompatActivity, VB> {
     private var binding: VB? = null
+    private var lifecycleObserverRegistered = false
 
     @Suppress("UNCHECKED_CAST")
     override fun getValue(
         thisRef: AppCompatActivity,
-        property: kotlin.reflect.KProperty<*>,
+        property: KProperty<*>,
     ): VB {
-        return binding ?: run {
-            val method = binder.java.getMethod("inflate", LayoutInflater::class.java)
-            val inflater = LayoutInflater.from(thisRef)
-            @Suppress("UNCHECKED_CAST")
-            method.invoke(null, inflater) as VB
-        }.also { binding = it }
+        binding?.let { return it }
+
+        val content = thisRef.findViewById<ViewGroup>(android.R.id.content)
+        val existingRoot = if (content.childCount > 0) content.getChildAt(0) else null
+
+        val newBinding =
+            if (existingRoot != null) {
+                val bindMethod = binder.java.getMethod("bind", View::class.java)
+                bindMethod.invoke(null, existingRoot) as VB
+            } else {
+                val inflateMethod = binder.java.getMethod("inflate", LayoutInflater::class.java)
+                inflateMethod.invoke(null, LayoutInflater.from(thisRef)) as VB
+            }
+
+        binding = newBinding
+        registerClearOnDestroy(thisRef)
+        return newBinding
+    }
+
+    private fun registerClearOnDestroy(activity: AppCompatActivity) {
+        if (lifecycleObserverRegistered) return
+        lifecycleObserverRegistered = true
+        activity.lifecycle.addObserver(
+            object : DefaultLifecycleObserver {
+                override fun onDestroy(owner: LifecycleOwner) {
+                    binding = null
+                    lifecycleObserverRegistered = false
+                    owner.lifecycle.removeObserver(this)
+                }
+            },
+        )
     }
 }
 
@@ -127,7 +125,7 @@ private class FragmentViewBindingDelegate<VB : ViewBinding>(
 
     override fun getValue(
         thisRef: Fragment,
-        property: kotlin.reflect.KProperty<*>,
+        property: KProperty<*>,
     ): VB {
         binding?.let { return it }
         val lifecycle = thisRef.viewLifecycleOwner.lifecycle

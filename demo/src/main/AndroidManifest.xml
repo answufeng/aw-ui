@@ -80,5 +80,26 @@
         <activity
             android:name=".SwitchDemoActivity"
             android:exported="false" />
+        <activity
+            android:name=".StickyHeaderDemoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FormDemoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RecyclerViewDemoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AnimDemoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".StepViewDemoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RatingBarDemoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".NoticeBarDemoActivity"
+            android:exported="false" />
     </application>
 </manifest>

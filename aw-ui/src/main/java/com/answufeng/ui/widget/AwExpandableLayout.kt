@@ -85,6 +85,13 @@ class AwExpandableLayout
             }
         }
 
+        override fun onDetachedFromWindow() {
+            animator?.cancel()
+            animator = null
+            isAnimating = false
+            super.onDetachedFromWindow()
+        }
+
         override fun onRestoreInstanceState(state: Parcelable?) {
             if (state is Bundle) {
                 val superState: Parcelable? =

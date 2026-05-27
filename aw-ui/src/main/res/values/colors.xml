@@ -7,6 +7,7 @@
     <color name="aw_color_loading_default">#999999</color>
     <color name="aw_color_swipe_refresh">#999999</color>
     <color name="aw_color_banner_indicator">#80FFFFFF</color>
+    <color name="aw_color_primary">#1976D2</color>
     <color name="aw_color_progress">#4CAF50</color>
     <color name="aw_color_progress_track">#E0E0E0</color>
     <color name="aw_color_skeleton_base">#E0E0E0</color>

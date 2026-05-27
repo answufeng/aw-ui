@@ -15,8 +15,8 @@ import android.view.Gravity
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
-import com.answufeng.ui.R
 import androidx.core.content.ContextCompat
+import com.answufeng.ui.R
 
 /**
  * 验证码输入视图，每位数字显示在独立的方框中。
@@ -168,7 +168,11 @@ class AwCodeInputView
             codeLength = ta.getInt(R.styleable.AwCodeInputView_code_length, 6)
             boxSize = ta.getDimensionPixelSize(R.styleable.AwCodeInputView_code_boxSize, (48 * density).toInt())
             boxSpacing = ta.getDimensionPixelSize(R.styleable.AwCodeInputView_code_boxSpacing, (8 * density).toInt())
-            boxStrokeColor = ta.getColor(R.styleable.AwCodeInputView_code_boxStrokeColor, ContextCompat.getColor(context, R.color.aw_color_code_input_stroke))
+            boxStrokeColor =
+                ta.getColor(
+                    R.styleable.AwCodeInputView_code_boxStrokeColor,
+                    ContextCompat.getColor(context, R.color.aw_color_code_input_stroke),
+                )
             boxStrokeWidth = ta.getDimension(R.styleable.AwCodeInputView_code_boxStrokeWidth, 2 * density)
             codeTextColor = ta.getColor(R.styleable.AwCodeInputView_code_textColor, Color.BLACK)
             codeTextSize = ta.getDimension(R.styleable.AwCodeInputView_code_textSize, 18 * density)

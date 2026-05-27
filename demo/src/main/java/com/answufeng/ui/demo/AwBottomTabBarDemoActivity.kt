@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.answufeng.ui.widget.AwBottomTabBar
+import com.answufeng.ui.widget.AwBottomTabItem
 import kotlin.jvm.java
 
 class AwBottomTabBarDemoActivity : AppCompatActivity() {
@@ -152,7 +153,7 @@ class AwBottomTabBarDemoActivity : AppCompatActivity() {
             val insertIndex = (tabBar.getCurrentIndex() + 1).coerceAtMost(tabBar.getItemCount())
             val template = extraItems[addCounter % extraItems.size]
             addCounter += 1
-            tabBar.insertItem(insertIndex, AwBottomTabBar.TabItem("${template.title}${addCounter}", iconRes = template.iconRes))
+            tabBar.insertItem(insertIndex, AwBottomTabItem("${template.title}${addCounter}", iconRes = template.iconRes))
             tabBar.setCurrentIndex(insertIndex, true)
             refreshDebugInfo()
         }
@@ -210,7 +211,7 @@ class AwBottomTabBarDemoActivity : AppCompatActivity() {
     }
 
     private fun applyItems(items: List<DemoTab>) {
-        tabBar.setItems(items.map { AwBottomTabBar.TabItem(title = it.title, iconRes = it.iconRes) })
+        tabBar.setItems(items.map { AwBottomTabItem(title = it.title, iconRes = it.iconRes) })
         tabBar.setCurrentIndex(0, false)
         tabBar.clearAllBadges()
     }
@@ -247,7 +248,7 @@ class AwBottomTabBarDemoActivity : AppCompatActivity() {
         return resolveTitle(item)
     }
 
-    private fun resolveTitle(item: AwBottomTabBar.TabItem): String {
+    private fun resolveTitle(item: AwBottomTabItem): String {
         return when {
             item.title.isNotBlank() -> item.title
             item.titleRes != 0 -> getString(item.titleRes)

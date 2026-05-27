@@ -2,9 +2,11 @@ package com.answufeng.ui.demo
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.answufeng.ui.demo.databinding.ActivityHomeBinding
 
@@ -12,13 +14,15 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
     private val categoryAdapter = CategoryAdapter { category ->
-        val intent = Intent(this, CategoryDemoActivity::class.java)
-        intent.putExtra(CategoryDemoActivity.EXTRA_CATEGORY_TITLE, category.title)
-        startActivity(intent)
+        startActivity(
+            Intent(this, CategoryDemoActivity::class.java)
+                .putExtra(CategoryDemoActivity.EXTRA_CATEGORY_TITLE, category.title),
+        )
     }
-    private val searchAdapter = DemoEntryAdapter { entry ->
-        startActivity(Intent(this, entry.activity))
-    }
+    private val searchAdapter = DemoEntryAdapter(
+        onClick = { entry -> startActivity(Intent(this, entry.activity)) },
+        showCategory = true,
+    )
     private var isSearchMode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         setupToolbar()
+        setupHero()
         setupList()
         setupSearch()
     }
@@ -40,6 +45,19 @@ class MainActivity : AppCompatActivity() {
     private fun setupToolbar() {
         binding.titleBar.title = getString(R.string.demo_home_title)
         binding.titleBar.showBackButton = false
+        binding.titleBar.setOnRightTextClickListener {
+            AlertDialog.Builder(this)
+                .setTitle(R.string.demo_playbook_title)
+                .setMessage(R.string.demo_playbook_message)
+                .setPositiveButton(android.R.string.ok, null)
+                .show()
+        }
+    }
+
+    private fun setupHero() {
+        val categoryCount = DemoData.categories.size
+        val componentCount = DemoData.totalComponentCount
+        binding.tvStats.text = getString(R.string.demo_stats_format, categoryCount, componentCount)
     }
 
     private fun setupList() {
@@ -49,8 +67,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupSearch() {
-        binding.etSearch.onQueryChange = { q ->
-            if (q.isEmpty()) {
+        binding.etSearch.onQueryChange = { query ->
+            if (query.isEmpty()) {
+                binding.emptySearch.isVisible = false
+                binding.rvEntries.isVisible = true
                 if (isSearchMode) {
                     binding.rvEntries.adapter = categoryAdapter
                     isSearchMode = false
@@ -60,14 +80,14 @@ class MainActivity : AppCompatActivity() {
                     binding.rvEntries.adapter = searchAdapter
                     isSearchMode = true
                 }
-                searchAdapter.submitList(
-                    DemoData.allEntries.filter {
-                        it.title.contains(q, ignoreCase = true) || it.desc.contains(
-                            q,
-                            ignoreCase = true
-                        )
-                    }
-                )
+                val results = DemoData.allEntries.filter {
+                    it.title.contains(query, ignoreCase = true) ||
+                        it.desc.contains(query, ignoreCase = true) ||
+                        it.category.contains(query, ignoreCase = true)
+                }
+                searchAdapter.submitList(results)
+                binding.emptySearch.isVisible = results.isEmpty()
+                binding.rvEntries.isVisible = results.isNotEmpty()
             }
         }
     }

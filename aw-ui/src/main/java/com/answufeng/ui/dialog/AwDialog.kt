@@ -241,9 +241,3 @@ class AwLoadingDialog(context: Context) : AwBaseDialog(context) {
         }
     }
 }
-
-@Deprecated(
-    message = "请使用 AwLoadingDialog 替代 LoadingDialog，保持命名一致性",
-    level = DeprecationLevel.WARNING,
-)
-typealias LoadingDialog = AwLoadingDialog

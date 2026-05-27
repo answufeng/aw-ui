@@ -23,6 +23,23 @@
 - 组件实现：[AwBottomTabBar.kt](../src/main/java/com/answufeng/ui/widget/AwBottomTabBar.kt)
 - 自定义属性：[attrs.xml](../src/main/res/values/attrs.xml)
 
+## 推荐 XML 预设样式
+
+减少直接配置十余个属性的成本，可使用 `styles.xml` 中的预设：
+
+| Style | 场景 |
+|-------|------|
+| `@style/Widget.AwBottomTabBar.FixedIconText` | 固定底栏，图标+文字，下划线指示器 |
+| `@style/Widget.AwBottomTabBar.ScrollableLine` | 可横向滚动 Tab + 指示器联动 |
+| `@style/Widget.AwBottomTabBar.IconOnly` | 仅图标，无指示器 |
+
+```xml
+<com.answufeng.ui.widget.AwBottomTabBar
+    style="@style/Widget.AwBottomTabBar.FixedIconText"
+    android:layout_width="match_parent"
+    android:layout_height="68dp" />
+```
+
 ## 快速开始
 
 ### 1. XML 中声明
@@ -48,18 +65,18 @@ val tabBar = findViewById<AwBottomTabBar>(R.id.tabBar)
 
 tabBar.setItems(
     listOf(
-        AwBottomTabBar.TabItem(title = "首页", iconRes = R.drawable.ic_home),
-        AwBottomTabBar.TabItem(title = "发现", iconRes = R.drawable.ic_discover),
-        AwBottomTabBar.TabItem(title = "消息", iconRes = R.drawable.ic_message),
-        AwBottomTabBar.TabItem(title = "我的", iconRes = R.drawable.ic_me)
+        AwBottomTabItem(title = "首页", iconRes = R.drawable.ic_home),
+        AwBottomTabItem(title = "发现", iconRes = R.drawable.ic_discover),
+        AwBottomTabItem(title = "消息", iconRes = R.drawable.ic_message),
+        AwBottomTabItem(title = "我的", iconRes = R.drawable.ic_me)
     )
 )
 ```
 
-## TabItem
+## AwBottomTabItem
 
 ```kotlin
-AwBottomTabBar.TabItem(
+AwBottomTabItem(
     title = "首页",
     icon = null,
     iconRes = R.drawable.ic_home,

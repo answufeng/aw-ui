@@ -1,14 +1,20 @@
 <resources>
     <string name="app_name">aw-ui Demo</string>
-    <string name="demo_home_title">aw-ui 组件库 Demo</string>
-    <string name="demo_search_hint">搜索组件/页面</string>
-    <string name="demo_playbook_action">演示清单</string>
+    <string name="demo_home_title">aw-ui 组件库</string>
+    <string name="demo_hero_title">Android View 组件演示</string>
+    <string name="demo_hero_subtitle">按场景分类浏览全部组件，支持搜索快速定位。每个演示页聚焦单一能力，便于集成参考。</string>
+    <string name="demo_stats_format">%1$d 个分类 · %2$d 个演示</string>
+    <string name="demo_category_count_format">本分类共 %1$d 个演示</string>
+    <string name="demo_search_hint">搜索组件名称或场景…</string>
+    <string name="demo_search_empty_title">未找到匹配组件</string>
+    <string name="demo_search_empty_desc">试试搜索「列表」「Dialog」「Banner」等关键词</string>
+    <string name="demo_playbook_action">清单</string>
     <string name="demo_playbook_title">演示清单</string>
-    <string name="demo_playbook_message">入口与组件对照见仓库 demo/DEMO_MATRIX.md。\n\n• 组件总览（Showcase）：输入、进度、Dialog、列表装饰等\n• 状态页：AwStateLayout 四态与重试\n• 下拉刷新列表：AwSwipeRefreshLayout + AwLoadMoreAdapter\n• 轮播：AwBannerView\n• 分段控制：AwSegmentedControl 专项页（文字/图标/指示器、ViewPager2 联动）\n\n发版前请配合 README「工程品质与发版检查」跑 lint + demo R8，并在真机核对无障碍与低内存场景。</string>
+    <string name="demo_playbook_message">共 7 大分类、27 个独立演示页，覆盖 aw-ui 公开组件。\n\n• 列表与数据：SimpleAdapter / MultiType / 分割线 / 动画 / 下拉刷新 / 吸顶\n• 弹窗与反馈：Dialog / NoticeBar / StepView / RatingBar\n• 视觉与动效：Banner / 圆角 / 角标 / 开关 / 跑马灯 / Anim\n\n完整对照见 demo/DEMO_MATRIX.md。</string>
     <string name="state_demo_transition_boot">过渡: 交叉（点按循环切换）</string>
     <string name="state_demo_transition_cycling">过渡: %1$s（点按循环：无 → 淡入 → 交叉 → 自底）</string>
     <string name="demo_swipe_refresh_title">下拉刷新列表</string>
-    <string name="demo_swipe_refresh_hint">本页为 AwLoadMoreAdapter 与 Swipe 组合样例：上拉加载 2、3 页，到底「没有更多」；下拉拉回第 1 页，调用 finishRefresh() 结束刷新。RecyclerView 须为单 child。</string>
+    <string name="demo_swipe_refresh_hint">AwLoadMoreAdapter 与 Swipe 组合：上拉加载 2、3 页，到底「没有更多」；下拉拉回第 1 页后 finishRefresh()。RecyclerView 须为单 child。</string>
     <string-array name="segment_items">
         <item>选项一</item>
         <item>选项二</item>
@@ -28,4 +34,9 @@
     <string name="seg_demo_pager_bound_hint">左右滑动 ViewPager2，分段会跟随；点分段，页面会切页（bindViewPager2）。</string>
     <string name="seg_demo_selected_only">当前选中：%1$d（onSelectionChange，未 bind ViewPager2）</string>
     <string name="seg_demo_page_n">第 %1$d 页</string>
+    <string name="anim_demo_reset">重置</string>
+    <string name="anim_demo_status">%1$s 动画已触发</string>
+    <string name="recycler_demo_add">添加一项</string>
+    <string name="recycler_demo_remove">删除末项</string>
+    <string name="recycler_demo_toggle_type">切换多类型数据</string>
 </resources>

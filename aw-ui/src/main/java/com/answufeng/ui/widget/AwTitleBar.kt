@@ -243,7 +243,11 @@ class AwTitleBar
                 )
             val immersive = ta.getBoolean(R.styleable.AwTitleBar_titleBar_immersive, false)
             showDivider = ta.getBoolean(R.styleable.AwTitleBar_titleBar_showDivider, false)
-            dividerColor = ta.getColor(R.styleable.AwTitleBar_titleBar_dividerColor, ContextCompat.getColor(context, R.color.aw_color_title_divider))
+            dividerColor =
+                ta.getColor(
+                    R.styleable.AwTitleBar_titleBar_dividerColor,
+                    ContextCompat.getColor(context, R.color.aw_color_title_divider),
+                )
             barHeightPx = ta.getDimensionPixelSize(R.styleable.AwTitleBar_titleBar_height, 56.dp)
             val iconTint = ta.getColor(R.styleable.AwTitleBar_titleBar_iconTint, Int.MIN_VALUE)
             ta.recycle()

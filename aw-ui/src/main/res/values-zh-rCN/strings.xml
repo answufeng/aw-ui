@@ -14,4 +14,5 @@
     <string name="aw_load_more_loading">正在加载…</string>
     <string name="aw_load_more_no_more">—— 没有更多了 ——</string>
     <string name="aw_load_more_failed">加载失败，点击重试</string>
+    <string name="aw_notice_close">关闭通知</string>
 </resources>

@@ -3,8 +3,6 @@ package com.answufeng.ui.widget
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
-import androidx.core.content.ContextCompat
 import android.graphics.Paint
 import android.graphics.Path
 import android.util.AttributeSet
@@ -21,6 +19,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.annotation.LayoutRes
+import androidx.core.content.ContextCompat
 import androidx.core.view.NestedScrollingChild3
 import androidx.core.view.NestedScrollingChildHelper
 import androidx.core.view.NestedScrollingParent3
@@ -29,6 +28,16 @@ import androidx.core.view.ViewCompat
 import com.answufeng.ui.R
 import com.answufeng.ui.dpFloat
 
+/**
+ * 自定义下拉刷新容器，支持 NestedScrolling 与自定义 Header。
+ *
+ * ### 推荐配置
+ * | 场景 | refreshStyle | 说明 |
+ * |------|----------------|------|
+ * | 默认列表 | [RefreshStyle.SYSTEM] | Material 风格转圈 |
+ * | 品牌定制 | `customRefreshHeaderLayout` | 完全自定义 Header 布局 |
+ * | 内置样式 | [RefreshStyle.FLOWER] / [RefreshStyle.ARROW] / [RefreshStyle.TEXT] | 库内预设 Header |
+ */
 class AwSwipeRefreshLayout
     @JvmOverloads
     constructor(
@@ -651,27 +660,16 @@ class AwSwipeRefreshLayout
         }
 
         private fun createHeaderView(): View {
-            return when (refreshStyle) {
-                RefreshStyle.SYSTEM ->
-                    SystemRefreshHeaderView(context).apply {
-                        tintColor = refreshTintColor
-                    }
-                RefreshStyle.FLOWER ->
-                    FlowerRefreshHeaderView(context).apply {
-                        tintColor = refreshTintColor
-                    }
-                RefreshStyle.ARROW ->
-                    ArrowRefreshHeaderView(context).apply {
-                        tintColor = refreshTintColor
-                    }
-                RefreshStyle.TEXT ->
-                    TextRefreshHeaderView(context).apply {
-                        tintColor = refreshTintColor
-                        text = refreshText
-                        if (refreshTextColor != 0) textColor = refreshTextColor
-                        if (refreshTextSize > 0) textSize = refreshTextSize
-                    }
-            }
+            return AwSwipeRefreshHeaderFactory.create(
+                context,
+                refreshStyle,
+                AwSwipeRefreshHeaderFactory.Config(
+                    tintColor = refreshTintColor,
+                    refreshText = refreshText,
+                    refreshTextColor = refreshTextColor,
+                    refreshTextSize = refreshTextSize,
+                ),
+            )
         }
 
         private fun canChildScrollUp(): Boolean {

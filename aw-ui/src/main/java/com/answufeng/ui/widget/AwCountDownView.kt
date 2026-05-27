@@ -532,13 +532,6 @@ class AwCountDownView
             progressPaint.color = color
         }
 
-        @Deprecated("Use setProgressColor instead", ReplaceWith("setProgressColor(color)"))
-        fun setStrokeColor(
-            @ColorInt color: Int,
-        ) {
-            setProgressColor(color)
-        }
-
         fun setTrackColor(
             @ColorInt color: Int,
         ) {
@@ -546,13 +539,6 @@ class AwCountDownView
         }
 
         fun setBgFillColor(
-            @ColorInt color: Int,
-        ) {
-            bgFillPaint.color = color
-        }
-
-        @Deprecated("Use setTrackColor instead", ReplaceWith("setTrackColor(color)"))
-        fun setCountDownTrackColor(
             @ColorInt color: Int,
         ) {
             bgFillPaint.color = color

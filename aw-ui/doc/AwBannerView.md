@@ -1,13 +1,15 @@
 # AwBannerView
 
-`AwBannerView` 是一个支持无限循环、自动轮播、指示器交互的 Banner 轮播组件，兼容 `ViewPager` 和 `ViewPager2`。
+`AwBannerView` 是一个支持无限循环、自动轮播、指示器交互的 Banner 轮播组件（基于 **ViewPager2**）。
+
+推荐使用 `setAdapter()` / `setData()`；如需兼容 ViewPager 1.x，可使用 `setPagerAdapter()`。
 
 ## 功能概览
 
 - 支持无限循环滚动
 - 自动轮播功能，支持暂停/恢复
 - 底部指示器，支持点击切换
-- 兼容 `ViewPager` 和 `ViewPager2`
+- 基于 ViewPager2（`setAdapter` / `setData`）
 - 生命周期感知，自动处理暂停/恢复
 - 支持页面点击和指示器点击回调
 

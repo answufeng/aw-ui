@@ -15,9 +15,9 @@ class CategoryDemoActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityCategoryDemoBinding
-    private val adapter = DemoEntryAdapter { entry ->
-        startActivity(Intent(this, entry.activity))
-    }
+    private val adapter = DemoEntryAdapter(
+        onClick = { entry -> startActivity(Intent(this, entry.activity)) },
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,11 +30,15 @@ class CategoryDemoActivity : AppCompatActivity() {
             insets
         }
 
-        val categoryTitle = intent.getStringExtra(EXTRA_CATEGORY_TITLE) ?: ""
+        val categoryTitle = intent.getStringExtra(EXTRA_CATEGORY_TITLE).orEmpty()
+        val category = DemoData.getCategory(categoryTitle)
         binding.titleBar.title = categoryTitle
         binding.titleBar.setOnBackClickListener { finish() }
 
+        binding.tvCategoryDesc.text = category?.desc ?: ""
         val entries = DemoData.getEntriesForCategory(categoryTitle)
+        binding.tvEntryCount.text = getString(R.string.demo_category_count_format, entries.size)
+
         binding.rvEntries.layoutManager = LinearLayoutManager(this)
         binding.rvEntries.adapter = adapter
         adapter.submitList(entries)

@@ -8,6 +8,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.answufeng.ui.widget.AwBottomTabBar
+import com.answufeng.ui.widget.AwBottomTabItem
 
 class ViewPagerActivity : AppCompatActivity() {
 
@@ -51,10 +52,10 @@ class ViewPagerActivity : AppCompatActivity() {
     private fun setupTabBar() {
         tabBar.setItems(
             listOf(
-                AwBottomTabBar.TabItem(title = "首页", iconRes = R.drawable.ic_home),
-                AwBottomTabBar.TabItem(title = "发现", iconRes = R.drawable.ic_discover),
-                AwBottomTabBar.TabItem(title = "消息", iconRes = R.drawable.ic_message),
-                AwBottomTabBar.TabItem(title = "我的", iconRes = R.drawable.ic_me)
+                AwBottomTabItem(title = "首页", iconRes = R.drawable.ic_home),
+                AwBottomTabItem(title = "发现", iconRes = R.drawable.ic_discover),
+                AwBottomTabItem(title = "消息", iconRes = R.drawable.ic_message),
+                AwBottomTabItem(title = "我的", iconRes = R.drawable.ic_me)
             )
         )
 

@@ -3,7 +3,6 @@ package com.answufeng.ui.widget
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.Path
@@ -13,8 +12,8 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.View
-import com.answufeng.ui.R
 import androidx.core.content.ContextCompat
+import com.answufeng.ui.R
 
 /**
  * 骨架屏加载视图，带有从左到右扫过的闪光/渐变动画。
@@ -111,8 +110,16 @@ class AwSkeletonView
         init {
             val density = resources.displayMetrics.density
             val ta = context.obtainStyledAttributes(attrs, R.styleable.AwSkeletonView)
-            baseColor = ta.getColor(R.styleable.AwSkeletonView_skeleton_baseColor, ContextCompat.getColor(context, R.color.aw_color_skeleton_base))
-            highlightColor = ta.getColor(R.styleable.AwSkeletonView_skeleton_highlightColor, ContextCompat.getColor(context, R.color.aw_color_skeleton_highlight))
+            baseColor =
+                ta.getColor(
+                    R.styleable.AwSkeletonView_skeleton_baseColor,
+                    ContextCompat.getColor(context, R.color.aw_color_skeleton_base),
+                )
+            highlightColor =
+                ta.getColor(
+                    R.styleable.AwSkeletonView_skeleton_highlightColor,
+                    ContextCompat.getColor(context, R.color.aw_color_skeleton_highlight),
+                )
             cornerRadius = ta.getDimension(R.styleable.AwSkeletonView_skeleton_cornerRadius, 4f * density)
             animationDuration = ta.getInteger(R.styleable.AwSkeletonView_skeleton_duration, 1000).toLong()
             ta.recycle()

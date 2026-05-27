@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.answufeng.ui.demo.databinding.ItemCategoryBinding
 
 class CategoryAdapter(
-    private val onClick: (DemoCategory) -> Unit
+    private val onClick: (DemoCategory) -> Unit,
 ) : RecyclerView.Adapter<CategoryAdapter.VH>() {
 
     private var items: List<DemoCategory> = emptyList()
@@ -31,17 +31,19 @@ class CategoryAdapter(
 
     class VH(
         private val binding: ItemCategoryBinding,
-        private val onClick: (DemoCategory) -> Unit
+        private val onClick: (DemoCategory) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(category: DemoCategory) {
             binding.tvTitle.text = category.title
-            binding.tvCount.text = "${category.count} 个组件"
+            binding.tvCount.text = category.desc
             binding.tvIcon.text = category.icon
+            binding.tvBadge.text = "${category.count} 项"
             try {
                 val color = Color.parseColor(category.colorHex)
+                binding.accentBar.setBackgroundColor(color)
                 val bg = binding.tvIcon.background
                 if (bg is GradientDrawable) {
-                    bg.setColor(adjustAlpha(color, 0.12f))
+                    bg.setColor(adjustAlpha(color, 0.14f))
                 }
             } catch (_: Exception) {
             }
@@ -49,7 +51,7 @@ class CategoryAdapter(
         }
 
         private fun adjustAlpha(color: Int, factor: Float): Int {
-            val alpha = (Color.alpha(color) * factor).toInt()
+            val alpha = (255 * factor).toInt().coerceIn(0, 255)
             return Color.argb(alpha, Color.red(color), Color.green(color), Color.blue(color))
         }
     }

@@ -5,13 +5,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.viewbinding.ViewBinding
 import com.answufeng.ui.R
-import androidx.core.content.ContextCompat
 import com.google.android.material.color.MaterialColors
 
 /**
@@ -48,7 +50,7 @@ import com.google.android.material.color.MaterialColors
  * - **FAILED**：加载失败，点击可重试
  *
  * ### 注意
- * - 滚动检测仅支持 [LinearLayoutManager]，其他 LayoutManager 不会自动触发加载
+ * - 滚动检测支持 [LinearLayoutManager]、[GridLayoutManager]、[StaggeredGridLayoutManager]
  * - 所有方法必须在主线程调用
  *
  * @param VB   ViewBinding 类型
@@ -167,9 +169,8 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
                     if (loadState != LoadState.IDLE) return
                     if (currentList.isEmpty()) return
 
-                    val layoutManager = rv.layoutManager as? LinearLayoutManager ?: return
-                    val lastVisible = layoutManager.findLastVisibleItemPosition()
-                    val total = layoutManager.itemCount
+                    val lastVisible = findLastVisibleItemPosition(rv) ?: return
+                    val total = rv.layoutManager?.itemCount ?: return
 
                     if (lastVisible >= total - 1 - preloadOffset) {
                         // 在 onScrolled 内直接 notify 会触发非法状态，延后到 post；此时必为 IDLE，尚无 footer，需 insert 而非 change
@@ -274,6 +275,40 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
     }
 
     /**
+     * 分页请求结束后的便捷方法：成功时追加数据并更新底部状态，失败时显示重试 footer。
+     *
+     * @param newItems 本页新数据（可为空）
+     * @param hasMore 是否还有下一页
+     * @param success 请求是否成功
+     */
+    @JvmOverloads
+    fun finishPage(
+        newItems: List<T>,
+        hasMore: Boolean,
+        success: Boolean = true,
+        commitCallback: Runnable? = null,
+    ) {
+        if (!success) {
+            loadFailed()
+            return
+        }
+        if (newItems.isNotEmpty()) {
+            loadMore(newItems) {
+                commitCallback?.run()
+                if (!hasMore) {
+                    noMore()
+                }
+            }
+        } else if (!hasMore) {
+            noMore()
+            commitCallback?.run()
+        } else {
+            resetLoadState()
+            commitCallback?.run()
+        }
+    }
+
+    /**
      * 重置加载状态为 IDLE。
      */
     fun resetLoadState() {
@@ -308,6 +343,19 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
     }
 
     private fun showFooter(): Boolean = loadState != LoadState.IDLE
+
+    private fun findLastVisibleItemPosition(recyclerView: RecyclerView): Int? {
+        return when (val lm = recyclerView.layoutManager) {
+            is LinearLayoutManager -> lm.findLastVisibleItemPosition()
+            is GridLayoutManager -> lm.findLastVisibleItemPosition()
+            is StaggeredGridLayoutManager -> {
+                val positions = IntArray(lm.spanCount)
+                lm.findLastVisibleItemPositions(positions)
+                positions.maxOrNull()
+            }
+            else -> null
+        }
+    }
 
     private class ItemViewHolder<VB : ViewBinding>(val binding: VB) : RecyclerView.ViewHolder(binding.root)
 

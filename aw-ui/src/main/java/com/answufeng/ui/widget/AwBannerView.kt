@@ -11,8 +11,10 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.PagerAdapter
@@ -21,8 +23,6 @@ import androidx.viewpager2.widget.ViewPager2
 import com.answufeng.ui.R
 import com.answufeng.ui.dp
 import com.answufeng.ui.dpFloat
-import androidx.core.content.ContextCompat
-
 class AwBannerView
     @JvmOverloads
     constructor(
@@ -38,10 +38,12 @@ class AwBannerView
         private val handler = Handler(Looper.getMainLooper())
         private lateinit var indicatorContainer: LinearLayout
         private lateinit var viewPager2: ViewPager2
+
         /** 僅在使用 [setPagerAdapter] 時建立，避免預設路徑同時掛載兩套 Pager。 */
         private var legacyViewPager: ViewPager? = null
 
         private var pagerEngine = PagerEngine.VIEW_PAGER2
+        private var boundLifecycleOwner: LifecycleOwner? = null
         private var lifecycleObserver: LifecycleEventObserver? = null
         private var wasAutoScrollingBeforePause = false
         private var normalDotDrawable: GradientDrawable? = null
@@ -132,21 +134,22 @@ class AwBannerView
             object : Runnable {
                 override fun run() {
                     if (isAutoScrolling && realItemCount > 1) {
-                        val shouldScheduleNext = when (pagerEngine) {
-                            PagerEngine.VIEW_PAGER2 -> {
-                                viewPager2.setCurrentItem(viewPager2.currentItem + 1, true)
-                                true
-                            }
-                            PagerEngine.VIEW_PAGER -> {
-                                val lp = legacyViewPager
-                                if (lp != null) {
-                                    lp.currentItem = lp.currentItem + 1
+                        val shouldScheduleNext =
+                            when (pagerEngine) {
+                                PagerEngine.VIEW_PAGER2 -> {
+                                    viewPager2.setCurrentItem(viewPager2.currentItem + 1, true)
                                     true
-                                } else {
-                                    false
+                                }
+                                PagerEngine.VIEW_PAGER -> {
+                                    val lp = legacyViewPager
+                                    if (lp != null) {
+                                        lp.currentItem = lp.currentItem + 1
+                                        true
+                                    } else {
+                                        false
+                                    }
                                 }
                             }
-                        }
                         if (shouldScheduleNext) {
                             handler.postDelayed(this, interval)
                         }
@@ -191,7 +194,11 @@ class AwBannerView
 
             val ta = context.obtainStyledAttributes(attrs, R.styleable.AwBannerView)
             interval = ta.getInteger(R.styleable.AwBannerView_banner_interval, 3000).toLong()
-            indicatorColor = ta.getColor(R.styleable.AwBannerView_banner_indicatorColor, ContextCompat.getColor(context, R.color.aw_color_banner_indicator))
+            indicatorColor =
+                ta.getColor(
+                    R.styleable.AwBannerView_banner_indicatorColor,
+                    ContextCompat.getColor(context, R.color.aw_color_banner_indicator),
+                )
             indicatorSelectedColor = ta.getColor(R.styleable.AwBannerView_banner_indicatorSelectedColor, Color.WHITE)
             showIndicators = ta.getBoolean(R.styleable.AwBannerView_banner_showIndicators, true)
             autoStart = ta.getBoolean(R.styleable.AwBannerView_banner_autoStart, true)
@@ -484,6 +491,7 @@ class AwBannerView
         private fun bindLifecycle() {
             unbindLifecycle()
             val owner = findViewTreeLifecycleOwner() ?: return
+            boundLifecycleOwner = owner
             lifecycleObserver =
                 LifecycleEventObserver { _, event ->
                     when (event) {
@@ -502,8 +510,9 @@ class AwBannerView
 
         private fun unbindLifecycle() {
             lifecycleObserver?.let { observer ->
-                findViewTreeLifecycleOwner()?.lifecycle?.removeObserver(observer)
+                boundLifecycleOwner?.lifecycle?.removeObserver(observer)
             }
             lifecycleObserver = null
+            boundLifecycleOwner = null
         }
     }

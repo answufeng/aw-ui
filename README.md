@@ -22,11 +22,11 @@ dependencyResolutionManagement {
 
 // app/build.gradle.kts
 dependencies {
-    implementation("com.github.answufeng:aw-ui:1.0.3")
+    implementation("com.github.answufeng:aw-ui:1.1.0")
 }
 ```
 
-`implementation` 中的 **版本号与 Git / JitPack 的 tag 一致**（上例为 `1.0.3`）。
+`implementation` 中的 **版本号与 Git / JitPack 的 tag 一致**（当前为 `1.1.0`）。
 
 ### 2) 打开 ViewBinding（推荐）
 
@@ -118,14 +118,27 @@ stateLayout.showContent()
 | 倒计时 | `AwCountDownView` | [文档](aw-ui/doc/AwCountDownView.md) |
 | 下拉刷新 | `AwSwipeRefreshLayout` | [文档](aw-ui/doc/AwSwipeRefreshLayout.md) |
 
-### 其他模块
+### 核心模块文档
 
-| 分类 | 组件 |
+| 分类 | 文档 |
 |------|------|
-| 状态与布局 | `AwStateLayout` |
-| 列表与刷新 | `AwSimpleAdapter`、`AwMultiTypeAdapter`、`AwLoadMoreAdapter`、`AwDividerDecoration`、`AwItemAnimator` |
-| 弹窗与提示 | `AwDialog`、`LoadingDialog`、`AwActionSheetDialog` |
-| 工具 | `AwFormValidator`、`ViewBindingDelegate`、`DimenExt`、`DiffCallbacks`、`Anim` |
+| 状态页 | [AwStateLayout](aw-ui/doc/AwStateLayout.md) |
+| 弹窗 | [Dialog](aw-ui/doc/Dialog.md) |
+| 列表 | [RecyclerView](aw-ui/doc/RecyclerView.md) |
+| 表单 | [AwFormValidator](aw-ui/doc/AwFormValidator.md) |
+| ViewBinding | [ViewBinding](aw-ui/doc/ViewBinding.md) |
+| 动效 | [Anim](aw-ui/doc/Anim.md) |
+
+### 其他组件
+
+| 分类 | 组件 | 文档 |
+|------|------|------|
+| 步骤条 | `AwStepView` | [文档](aw-ui/doc/AwStepView.md) |
+| 评分 | `AwRatingBar` | [文档](aw-ui/doc/AwRatingBar.md) |
+| 通知条 | `AwNoticeBar` | [文档](aw-ui/doc/AwNoticeBar.md) |
+| 侧边索引 | `AwIndexBar` | [文档](aw-ui/doc/AwIndexBar.md) |
+| 列表吸顶 | `AwStickyHeaderDecoration` | 见 [RecyclerView](aw-ui/doc/RecyclerView.md) |
+| 底栏预设样式 | `Widget.AwBottomTabBar.*` | 见 [AwBottomTabBar](aw-ui/doc/AwBottomTabBar.md) |
 
 ---
 
@@ -136,7 +149,9 @@ stateLayout.showContent()
 
 ```kotlin
 AwDialog.Builder(context).title("提示").message("完成").positiveButton("确定").show()
-LoadingDialog.show(context, "提交中…")
+// 或扩展函数
+context.showAwConfirm("确认", "确定提交吗？") { submit() }
+AwLoadingDialog.show(context, "提交中…")
 ```
 
 </details>
@@ -179,7 +194,8 @@ swipeRefresh.refreshListener = {
 <summary><strong>ViewBinding / 尺寸</strong></summary>
 
 ```kotlin
-private val binding by viewBinding(ActivityMainBinding::bind)
+private val binding by viewBinding(ActivityMainBinding::class)
+// onCreate 中 setContentView(R.layout.activity_main) 后使用 binding
 val x = 16.dp
 ```
 
@@ -198,11 +214,11 @@ val x = 16.dp
 | 项 | 说明 |
 |----|------|
 | 演示能力矩阵 | [demo/DEMO_MATRIX.md](demo/DEMO_MATRIX.md) |
-| demo 内总览 | 启动 App 主列表 → **「演示清单」** |
+| demo 内总览 | 启动 App 主列表 → **「清单」** |
 | CI | [`.github/workflows/ci.yml`](.github/workflows/ci.yml)：assemble、ktlint、Lint |
 | 本地建议命令 | `./gradlew :aw-ui:assembleRelease :aw-ui:ktlintCheck :demo:ktlintCheck :aw-ui:lintRelease :demo:assembleRelease`（需 **JDK 17**） |
 
-上线前建议在真机过一遍：状态页、列表、对话框与低内存；关键控件在业务侧补齐 **TalkBack** / `contentDescription`。
+建议在真机过一遍：状态页、列表、对话框与低内存；关键控件在业务侧补齐 **TalkBack** / `contentDescription`。
 
 ---
 

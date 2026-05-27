@@ -5,15 +5,15 @@
     <color name="secondary">#0EA5E9</color>
     <color name="secondary_variant">#0284C7</color>
 
-    <color name="background">#F8FAFC</color>
+    <color name="background">#F1F5F9</color>
     <color name="surface">#FFFFFF</color>
-    <color name="surface_variant">#F1F5F9</color>
+    <color name="surface_variant">#E2E8F0</color>
 
     <color name="on_primary">#FFFFFF</color>
     <color name="on_secondary">#FFFFFF</color>
     <color name="on_background">#0F172A</color>
     <color name="on_surface">#0F172A</color>
-    <color name="on_surface_variant">#475569</color>
+    <color name="on_surface_variant">#64748B</color>
 
     <color name="success">#10B981</color>
     <color name="warning">#F59E0B</color>
@@ -23,22 +23,20 @@
     <color name="card_background">#FFFFFF</color>
     <color name="card_border">#E2E8F0</color>
 
+    <color name="hero_start">#4F46E5</color>
+    <color name="hero_end">#6366F1</color>
+    <color name="chip_background">#EEF2FF</color>
+    <color name="chip_text">#4338CA</color>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!-- Background Colors -->
-    <color name="background_light">#F5F5F5</color>
-
-    <!-- Text Colors -->
-    <color name="text_primary">#333333</color>
-    <color name="text_secondary">#666666</color>
-    <color name="text_hint">#999999</color>
-
-
-    <!-- Material Design Colors -->
-    <color name="primary_color">#FF5722</color>
-    <color name="primary_dark_color">#E64A19</color>
-    <color name="accent_color">#FF9800</color>
-
-
+    <!-- Legacy aliases kept for existing layouts -->
+    <color name="background_light">@color/background</color>
+    <color name="text_primary">@color/on_surface</color>
+    <color name="text_secondary">@color/on_surface_variant</color>
+    <color name="text_hint">#94A3B8</color>
+    <color name="primary_color">@color/primary</color>
+    <color name="primary_dark_color">@color/primary_variant</color>
+    <color name="accent_color">@color/secondary</color>
 </resources>

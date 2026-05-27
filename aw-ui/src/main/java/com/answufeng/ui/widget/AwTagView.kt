@@ -60,7 +60,10 @@ class AwTagView
             tagSelectedTextColor = ta.getColor(R.styleable.AwTagView_tag_selectedTextColor, tagSelectedTextColor)
             tagBgColor = ta.getColor(R.styleable.AwTagView_tag_bgColor, tagBgColor)
             tagSelectedBgColor = ta.getColor(R.styleable.AwTagView_tag_selectedBgColor, tagSelectedBgColor)
-            tagTextSize = ta.getDimension(R.styleable.AwTagView_tag_textSize, tagTextSize * resources.displayMetrics.scaledDensity) / resources.displayMetrics.scaledDensity
+            val scaledDensity = resources.displayMetrics.scaledDensity
+            tagTextSize =
+                ta.getDimension(R.styleable.AwTagView_tag_textSize, tagTextSize * scaledDensity) /
+                scaledDensity
             tagPaddingH = ta.getDimensionPixelSize(R.styleable.AwTagView_tag_paddingH, tagPaddingH)
             tagPaddingV = ta.getDimensionPixelSize(R.styleable.AwTagView_tag_paddingV, tagPaddingV)
             tagCornerRadius = ta.getDimension(R.styleable.AwTagView_tag_cornerRadius, tagCornerRadius)

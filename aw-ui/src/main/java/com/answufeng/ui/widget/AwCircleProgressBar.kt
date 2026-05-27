@@ -12,9 +12,9 @@ import android.os.Parcelable
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.answufeng.ui.R
 import com.answufeng.ui.dpFloat
-import androidx.core.content.ContextCompat
 import kotlin.math.min
 
 class AwCircleProgressBar
@@ -115,8 +115,16 @@ class AwCircleProgressBar
             max = ta.getFloat(R.styleable.AwCircleProgressBar_circleProgress_max, 100f)
             progress = ta.getFloat(R.styleable.AwCircleProgressBar_circleProgress_progress, 0f)
             strokeWidthPx = ta.getDimension(R.styleable.AwCircleProgressBar_circleProgress_strokeWidth, 8f.dpFloat)
-            progressColor = ta.getColor(R.styleable.AwCircleProgressBar_circleProgress_progressColor, ContextCompat.getColor(context, R.color.aw_color_progress))
-            trackColor = ta.getColor(R.styleable.AwCircleProgressBar_circleProgress_bgColor, ContextCompat.getColor(context, R.color.aw_color_progress_track))
+            progressColor =
+                ta.getColor(
+                    R.styleable.AwCircleProgressBar_circleProgress_progressColor,
+                    ContextCompat.getColor(context, R.color.aw_color_progress),
+                )
+            trackColor =
+                ta.getColor(
+                    R.styleable.AwCircleProgressBar_circleProgress_bgColor,
+                    ContextCompat.getColor(context, R.color.aw_color_progress_track),
+                )
             showText = ta.getBoolean(R.styleable.AwCircleProgressBar_circleProgress_showText, true)
             textColor = ta.getColor(R.styleable.AwCircleProgressBar_circleProgress_textColor, Color.DKGRAY)
             textSizePx = ta.getDimension(R.styleable.AwCircleProgressBar_circleProgress_textSize, 14f.sp())

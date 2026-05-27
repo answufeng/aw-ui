@@ -17,4 +17,30 @@
         <item name="android:backgroundDimAmount">0.5</item>
     </style>
 
+    <!-- AwBottomTabBar 推荐预设：在 XML 中使用 style="@style/Widget.AwBottomTabBar.xxx" -->
+    <style name="Widget.AwBottomTabBar" parent="">
+        <item name="tab_mode">icon_text</item>
+        <item name="tab_layout_mode">fixed</item>
+        <item name="indicator_style">line</item>
+    </style>
+
+    <style name="Widget.AwBottomTabBar.FixedIconText" parent="Widget.AwBottomTabBar">
+        <item name="tab_mode">icon_text</item>
+        <item name="tab_layout_mode">fixed</item>
+        <item name="indicator_style">line</item>
+    </style>
+
+    <style name="Widget.AwBottomTabBar.ScrollableLine" parent="Widget.AwBottomTabBar">
+        <item name="tab_mode">icon_text</item>
+        <item name="tab_layout_mode">scrollable</item>
+        <item name="indicator_style">line</item>
+        <item name="enable_scroll_sync">true</item>
+    </style>
+
+    <style name="Widget.AwBottomTabBar.IconOnly" parent="Widget.AwBottomTabBar">
+        <item name="tab_mode">icon_only</item>
+        <item name="tab_layout_mode">fixed</item>
+        <item name="indicator_style">none</item>
+    </style>
+
 </resources>

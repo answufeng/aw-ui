@@ -12,8 +12,8 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
-import com.answufeng.ui.R
 import androidx.core.content.ContextCompat
+import com.answufeng.ui.R
 
 class AwSwitchButton
     @JvmOverloads
@@ -84,8 +84,16 @@ class AwSwitchButton
         init {
             val ta = context.obtainStyledAttributes(attrs, R.styleable.AwSwitchButton)
             isChecked = ta.getBoolean(R.styleable.AwSwitchButton_switch_checked, false)
-            trackColor = ta.getColor(R.styleable.AwSwitchButton_switch_trackColor, ContextCompat.getColor(context, R.color.aw_color_switch_track))
-            trackCheckedColor = ta.getColor(R.styleable.AwSwitchButton_switch_trackCheckedColor, ContextCompat.getColor(context, R.color.aw_color_switch_checked))
+            trackColor =
+                ta.getColor(
+                    R.styleable.AwSwitchButton_switch_trackColor,
+                    ContextCompat.getColor(context, R.color.aw_color_switch_track),
+                )
+            trackCheckedColor =
+                ta.getColor(
+                    R.styleable.AwSwitchButton_switch_trackCheckedColor,
+                    ContextCompat.getColor(context, R.color.aw_color_switch_checked),
+                )
             thumbColor = ta.getColor(R.styleable.AwSwitchButton_switch_thumbColor, Color.WHITE)
             thumbCheckedColor = ta.getColor(R.styleable.AwSwitchButton_switch_thumbCheckedColor, Color.WHITE)
             thumbShadowEnabled = ta.getBoolean(R.styleable.AwSwitchButton_switch_thumbShadowEnabled, true)

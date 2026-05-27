@@ -13,8 +13,8 @@ import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
-import com.answufeng.ui.R
 import androidx.core.content.ContextCompat
+import com.answufeng.ui.R
 import com.google.android.material.color.MaterialColors
 
 /**
@@ -78,14 +78,22 @@ class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSh
     }
     private val secondaryColor: Int by lazy {
         try {
-            MaterialColors.getColor(context, android.R.attr.textColorSecondary, ContextCompat.getColor(context, R.color.aw_color_action_sheet_secondary))
+            MaterialColors.getColor(
+                context,
+                android.R.attr.textColorSecondary,
+                ContextCompat.getColor(context, R.color.aw_color_action_sheet_secondary),
+            )
         } catch (_: Exception) {
             ContextCompat.getColor(context, R.color.aw_color_action_sheet_secondary)
         }
     }
     private val primaryColor: Int by lazy {
         try {
-            MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimary, ContextCompat.getColor(context, R.color.aw_color_action_sheet_primary))
+            MaterialColors.getColor(
+                context,
+                com.google.android.material.R.attr.colorPrimary,
+                ContextCompat.getColor(context, R.color.aw_color_action_sheet_primary),
+            )
         } catch (_: Exception) {
             ContextCompat.getColor(context, R.color.aw_color_action_sheet_primary)
         }

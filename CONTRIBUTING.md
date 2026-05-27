@@ -29,7 +29,7 @@
 - Android SDK 35
 - Kotlin 2.0+
 
-## 构建 & 测试
+## 构建
 
 ```bash
 ./gradlew :aw-ui:assembleRelease        # 构建库
@@ -38,6 +38,4 @@
 ./gradlew :demo:assembleRelease         # 构建 Demo
 ```
 
-## 发版前补充检查（R8）
-
-自定义 View、适配器内部类依赖 consumer rules；发版前 `assembleRelease` + demo。收紧混淆时用 `-printusage` 辅助，避免整包 `-keep`。
+自定义 View、适配器内部类依赖 consumer rules；本地验证时建议 `assembleRelease` + demo。收紧混淆时用 `-printusage` 辅助，避免整包 `-keep`。

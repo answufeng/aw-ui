@@ -318,5 +318,34 @@
         <attr name="tag_maxSelectCount" format="integer" />
     </declare-styleable>
 
+    <declare-styleable name="AwStepView">
+        <attr name="step_count" format="integer" />
+        <attr name="step_current" format="integer" />
+        <attr name="step_activeColor" format="color" />
+        <attr name="step_inactiveColor" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="AwRatingBar">
+        <attr name="rating_maxStars" format="integer" />
+        <attr name="rating_value" format="float" />
+        <attr name="rating_starSize" format="dimension" />
+        <attr name="rating_starSpacing" format="dimension" />
+        <attr name="rating_filledColor" format="color" />
+        <attr name="rating_emptyColor" format="color" />
+        <attr name="rating_isIndicator" format="boolean" />
+        <attr name="rating_stepSize" format="float" />
+    </declare-styleable>
+
+    <declare-styleable name="AwNoticeBar">
+        <attr name="notice_text" format="string" />
+        <attr name="notice_closable" format="boolean" />
+        <attr name="notice_backgroundColor" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="AwIndexBar">
+        <attr name="index_textColor" format="color" />
+        <attr name="index_selectedTextColor" format="color" />
+        <attr name="index_textSize" format="dimension" />
+    </declare-styleable>
 
 </resources>

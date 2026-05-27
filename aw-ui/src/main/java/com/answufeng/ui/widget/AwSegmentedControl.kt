@@ -15,10 +15,10 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.answufeng.ui.R
-import androidx.core.content.ContextCompat
 
 /**
  * 类 **微信** 底栏的分段/Tab 控件：底轨为 [FrameLayout]，滑块/下划线在**下方一层**，标题行在上且**背景透明**，
@@ -135,7 +135,11 @@ class AwSegmentedControl
             val itemsFromXml = if (itemsResId != 0) resources.getStringArray(itemsResId).toList() else emptyList()
             internalIndex = ta.getInt(R.styleable.AwSegmentedControl_seg_selectedIndex, 0)
             selectedColor = ta.getColor(R.styleable.AwSegmentedControl_seg_selectedColor, Color.WHITE)
-            textColor = ta.getColor(R.styleable.AwSegmentedControl_seg_textColor, ContextCompat.getColor(context, R.color.aw_color_seg_text))
+            textColor =
+                ta.getColor(
+                    R.styleable.AwSegmentedControl_seg_textColor,
+                    ContextCompat.getColor(context, R.color.aw_color_seg_text),
+                )
             selectedTextColor =
                 ta.getColor(
                     R.styleable.AwSegmentedControl_seg_selectedTextColor,
