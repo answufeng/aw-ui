@@ -7,6 +7,15 @@
         <attr name="errorLayout" format="reference" />
         <attr name="enableAnimation" format="boolean" />
         <attr name="animationDuration" format="integer" />
+        <attr name="state_loadingStyle" format="enum">
+            <enum name="spinner" value="0" />
+            <enum name="skeleton" value="1" />
+        </attr>
+        <attr name="skeleton_maskColor" />
+        <attr name="skeleton_shimmerColor" />
+        <attr name="skeleton_maskCornerRadius" />
+        <attr name="skeleton_shimmerDuration" />
+        <attr name="skeleton_showShimmer" />
     </declare-styleable>
 
 
@@ -263,6 +272,19 @@
         <attr name="skeleton_cornerRadius" format="dimension" />
         <attr name="skeleton_duration" format="integer" />
     </declare-styleable>
+
+    <!-- AwSkeletonLayout 自定义属性 -->
+    <declare-styleable name="AwSkeletonLayout">
+        <attr name="skeleton_maskColor" format="color" />
+        <attr name="skeleton_shimmerColor" format="color" />
+        <attr name="skeleton_maskCornerRadius" format="dimension" />
+        <attr name="skeleton_shimmerDuration" format="integer" />
+        <attr name="skeleton_showShimmer" format="boolean" />
+        <attr name="skeleton_autoShow" format="boolean" />
+    </declare-styleable>
+
+    <attr name="skeleton_mask" format="boolean" />
+    <attr name="skeleton_ignore" format="boolean" />
 
     <!-- AwRoundImageView 自定义属性 -->
     <declare-styleable name="AwRoundImageView">

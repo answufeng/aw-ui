@@ -4,7 +4,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_light"
+    android:background="@color/background"
     android:orientation="vertical">
 
     <com.answufeng.ui.widget.AwTitleBar
@@ -13,11 +13,12 @@
         android:layout_height="wrap_content"
         app:titleBar_showBack="true"
         app:titleBar_showDivider="true"
-        app:titleBar_title="AwSkeletonView" />
+        app:titleBar_title="骨架屏" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
         android:padding="16dp">
 
         <LinearLayout
@@ -26,136 +27,141 @@
             android:orientation="vertical">
 
             <TextView
+                style="@style/Text.AwUi.Section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="列表项骨架屏"
-                style="@style/Text.AwUi.Subtitle"
-                android:layout_marginBottom="12dp" />
-
-            <com.answufeng.ui.widget.AwRoundLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:round_radius="12dp"
-                app:round_strokeColor="#E0E0E0"
-                app:round_strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="#FFFFFF"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <com.answufeng.ui.widget.AwSkeletonView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            app:skeleton_cornerRadius="24dp" />
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="12dp"
-                            android:orientation="vertical">
-
-                            <com.answufeng.ui.widget.AwSkeletonView
-                                android:layout_width="120dp"
-                                android:layout_height="14dp"
-                                android:layout_marginBottom="8dp"
-                                app:skeleton_cornerRadius="4dp" />
-
-                            <com.answufeng.ui.widget.AwSkeletonView
-                                android:layout_width="80dp"
-                                android:layout_height="12dp"
-                                app:skeleton_cornerRadius="4dp" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <com.answufeng.ui.widget.AwSkeletonView
-                        android:layout_width="match_parent"
-                        android:layout_height="12dp"
-                        android:layout_marginTop="12dp"
-                        app:skeleton_cornerRadius="4dp" />
-
-                    <com.answufeng.ui.widget.AwSkeletonView
-                        android:layout_width="200dp"
-                        android:layout_height="12dp"
-                        android:layout_marginTop="8dp"
-                        app:skeleton_cornerRadius="4dp" />
-                </LinearLayout>
-            </com.answufeng.ui.widget.AwRoundLayout>
+                android:text="AwSkeletonLayout · 自动遮罩" />
 
             <TextView
+                style="@style/Text.AwUi.Body"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="卡片骨架屏"
-                style="@style/Text.AwUi.Subtitle"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp"
+                android:text="包裹真实 layout，showSkeleton / showContent 切换，无需手写 skeleton layout。" />
 
-            <com.answufeng.ui.widget.AwRoundLayout
+            <com.answufeng.ui.widget.skeleton.AwSkeletonLayout
+                android:id="@+id/skeletonLayoutCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:round_radius="12dp"
-                app:round_strokeColor="#E0E0E0"
-                app:round_strokeWidth="1dp">
+                app:skeleton_autoShow="true">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="#FFFFFF"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <com.answufeng.ui.widget.AwSkeletonView
-                        android:layout_width="match_parent"
-                        android:layout_height="160dp"
-                        android:layout_marginBottom="12dp"
-                        app:skeleton_cornerRadius="8dp" />
-
-                    <com.answufeng.ui.widget.AwSkeletonView
-                        android:layout_width="match_parent"
-                        android:layout_height="16dp"
-                        android:layout_marginBottom="8dp"
-                        app:skeleton_cornerRadius="4dp" />
-
-                    <com.answufeng.ui.widget.AwSkeletonView
-                        android:layout_width="150dp"
-                        android:layout_height="14dp"
-                        app:skeleton_cornerRadius="4dp" />
-                </LinearLayout>
-            </com.answufeng.ui.widget.AwRoundLayout>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="动画控制"
-                style="@style/Text.AwUi.Subtitle"
-                android:layout_marginBottom="12dp" />
-
-            <com.answufeng.ui.widget.AwSkeletonView
-                android:id="@+id/skeleton_controllable"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                app:skeleton_baseColor="#E0E0E0"
-                app:skeleton_highlightColor="#F5F5F5"
-                app:skeleton_cornerRadius="8dp"
-                app:skeleton_duration="1500" />
+                <include layout="@layout/item_skeleton_feed" />
+            </com.answufeng.ui.widget.skeleton.AwSkeletonLayout>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_toggle_skeleton"
+                android:id="@+id/btnReloadCard"
+                style="@style/MaterialButton.AwUi.Outlined"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="开始/停止动画" />
+                android:layout_marginTop="8dp"
+                android:text="重新加载卡片" />
 
+            <TextView
+                style="@style/Text.AwUi.Section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="RecyclerView.applyAwSkeleton" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvSkeletonList"
+                android:layout_width="match_parent"
+                android:layout_height="240dp"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnReloadList"
+                style="@style/MaterialButton.AwUi.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="重新加载列表" />
+
+            <TextView
+                style="@style/Text.AwUi.Section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="AwStateLayout · loadingStyle=skeleton" />
+
+            <com.answufeng.ui.statelayout.AwStateLayout
+                android:id="@+id/stateLayoutSkeleton"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="8dp"
+                app:state_loadingStyle="skeleton">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tvStateTitle"
+                        style="@style/Text.AwUi.Subtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="20dp"
+                        android:text="" />
+
+                    <TextView
+                        android:id="@+id/tvStateBody"
+                        style="@style/Text.AwUi.Body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:minHeight="40dp"
+                        android:text="" />
+                </LinearLayout>
+            </com.answufeng.ui.statelayout.AwStateLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnStateLoading"
+                    style="@style/MaterialButton.AwUi.Outlined"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Loading" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnStateContent"
+                    style="@style/MaterialButton.AwUi.Outlined"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:text="Content" />
+            </LinearLayout>
+
+            <TextView
+                style="@style/Text.AwUi.Section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="AwSkeletonView · 手拼块" />
+
+            <com.answufeng.ui.widget.AwSkeletonView
+                android:id="@+id/skeletonBlock"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                app:skeleton_cornerRadius="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnToggleBlock"
+                style="@style/MaterialButton.AwUi.Text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="开始/停止手拼块动画" />
         </LinearLayout>
     </ScrollView>
-
 </LinearLayout>

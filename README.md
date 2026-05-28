@@ -22,11 +22,11 @@ dependencyResolutionManagement {
 
 // app/build.gradle.kts
 dependencies {
-    implementation("com.github.answufeng:aw-ui:1.1.0")
+    implementation("com.github.answufeng:aw-ui:1.1.1")
 }
 ```
 
-`implementation` 中的 **版本号与 Git / JitPack 的 tag 一致**（当前为 `1.1.0`）。
+`implementation` 中的 **版本号与 Git / JitPack 的 tag 一致**（当前为 `1.1.1`）。
 
 ### 2) 打开 ViewBinding（推荐）
 
@@ -107,7 +107,7 @@ stateLayout.showContent()
 | 轮播图 | `AwBannerView` | [文档](aw-ui/doc/AwBannerView.md) |
 | 角标 | `AwBadgeView` | [文档](aw-ui/doc/AwBadgeView.md) |
 | 开关按钮 | `AwSwitchButton` | [文档](aw-ui/doc/AwSwitchButton.md) |
-| 骨架屏 | `AwSkeletonView` | [文档](aw-ui/doc/AwSkeletonView.md) |
+| 骨架屏 | `AwSkeletonLayout` / `AwSkeletonView` | [Layout](aw-ui/doc/AwSkeletonLayout.md) · [View](aw-ui/doc/AwSkeletonView.md) |
 | 圆形进度 | `AwCircleProgressBar` | [文档](aw-ui/doc/AwCircleProgressBar.md) |
 | 加载指示 | `AwLoadingView` | [文档](aw-ui/doc/AwLoadingView.md) |
 | 圆角图片 | `AwRoundImageView` | [文档](aw-ui/doc/AwRoundImageView.md) |

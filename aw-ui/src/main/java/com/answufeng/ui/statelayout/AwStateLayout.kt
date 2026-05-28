@@ -6,11 +6,16 @@ import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 import androidx.annotation.LayoutRes
+import androidx.core.content.ContextCompat
 import androidx.core.view.doOnLayout
 import com.answufeng.ui.R
+import com.answufeng.ui.widget.skeleton.AwSkeleton
+import com.answufeng.ui.widget.skeleton.AwSkeletonConfig
+import com.answufeng.ui.widget.skeleton.createAwSkeleton
 
 /**
  * 状态切换过渡动画策略。
@@ -172,6 +177,15 @@ class AwStateLayout
         /** 支持的四种页面状态 + 自定义状态 */
         enum class State { CONTENT, LOADING, EMPTY, ERROR, CUSTOM }
 
+        /** Loading 态展示方式 */
+        enum class LoadingStyle {
+            /** 默认转圈 loading 页 */
+            SPINNER,
+
+            /** 对 content 子 View 应用骨架遮罩，不隐藏 content 结构 */
+            SKELETON,
+        }
+
         /** 状态变更监听器 */
         fun interface OnStateChangeListener {
             /**
@@ -209,6 +223,14 @@ class AwStateLayout
         /** 状态切换过渡动画策略，默认 [StateTransition.FADE] */
         var transition: StateTransition = StateTransition.FADE
 
+        /** Loading 展示样式，默认 [LoadingStyle.SPINNER] */
+        var loadingStyle: LoadingStyle = LoadingStyle.SPINNER
+
+        /** skeleton 模式下使用的配置 */
+        var skeletonConfig: AwSkeletonConfig = AwSkeletonConfig.default(context)
+
+        private var contentSkeleton: AwSkeleton? = null
+
         init {
             val ta = context.obtainStyledAttributes(attrs, R.styleable.AwStateLayout)
             loadingLayoutRes = ta.getResourceId(R.styleable.AwStateLayout_loadingLayout, R.layout.aw_state_loading)
@@ -216,6 +238,30 @@ class AwStateLayout
             errorLayoutRes = ta.getResourceId(R.styleable.AwStateLayout_errorLayout, R.layout.aw_state_error)
             enableAnimation = ta.getBoolean(R.styleable.AwStateLayout_enableAnimation, true)
             animationDuration = ta.getInt(R.styleable.AwStateLayout_animationDuration, 200).toLong()
+            val styleIndex = ta.getInt(R.styleable.AwStateLayout_state_loadingStyle, 0)
+            loadingStyle = LoadingStyle.entries.getOrElse(styleIndex) { LoadingStyle.SPINNER }
+            val density = resources.displayMetrics.density
+            skeletonConfig =
+                AwSkeletonConfig(
+                    maskColor =
+                        ta.getColor(
+                            R.styleable.AwStateLayout_skeleton_maskColor,
+                            ContextCompat.getColor(context, R.color.aw_color_skeleton_base),
+                        ),
+                    shimmerColor =
+                        ta.getColor(
+                            R.styleable.AwStateLayout_skeleton_shimmerColor,
+                            ContextCompat.getColor(context, R.color.aw_color_skeleton_highlight),
+                        ),
+                    maskCornerRadiusPx =
+                        ta.getDimension(
+                            R.styleable.AwStateLayout_skeleton_maskCornerRadius,
+                            4f * density,
+                        ),
+                    shimmerDurationMs =
+                        ta.getInteger(R.styleable.AwStateLayout_skeleton_shimmerDuration, 1500).toLong(),
+                    showShimmer = ta.getBoolean(R.styleable.AwStateLayout_skeleton_showShimmer, true),
+                )
             ta.recycle()
         }
 
@@ -401,10 +447,64 @@ class AwStateLayout
             }
             stateChangeListener?.onStateChanged(oldState, state)
             announceStateForAccessibility(state)
-            showOrHide(contentView, state == State.CONTENT)
-            showOrHide(state, State.LOADING) { ensureLoadingView() }
-            showOrHide(state, State.EMPTY) { ensureEmptyView() }
-            showOrHide(state, State.ERROR) { ensureErrorView() }
+
+            if (loadingStyle == LoadingStyle.SKELETON) {
+                applySkeletonLoadingState(state, oldState)
+            } else {
+                dismissContentSkeleton()
+                showOrHide(contentView, state == State.CONTENT)
+                showOrHide(state, State.LOADING) { ensureLoadingView() }
+                showOrHide(state, State.EMPTY) { ensureEmptyView() }
+                showOrHide(state, State.ERROR) { ensureErrorView() }
+            }
+        }
+
+        private fun applySkeletonLoadingState(
+            state: State,
+            oldState: State,
+        ) {
+            loadingView?.visibility = GONE
+            when (state) {
+                State.LOADING -> {
+                    showOrHide(contentView, true)
+                    emptyView?.visibility = GONE
+                    errorView?.visibility = GONE
+                    ensureContentSkeleton()?.showSkeleton()
+                }
+                State.CONTENT -> {
+                    ensureContentSkeleton()?.showContent(enableAnimation)
+                    showOrHide(contentView, true)
+                    emptyView?.visibility = GONE
+                    errorView?.visibility = GONE
+                }
+                State.EMPTY -> {
+                    dismissContentSkeleton()
+                    showOrHide(contentView, false)
+                    showOrHide(state, State.EMPTY) { ensureEmptyView() }
+                }
+                State.ERROR -> {
+                    dismissContentSkeleton()
+                    showOrHide(contentView, false)
+                    showOrHide(state, State.ERROR) { ensureErrorView() }
+                }
+                State.CUSTOM -> {
+                    dismissContentSkeleton()
+                }
+            }
+        }
+
+        private fun ensureContentSkeleton(): AwSkeleton? {
+            val content = contentView as? ViewGroup ?: return null
+            if (contentSkeleton == null) {
+                contentSkeleton = content.createAwSkeleton(skeletonConfig)
+            }
+            return contentSkeleton
+        }
+
+        private fun dismissContentSkeleton() {
+            if (contentSkeleton?.isShowingSkeleton == true) {
+                contentSkeleton?.showContent(false)
+            }
         }
 
         private fun showOrHide(

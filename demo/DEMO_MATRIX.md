@@ -24,7 +24,7 @@
 
 | 列表与数据 | 3 | AwSimpleAdapter、AwMultiTypeAdapter、AwDividerDecoration、AwItemAnimator、AwSwipeRefreshLayout、AwLoadMoreAdapter、AwStickyHeaderDecoration、AwIndexBar |
 
-| 布局与状态 | 4 | AwFlowLayout、AwTagView、AwExpandableLayout、AwSkeletonView、AwStateLayout |
+| 布局与状态 | 4 | AwFlowLayout、AwTagView、AwExpandableLayout、AwSkeletonLayout、AwSkeletonView、AwStateLayout |
 
 | 弹窗与反馈 | 4 | AwDialog、AwLoadingDialog、AwActionSheetDialog、AwDialogExt、AwNoticeBar、AwStepView、AwRatingBar |
 
@@ -47,6 +47,7 @@
 | `SwipeRefreshListDemoActivity` | 多种 Refresh Header、上拉分页 / 无更多、下拉回第一页 |
 
 | `StateDemoActivity` | AwStateLayout 四态与重试；点按循环 StateTransition |
+| `SkeletonDemoActivity` | AwSkeletonLayout 静态卡片、RV.applyAwSkeleton、StateLayout skeleton loading、AwSkeletonView 手拼块 |
 
 | `ShowcaseActivity` | AwDialog / AwLoadingDialog / AwActionSheetDialog / Context 扩展 |
 

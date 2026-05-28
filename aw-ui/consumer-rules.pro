@@ -18,6 +18,12 @@
     public <init>(android.content.Context, android.util.AttributeSet, int);
 }
 
+-keepclassmembers class com.answufeng.ui.widget.skeleton.** {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+}
+
 -keepclassmembers class com.answufeng.ui.widget.** {
     public <init>(android.content.Context);
     public <init>(android.content.Context, android.util.AttributeSet);

@@ -32,6 +32,23 @@ stateLayout.showContent()
 
 使用 `StateTransition.FADE`、`CROSS_FADE`、`slideFromBottom()` 或自定义 `StateTransition { view, duration -> ... }`。
 
+## Loading 样式
+
+| 样式 | XML | 行为 |
+|------|-----|------|
+| `spinner`（默认） | `app:state_loadingStyle="spinner"` | 显示 loading 布局，隐藏 content |
+| `skeleton` | `app:state_loadingStyle="skeleton"` | **不隐藏 content**，对 content 加 skeleton mask |
+
+```kotlin
+stateLayout.loadingStyle = AwStateLayout.LoadingStyle.SKELETON
+stateLayout.skeletonConfig = AwSkeletonConfig.default(context)
+stateLayout.showLoading()   // content 上显示遮罩
+stateLayout.showContent()   // 移除遮罩，显示真实内容
+```
+
+skeleton 模式下 content 需具备合理尺寸（如 TextView 设置 `minHeight`），详见 [AwSkeletonLayout](AwSkeletonLayout.md)。
+
 ## Demo
 
-`StateDemoActivity`
+- `StateDemoActivity` — 四态与过渡动画
+- `SkeletonDemoActivity` — `loadingStyle=skeleton` 联动示例

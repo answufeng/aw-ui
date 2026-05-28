@@ -1,54 +1,21 @@
 package com.answufeng.ui.widget
 
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.LinearGradient
-import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
-import android.graphics.Shader
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.answufeng.ui.R
+import com.answufeng.ui.widget.skeleton.AwSkeletonShimmer
 
 /**
  * 骨架屏加载视图，带有从左到右扫过的闪光/渐变动画。
  *
- * 显示一个圆角矩形，带有扫过式高亮渐变以表示加载状态。
- * 闪光动画持续运行，直到调用 [stopShimmer]。
- *
- * ### XML 用法
- * ```xml
- * <com.answufeng.ui.widget.AwSkeletonView
- *     android:layout_width="match_parent"
- *     android:layout_height="20dp"
- *     app:skeleton_baseColor="#E0E0E0"
- *     app:skeleton_highlightColor="#F5F5F5"
- *     app:skeleton_cornerRadius="4dp"
- *     app:skeleton_duration="1000" />
- * ```
- *
- * ### 代码用法
- * ```kotlin
- * skeletonView.startShimmer()
- * skeletonView.stopShimmer()
- * ```
- *
- * @property baseColor 骨架屏基础颜色，默认 #E0E0E0
- * @property highlightColor 闪光高亮颜色，默认 #F5F5F5
- * @property cornerRadius 骨架屏矩形的圆角半径（像素）
- * @property animationDuration 闪光动画周期时长（毫秒），默认 1000
- *
- * | XML 属性 | 说明 | 默认值 |
- * |---|---|---|
- * | `skeleton_baseColor` | 基础填充颜色 | #E0E0E0 |
- * | `skeleton_highlightColor` | 闪光高亮颜色 | #F5F5F5 |
- * | `skeleton_cornerRadius` | 圆角半径 | 4dp |
- * | `skeleton_duration` | 动画时长（毫秒） | 1000 |
+ * 精细手拼场景使用；常规页面/列表请优先 [com.answufeng.ui.widget.skeleton.AwSkeletonLayout]。
  */
 class AwSkeletonView
     @JvmOverloads
@@ -57,55 +24,46 @@ class AwSkeletonView
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0,
     ) : View(context, attrs, defStyleAttr) {
-        private val basePaint = Paint(Paint.ANTI_ALIAS_FLAG)
-        private val shimmerPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        private val basePaint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG)
         private val path = Path()
         private val rectF = RectF()
-        private val cachedMatrix = android.graphics.Matrix()
+        private val shimmer = AwSkeletonShimmer(0, 0)
 
-        /** 骨架屏基础颜色 */
         var baseColor: Int = 0xFFE0E0E0.toInt()
             set(value) {
                 field = value
                 basePaint.color = value
-                cachedShader = null
+                shimmer.updateColors(value, highlightColor)
                 invalidate()
             }
 
-        /** 闪光高亮颜色 */
         var highlightColor: Int = 0xFFF5F5F5.toInt()
             set(value) {
                 field = value
-                cachedShader = null
+                shimmer.updateColors(baseColor, value)
                 invalidate()
             }
 
-        /** 骨架屏矩形的圆角半径（像素） */
         var cornerRadius: Float = 4f * resources.displayMetrics.density
             set(value) {
                 field = value
                 invalidate()
             }
 
-        /** 闪光动画周期时长（毫秒） */
         var animationDuration: Long = 1000L
             set(value) {
                 field = value
+                shimmer.durationMs = value
                 if (isShimmering) {
                     stopShimmer()
                     startShimmer()
                 }
             }
 
-        /** 闪光动画当前是否正在运行 */
         var isShimmering: Boolean = false
             private set
 
         var autoStart: Boolean = true
-
-        private var shimmerOffset: Float = 0f
-        private var animator: ValueAnimator? = null
-        private var cachedShader: LinearGradient? = null
 
         init {
             val density = resources.displayMetrics.density
@@ -125,32 +83,20 @@ class AwSkeletonView
             ta.recycle()
 
             basePaint.color = baseColor
-            shimmerPaint.isDither = true
+            shimmer.updateColors(baseColor, highlightColor)
+            shimmer.durationMs = animationDuration
+            shimmer.onInvalidate = { invalidate() }
         }
 
-        /** 启动闪光动画。如果已在运行，则不执行任何操作 */
         fun startShimmer() {
             if (isShimmering) return
             isShimmering = true
-            animator =
-                ValueAnimator.ofFloat(-1f, 1f).apply {
-                    duration = animationDuration
-                    repeatCount = ValueAnimator.INFINITE
-                    repeatMode = ValueAnimator.RESTART
-                    addUpdateListener { animation ->
-                        shimmerOffset = animation.animatedValue as Float
-                        invalidate()
-                    }
-                    start()
-                }
+            shimmer.start()
         }
 
-        /** 停止闪光动画并重置高亮偏移量 */
         fun stopShimmer() {
-            animator?.cancel()
-            animator = null
+            shimmer.stop()
             isShimmering = false
-            shimmerOffset = -1f
             invalidate()
         }
 
@@ -159,30 +105,8 @@ class AwSkeletonView
             rectF.set(0f, 0f, width.toFloat(), height.toFloat())
             path.reset()
             path.addRoundRect(rectF, cornerRadius, cornerRadius, Path.Direction.CW)
-
             canvas.drawPath(path, basePaint)
-
-            if (isShimmering && shimmerOffset > -1f) {
-                val gradientWidth = width.toFloat()
-                val translateX = shimmerOffset * gradientWidth * 2
-                val shader =
-                    cachedShader ?: LinearGradient(
-                        -gradientWidth,
-                        0f,
-                        0f,
-                        0f,
-                        intArrayOf(baseColor, highlightColor, baseColor),
-                        floatArrayOf(0f, 0.5f, 1f),
-                        Shader.TileMode.CLAMP,
-                    ).also { cachedShader = it }
-                shader.setLocalMatrix(
-                    cachedMatrix.apply {
-                        setTranslate(translateX, 0f)
-                    },
-                )
-                shimmerPaint.shader = shader
-                canvas.drawPath(path, shimmerPaint)
-            }
+            shimmer.drawShimmerOnPath(canvas, path, width)
         }
 
         override fun onSizeChanged(
@@ -192,17 +116,7 @@ class AwSkeletonView
             oldh: Int,
         ) {
             super.onSizeChanged(w, h, oldw, oldh)
-            cachedShader = null
-            if (isShimmering) {
-                val gradientWidth = w.toFloat()
-                cachedShader =
-                    LinearGradient(
-                        -gradientWidth, 0f, 0f, 0f,
-                        intArrayOf(baseColor, highlightColor, baseColor),
-                        floatArrayOf(0f, 0.5f, 1f),
-                        Shader.TileMode.CLAMP,
-                    )
-            }
+            shimmer.invalidateShader(w)
         }
 
         override fun onAttachedToWindow() {
@@ -217,7 +131,7 @@ class AwSkeletonView
 
         override fun setVisibility(visibility: Int) {
             super.setVisibility(visibility)
-            if (visibility == View.VISIBLE) {
+            if (visibility == VISIBLE) {
                 startShimmer()
             } else {
                 stopShimmer()
@@ -241,8 +155,7 @@ class AwSkeletonView
                         state.getParcelable("superState")
                     }
                 super.onRestoreInstanceState(superState)
-                val wasShimmering = state.getBoolean("isShimmering", false)
-                if (wasShimmering) startShimmer()
+                if (state.getBoolean("isShimmering", false)) startShimmer()
             } else {
                 super.onRestoreInstanceState(state)
             }

@@ -136,8 +136,8 @@ object DemoData {
             activity = ExpandableDemoActivity::class.java,
         ),
         DemoEntry(
-            title = "AwSkeletonView",
-            desc = "骨架屏占位：列表项 / 卡片、闪光动画、自定义圆角",
+            title = "AwSkeletonLayout",
+            desc = "自动 mask 骨架屏：Layout / 列表 / StateLayout，含 AwSkeletonView 手拼块",
             activity = SkeletonDemoActivity::class.java,
         ),
         DemoEntry(

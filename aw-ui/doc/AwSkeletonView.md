@@ -1,6 +1,8 @@
 # AwSkeletonView
 
-`AwSkeletonView` 是一个骨架屏视图，在数据加载完成前显示占位动画，提升用户体验。
+`AwSkeletonView` 是**底层 shimmer 占位块**，适合营销页、精细手拼 skeleton layout。
+
+常规业务场景（自动按 content 子 View 遮罩）请优先使用 [`AwSkeletonLayout`](AwSkeletonLayout.md) 或 `RecyclerView.applyAwSkeleton`。
 
 ## 功能概览
 
@@ -70,22 +72,7 @@ skeleton.animationDuration = 1500L
 
 ## 使用示例
 
-### 列表骨架屏
-
-```kotlin
-override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    skeletonView.startShimmer()
-    viewModel.loadData { data ->
-        skeletonView.stopShimmer()
-        skeletonView.visibility = View.GONE
-        recyclerView.visibility = View.VISIBLE
-        adapter.submitList(data)
-    }
-}
-```
-
-### 多行骨架屏
+### 多行手拼骨架屏
 
 ```xml
 <LinearLayout
@@ -118,3 +105,4 @@ override fun onCreate(savedInstanceState: Bundle?) {
 - `stopShimmer()` 不会隐藏视图，需手动设置 `visibility`
 - 动画使用 `ValueAnimator`，注意避免内存泄漏
 - 多个 `AwSkeletonView` 可组合使用模拟复杂布局
+- shimmer 绘制由内部 `AwSkeletonShimmer` 实现，与 `AwSkeletonLayout` 共享引擎
