@@ -19,6 +19,13 @@ object DemoData {
                 entries = formEntries(),
             ),
             DemoCategory(
+                title = "输入与选择",
+                desc = "带清除/密码切换的输入框、数量加减、下拉选择与复选框/单选按钮组。",
+                icon = "✅",
+                colorHex = "#0EA5E9",
+                entries = inputChoiceEntries(),
+            ),
+            DemoCategory(
                 title = "列表与数据",
                 desc = "RecyclerView 适配器、分割线、动画、下拉刷新与吸顶索引。",
                 icon = "📋",
@@ -34,17 +41,24 @@ object DemoData {
             ),
             DemoCategory(
                 title = "弹窗与反馈",
-                desc = "对话框、通知条、步骤条与评分等用户反馈组件。",
+                desc = "对话框、底部面板、通知条、步骤条与评分等用户反馈组件。",
                 icon = "💬",
                 colorHex = "#7C3AED",
                 entries = dialogEntries(),
             ),
             DemoCategory(
                 title = "进度与加载",
-                desc = "圆形进度、加载动画与倒计时等异步等待场景。",
+                desc = "圆形进度、水平进度条、加载动画与倒计时等异步等待场景。",
                 icon = "⏳",
                 colorHex = "#DC2626",
                 entries = progressEntries(),
+            ),
+            DemoCategory(
+                title = "底部面板与滚轮选择",
+                desc = "底部弹出面板、滚轮选择器、日期选择与时间选择器。",
+                icon = "📅",
+                colorHex = "#F43F5E",
+                entries = pickerSheetEntries(),
             ),
             DemoCategory(
                 title = "视觉与动效",
@@ -106,6 +120,24 @@ object DemoData {
         ),
     )
 
+    private fun inputChoiceEntries() = listOf(
+        DemoEntry(
+            title = "输入增强",
+            desc = "AwClearEditText 输入清除、AwPasswordEditText 密码可见切换、AwStepper 数量加减、AwDropDownMenu 下拉选择",
+            activity = InputEnhanceDemoActivity::class.java,
+        ),
+        DemoEntry(
+            title = "选择控件",
+            desc = "AwCheckBox 复选框、AwRadioButton / AwRadioGroup 单选按钮组（竖/横排列）",
+            activity = ChoiceDemoActivity::class.java,
+        ),
+        DemoEntry(
+            title = "AwRangeSeekBar",
+            desc = "双滑块范围选择：价格区间、步长控制、自定义颜色与标签",
+            activity = RangeSeekBarDemoActivity::class.java,
+        ),
+    )
+
     private fun listEntries() = listOf(
         DemoEntry(
             title = "RecyclerView 工具集",
@@ -121,6 +153,11 @@ object DemoData {
             title = "吸顶 Header + 索引",
             desc = "AwStickyHeaderDecoration 分组吸顶与 AwIndexBar 侧边索引",
             activity = StickyHeaderDemoActivity::class.java,
+        ),
+        DemoEntry(
+            title = "AwSwipeMenuLayout",
+            desc = "左滑菜单：滑动露出编辑/删除按钮、平滑动画、打开/关闭回调",
+            activity = SwipeMenuDemoActivity::class.java,
         ),
     )
 
@@ -145,6 +182,11 @@ object DemoData {
             desc = "加载 / 空 / 错 / 内容四态切换、过渡动画与重试",
             activity = StateDemoActivity::class.java,
         ),
+        DemoEntry(
+            title = "AwStickyHeaderLayout",
+            desc = "粘性头部容器：嵌套滚动中头部固定在顶部、粘住/取消回调",
+            activity = StickyHeaderLayoutDemoActivity::class.java,
+        ),
     )
 
     private fun dialogEntries() = listOf(
@@ -168,6 +210,11 @@ object DemoData {
             desc = "星级评分：半星步进、最大星数、评分变化回调",
             activity = RatingBarDemoActivity::class.java,
         ),
+        DemoEntry(
+            title = "AwVerticalMarqueeView",
+            desc = "垂直翻页公告：自动轮播、点击回调、动态更新内容",
+            activity = VerticalMarqueeDemoActivity::class.java,
+        ),
     )
 
     private fun progressEntries() = listOf(
@@ -175,6 +222,11 @@ object DemoData {
             title = "AwCircleProgressBar",
             desc = "圆形进度条：进度动画、自定义颜色与描边粗细",
             activity = CircleProgressDemoActivity::class.java,
+        ),
+        DemoEntry(
+            title = "AwHorizontalProgressBar",
+            desc = "水平进度条：确定/不确定模式、辅助进度、百分比文本、动画过渡",
+            activity = ProgressBarDemoActivity::class.java,
         ),
         DemoEntry(
             title = "AwLoadingView",
@@ -185,6 +237,29 @@ object DemoData {
             title = "AwCountDownView",
             desc = "倒计时：秒数 / 分秒模式、进度环动画、跳过与重置",
             activity = CountDownDemoActivity::class.java,
+        ),
+        DemoEntry(
+            title = "AwProgressButton",
+            desc = "带进度的按钮：确定/不确定进度模式、进度完成回调",
+            activity = ProgressButtonDemoActivity::class.java,
+        ),
+    )
+
+    private fun pickerSheetEntries() = listOf(
+        DemoEntry(
+            title = "AwBottomSheetDialog",
+            desc = "底部弹出面板：拖拽手柄、自定义内容、Builder 链式构建",
+            activity = BottomSheetDemoActivity::class.java,
+        ),
+        DemoEntry(
+            title = "滚轮选择器",
+            desc = "AwPickerView 单列滚轮、AwDatePickerPanel 日期选择、AwTimePickerPanel 时间选择",
+            activity = PickerDemoActivity::class.java,
+        ),
+        DemoEntry(
+            title = "AwCalendarView",
+            desc = "日历网格选择：日期选中高亮、月份切换、滑动翻月、今日标记",
+            activity = CalendarDemoActivity::class.java,
         ),
     )
 
@@ -218,6 +293,16 @@ object DemoData {
             title = "AwMarqueeTextView",
             desc = "跑马灯文本：方向、速度、暂停时长与动态更新",
             activity = MarqueeDemoActivity::class.java,
+        ),
+        DemoEntry(
+            title = "AwDotIndicator",
+            desc = "ViewPager2 圆点指示器：选中动画、自定义颜色与尺寸",
+            activity = DotIndicatorDemoActivity::class.java,
+        ),
+        DemoEntry(
+            title = "AwNineGridImageView",
+            desc = "九宫格图片：1~9 张自适应布局、超出数量覆盖层、点击回调",
+            activity = NineGridDemoActivity::class.java,
         ),
         DemoEntry(
             title = "Anim 扩展",

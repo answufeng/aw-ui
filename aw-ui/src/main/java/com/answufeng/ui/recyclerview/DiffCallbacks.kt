@@ -28,6 +28,7 @@ fun stringDiffCallback(): DiffUtil.ItemCallback<String> =
  * @param T 数据类型
  * @param idSelector 获取数据唯一标识的函数
  */
+@Deprecated("Use SimpleDiffCallback instead: IdDiffCallback(id) ≡ SimpleDiffCallback(id)", ReplaceWith("SimpleDiffCallback(idSelector)"))
 class IdDiffCallback<T : Any>(
     private val idSelector: (T) -> Any,
 ) : DiffUtil.ItemCallback<T>() {
@@ -82,6 +83,7 @@ class SimpleDiffCallback<T : Any>(
  * @param idSelector 获取数据唯一标识的函数
  * @return DiffUtil.ItemCallback<T> 实例
  */
+@Deprecated("Use simpleDiffCallback instead", ReplaceWith("simpleDiffCallback(idSelector)"))
 fun <T : Any> idDiffCallback(idSelector: (T) -> Any): DiffUtil.ItemCallback<T> = IdDiffCallback(idSelector)
 
 /**

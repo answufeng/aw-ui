@@ -15,4 +15,7 @@ interface AwSkeleton {
 
     /** 运行时配置 */
     var config: AwSkeletonConfig
+
+    /** 清理资源（移除遮罩视图、停止动画），在不再使用骨架时调用 */
+    fun dispose()
 }

@@ -8,17 +8,19 @@ import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 
 /**
- * 淡入动画。将视图透明度从当前值渐变到 1。
+ * 通用透明度动画。将视图透明度渐变到指定值。
  *
+ * @param alpha    目标透明度（0~1）
  * @param duration 动画时长（毫秒），默认 300
  * @param onEnd    动画结束回调
  */
-fun View.fadeIn(
+fun View.fadeTo(
+    alpha: Float,
     duration: Long = 300L,
     onEnd: (() -> Unit)? = null,
 ) {
     animate().apply {
-        alpha(1f)
+        this.alpha(alpha)
         this.duration = duration
         interpolator = AccelerateDecelerateInterpolator()
         onEnd?.let { callback ->
@@ -36,6 +38,17 @@ fun View.fadeIn(
 }
 
 /**
+ * 淡入动画。将视图透明度从当前值渐变到 1。
+ *
+ * @param duration 动画时长（毫秒），默认 300
+ * @param onEnd    动画结束回调
+ */
+fun View.fadeIn(
+    duration: Long = 300L,
+    onEnd: (() -> Unit)? = null,
+) = fadeTo(1f, duration, onEnd)
+
+/**
  * 淡出动画。将视图透明度从当前值渐变到 0。
  *
  * @param duration 动画时长（毫秒），默认 300
@@ -44,24 +57,7 @@ fun View.fadeIn(
 fun View.fadeOut(
     duration: Long = 300L,
     onEnd: (() -> Unit)? = null,
-) {
-    animate().apply {
-        alpha(0f)
-        this.duration = duration
-        interpolator = AccelerateDecelerateInterpolator()
-        onEnd?.let { callback ->
-            setListener(
-                object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator) {
-                        callback()
-                        setListener(null)
-                    }
-                },
-            )
-        }
-        start()
-    }
-}
+) = fadeTo(0f, duration, onEnd)
 
 /**
  * 从底部滑入动画。视图先移到底部外侧，再滑回原位。

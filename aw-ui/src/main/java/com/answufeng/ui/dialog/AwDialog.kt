@@ -40,8 +40,10 @@ class AwDialog private constructor(
         builder.message?.let { dialogBuilder.setMessage(it) }
         builder.contentView?.let { dialogBuilder.setView(it) }
 
-        dialogBuilder.setPositiveButton(builder.positiveText) { _, _ ->
-            builder.onPositiveClick?.invoke()
+        builder.positiveText?.let {
+            dialogBuilder.setPositiveButton(it) { _, _ ->
+                builder.onPositiveClick?.invoke()
+            }
         }
         builder.negativeText?.let {
             dialogBuilder.setNegativeButton(it) { _, _ ->
@@ -67,7 +69,7 @@ class AwDialog private constructor(
             private set
         internal var message: String? = null
             private set
-        internal var positiveText: String = "确定"
+        internal var positiveText: String? = null
             private set
         internal var negativeText: String? = null
             private set
@@ -95,7 +97,7 @@ class AwDialog private constructor(
         }
 
         fun positiveButton(
-            text: String = "确定",
+            text: String? = null,
             onClick: () -> Unit = {},
         ): Builder {
             this.positiveText = text
@@ -104,7 +106,7 @@ class AwDialog private constructor(
         }
 
         fun negativeButton(
-            text: String = "取消",
+            text: String? = null,
             onClick: () -> Unit = {},
         ): Builder {
             this.negativeText = text
@@ -146,10 +148,11 @@ class AwDialog private constructor(
             context: Context,
             title: String,
             message: String,
-        ) {
-            Builder(context)
+        ): AwDialog {
+            return Builder(context)
                 .title(title)
                 .message(message)
+                .positiveButton(context.getString(R.string.aw_dialog_ok))
                 .show()
         }
 
@@ -158,12 +161,12 @@ class AwDialog private constructor(
             title: String,
             message: String,
             onConfirm: () -> Unit,
-        ) {
-            Builder(context)
+        ): AwDialog {
+            return Builder(context)
                 .title(title)
                 .message(message)
-                .positiveButton { onConfirm() }
-                .negativeButton()
+                .positiveButton(context.getString(R.string.aw_dialog_ok)) { onConfirm() }
+                .negativeButton(context.getString(R.string.aw_dialog_cancel))
                 .show()
         }
     }
@@ -183,7 +186,7 @@ class AwDialog private constructor(
 class AwLoadingDialog(context: Context) : AwBaseDialog(context) {
     override val cancelableOnTouchOutside: Boolean = false
 
-    private var loadingMessage: String = "加载中..."
+    private var loadingMessage: String = context.getString(R.string.aw_loading_message)
     private var messageTextView: TextView? = null
     private var loadingView: AwLoadingView? = null
 
@@ -220,8 +223,8 @@ class AwLoadingDialog(context: Context) : AwBaseDialog(context) {
         return this
     }
 
-    fun showLoading(message: String = "加载中...") {
-        this.loadingMessage = message
+    fun showLoading(message: String? = null) {
+        this.loadingMessage = message ?: context.getString(R.string.aw_loading_message)
         show()
     }
 
@@ -232,10 +235,10 @@ class AwLoadingDialog(context: Context) : AwBaseDialog(context) {
     companion object {
         fun show(
             context: Context,
-            message: String = "加载中...",
+            message: String? = null,
         ): AwLoadingDialog {
             return AwLoadingDialog(context).apply {
-                setLoadingMessage(message)
+                setLoadingMessage(message ?: context.getString(R.string.aw_loading_message))
                 show()
             }
         }

@@ -101,5 +101,18 @@
         <activity
             android:name=".NoticeBarDemoActivity"
             android:exported="false" />
+            <activity android:name=".InputEnhanceDemoActivity" android:exported="false" />
+        <activity android:name=".ChoiceDemoActivity" android:exported="false" />
+        <activity android:name=".ProgressBarDemoActivity" android:exported="false" />
+        <activity android:name=".BottomSheetDemoActivity" android:exported="false" />
+        <activity android:name=".PickerDemoActivity" android:exported="false" />
+        <activity android:name=".SwipeMenuDemoActivity" android:exported="false" />
+        <activity android:name=".RangeSeekBarDemoActivity" android:exported="false" />
+        <activity android:name=".DotIndicatorDemoActivity" android:exported="false" />
+        <activity android:name=".CalendarDemoActivity" android:exported="false" />
+        <activity android:name=".VerticalMarqueeDemoActivity" android:exported="false" />
+        <activity android:name=".ProgressButtonDemoActivity" android:exported="false" />
+        <activity android:name=".NineGridDemoActivity" android:exported="false" />
+        <activity android:name=".StickyHeaderLayoutDemoActivity" android:exported="false" />
     </application>
 </manifest>

@@ -1,9 +1,12 @@
 package com.answufeng.ui.form
 
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 
+/** 校验规则接口 */
 interface Rule {
     val errorMsg: String
 
@@ -33,6 +36,8 @@ class AwFormValidator {
     private val customFields = mutableListOf<CustomFieldEntry>()
 
     private val errors = mutableMapOf<View, String>()
+
+    private val realtimeWatchers = mutableMapOf<View, TextWatcher>()
 
     private var validityListener: ((Boolean) -> Unit)? = null
 
@@ -112,6 +117,45 @@ class AwFormValidator {
         return allValid
     }
 
+    /**
+     * 验证单个字段。
+     */
+    fun validate(view: View): Boolean {
+        val entry = fields.find { it.view === view }
+        if (entry != null) {
+            val text = (view as TextView).text.toString()
+            val failedRule = entry.rules.firstOrNull { !it.validate(text) }
+            if (failedRule != null) {
+                errors[view] = failedRule.errorMsg
+                if (view is EditText) {
+                    view.error = failedRule.errorMsg
+                }
+                return false
+            } else {
+                errors.remove(view)
+                if (view is EditText) {
+                    view.error = null
+                }
+                return true
+            }
+        }
+        val customEntry = customFields.find { it.view === view }
+        if (customEntry != null) {
+            val text = customEntry.getter()
+            val failedRule = customEntry.rules.firstOrNull { !it.validate(text) }
+            if (failedRule != null) {
+                errors[view] = failedRule.errorMsg
+                customEntry.onError(view, failedRule.errorMsg)
+                return false
+            } else {
+                errors.remove(view)
+                customEntry.onError(view, null)
+                return true
+            }
+        }
+        return true
+    }
+
     fun getErrors(): Map<View, String> = errors.toMap()
 
     fun clearErrors() {
@@ -125,6 +169,48 @@ class AwFormValidator {
         for (entry in customFields) {
             entry.onError(entry.view, null)
         }
+    }
+
+    /**
+     * 移除已注册的字段。
+     */
+    fun removeField(view: View): AwFormValidator {
+        fields.removeAll { it.view === view }
+        customFields.removeAll { it.view === view }
+        errors.remove(view)
+        realtimeWatchers.remove(view)?.let { watcher ->
+            if (view is EditText) {
+                view.removeTextChangedListener(watcher)
+            }
+        }
+        return this
+    }
+
+    /**
+     * 为 [EditText] 字段添加实时校验，用户输入时自动显示/清除错误。
+     *
+     * @param view  已通过 [addField] 注册的 EditText
+     * @param delay 输入后延迟校验的毫秒数，默认 500
+     */
+    fun addRealtimeValidation(
+        view: View,
+        delay: Long = 500L,
+    ): AwFormValidator {
+        if (view !is EditText) return this
+        // 移除旧的 watcher
+        realtimeWatchers.remove(view)?.let { view.removeTextChangedListener(it) }
+        val watcher = object : TextWatcher {
+            private val runnable = Runnable { validate(view) }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                view.removeCallbacks(runnable)
+                view.postDelayed(runnable, delay)
+            }
+        }
+        view.addTextChangedListener(watcher)
+        realtimeWatchers[view] = watcher
+        return this
     }
 
     fun setOnValidityChange(listener: (Boolean) -> Unit): AwFormValidator {

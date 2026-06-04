@@ -341,7 +341,6 @@ class AwTitleBar
             rightContainer.layoutParams = (rightContainer.layoutParams as LayoutParams).also { it.height = barHeightPx }
             tvRight.layoutParams = (tvRight.layoutParams as LinearLayout.LayoutParams).also { it.height = barHeightPx }
             ivRight.layoutParams = (ivRight.layoutParams as LinearLayout.LayoutParams).also { it.height = barHeightPx }
-            ivBack.layoutParams = (ivBack.layoutParams as FrameLayout.LayoutParams)
         }
 
         private fun applyIconTint(

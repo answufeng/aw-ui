@@ -51,9 +51,10 @@ internal class AwSkeletonRecyclerController(
     }
 
     override fun showContent(animate: Boolean) {
-        if (!showingSkeleton && originalAdapter == null) return
+        if (!showingSkeleton) return
         showingSkeleton = false
         val restore = originalAdapter
+        originalAdapter = null
         recyclerView.adapter = restore
         if (animate && restore != null) {
             fadeInContent(recyclerView, 200L)
@@ -63,5 +64,14 @@ internal class AwSkeletonRecyclerController(
     /** 在 showContent 前设置将要恢复的真实 adapter */
     fun setContentAdapter(adapter: RecyclerView.Adapter<*>) {
         originalAdapter = adapter
+    }
+
+    override fun dispose() {
+        showingSkeleton = false
+        val restore = originalAdapter
+        originalAdapter = null
+        if (recyclerView.adapter !== restore && restore != null) {
+            recyclerView.adapter = restore
+        }
     }
 }

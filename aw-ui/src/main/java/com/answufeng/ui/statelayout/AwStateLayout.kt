@@ -275,7 +275,7 @@ class AwStateLayout
         override fun onSaveInstanceState(): Parcelable {
             return Bundle().apply {
                 putParcelable("superState", super.onSaveInstanceState())
-                putInt("state", currentState.ordinal)
+                putString("state", currentState.name)
             }
         }
 
@@ -289,8 +289,8 @@ class AwStateLayout
                         state.getParcelable("superState")
                     }
                 super.onRestoreInstanceState(superState)
-                val savedOrdinal = state.getInt("state", State.CONTENT.ordinal)
-                val restoredState = State.entries.getOrElse(savedOrdinal) { State.CONTENT }
+                val savedName = state.getString("state") ?: State.CONTENT.name
+                val restoredState = try { State.valueOf(savedName) } catch (_: Exception) { State.CONTENT }
                 if (restoredState != currentState) {
                     switchState(restoredState)
                 }
@@ -416,6 +416,11 @@ class AwStateLayout
                 if (view.parent == null) addView(view)
                 view.visibility = VISIBLE
             }
+        }
+
+        /** 通过布局资源设置内容视图 */
+        fun setContentView(@LayoutRes layoutRes: Int) {
+            setContentView(inflate(context, layoutRes, this))
         }
 
         /**

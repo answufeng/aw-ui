@@ -153,7 +153,8 @@ class AwSearchView
                     clearIconDrawableRes = ta.getResourceId(R.styleable.AwSearchView_search_clearIcon, 0)
                     cornerRadiusDimen = ta.getDimension(R.styleable.AwSearchView_search_cornerRadius, 0f)
                     heightDimen = ta.getDimension(R.styleable.AwSearchView_search_height, 0f)
-                } catch (_: Exception) {
+                } catch (e: Exception) {
+                    android.util.Log.w("AwSearchView", "Error reading attributes", e)
                 } finally {
                     ta.recycle()
                 }

@@ -200,7 +200,9 @@ class AwRoundImageView
                 cachedDrawable = null
                 cachedBitmap?.recycle()
                 cachedBitmap = null
-                return drawable.bitmap
+                val bitmap = drawable.bitmap
+                if (bitmap.isRecycled) return null
+                return bitmap
             }
             if (drawable is android.graphics.drawable.VectorDrawable) {
                 cachedBitmap?.recycle()

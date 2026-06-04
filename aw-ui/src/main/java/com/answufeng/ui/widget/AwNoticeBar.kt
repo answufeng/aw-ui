@@ -62,10 +62,6 @@ class AwNoticeBar
                         }
                     setImageResource(android.R.drawable.ic_menu_close_clear_cancel)
                     contentDescription = context.getString(R.string.aw_notice_close)
-                    setOnClickListener {
-                        visibility = GONE
-                        onCloseClick?.invoke()
-                    }
                 }
             addView(messageView)
             addView(closeView)
@@ -83,6 +79,12 @@ class AwNoticeBar
                 }
 
             setOnClickListener { onBarClick?.invoke() }
+
+            // 关闭按钮点击时阻止事件冒泡到整栏的 onBarClick
+            closeView.setOnClickListener {
+                visibility = GONE
+                onCloseClick?.invoke()
+            }
         }
 
         fun showMessage(text: CharSequence) {

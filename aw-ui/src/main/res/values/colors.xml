@@ -31,4 +31,32 @@
     <color name="tab_normal_default">#999999</color>
     <color name="tab_badge_default">#FF0000</color>
 
+
+    <color name="aw_color_clear_icon">#999999</color>
+    <color name="aw_color_pwd_toggle">#999999</color>
+    <color name="aw_color_stepper_border">#CCCCCC</color>
+    <color name="aw_color_stepper_bg">#FFFFFF</color>
+    <color name="aw_color_stepper_text">#333333</color>
+    <color name="aw_color_stepper_btn_text">#333333</color>
+    <color name="aw_color_stepper_btn_bg">#F5F5F5</color>
+    <color name="aw_color_stepper_value_bg">#FFFFFF</color>
+    <color name="aw_color_progress_text">#333333</color>
+    <color name="aw_color_indeterminate">#1976D2</color>
+    <color name="aw_color_secondary_progress">#BBDEFB</color>
+    <color name="aw_color_checkbox_text">#333333</color>
+    <color name="aw_color_checkbox_checked">#1976D2</color>
+    <color name="aw_color_checkbox_unchecked">#CCCCCC</color>
+    <color name="aw_color_radio_text">#333333</color>
+    <color name="aw_color_radio_checked">#1976D2</color>
+    <color name="aw_color_radio_unchecked">#CCCCCC</color>
+    <color name="aw_color_dropdown_bg">#FFFFFF</color>
+    <color name="aw_color_dropdown_item_selected">#F5F5F5</color>
+    <color name="aw_color_dropdown_hint">#999999</color>
+    <color name="aw_color_dropdown_icon">#999999</color>
+    <color name="aw_color_bottom_sheet_bg">#FFFFFF</color>
+    <color name="aw_color_bottom_sheet_drag">#DDDDDD</color>
+    <color name="aw_color_date_header">#1976D2</color>
+    <color name="aw_color_date_header_text">#FFFFFF</color>
+    <color name="aw_color_date_selected">#1976D2</color>
+    <color name="aw_color_picker_selected_text">#1976D2</color>
 </resources>

@@ -3,6 +3,7 @@ package com.answufeng.ui.widget.skeleton
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.doOnLayout
+import androidx.core.view.doOnAttach
 
 /**
  * 对任意 [ViewGroup] 内容根节点挂载遮罩层的骨架控制器。
@@ -23,23 +24,40 @@ internal class AwSkeletonController(
 
     private var showingSkeleton = false
     private var contentHidden = false
+    private var maskAttached = false
 
     override val isShowingSkeleton: Boolean get() = showingSkeleton
 
     init {
         maskView.applyConfig(config)
         maskView.visibility = View.GONE
-        if (maskView.parent == null && host !== contentRoot) {
+        attachMaskView()
+    }
+
+    /**
+     * 将 maskView 添加到 host 中。
+     * 若 contentRoot 尚未挂载（parent == null），则延迟到 attach 后再添加，
+     * 避免 host 回退为 contentRoot 自身导致 maskView 作为子 View 被一同隐藏。
+     */
+    private fun attachMaskView() {
+        if (maskView.parent != null) return
+        if (host !== contentRoot) {
             val lp = contentRoot.layoutParams
             host.addView(maskView, lp)
-        } else if (maskView.parent == null) {
-            host.addView(
-                maskView,
-                ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                ),
-            )
+            maskAttached = true
+        } else {
+            // contentRoot 尚未挂载到父 ViewGroup，延迟添加
+            contentRoot.doOnAttach {
+                if (maskView.parent != null) return@doOnAttach
+                val parent = contentRoot.parent as? ViewGroup ?: return@doOnAttach
+                parent.addView(maskView, contentRoot.layoutParams)
+                maskAttached = true
+                if (showingSkeleton) {
+                    maskView.visibility = View.VISIBLE
+                    maskView.bringToFront()
+                    rebuildMask()
+                }
+            }
         }
     }
 
@@ -50,8 +68,10 @@ internal class AwSkeletonController(
         }
         showingSkeleton = true
         contentRoot.isEnabled = false
-        maskView.visibility = View.VISIBLE
-        maskView.bringToFront()
+        if (maskAttached) {
+            maskView.visibility = View.VISIBLE
+            maskView.bringToFront()
+        }
         rebuildMask()
         maskView.startShimmer()
     }
@@ -77,16 +97,22 @@ internal class AwSkeletonController(
 
     private fun rebuildMask() {
         contentRoot.doOnLayout {
+            // 检查是否仍处于骨架态，避免 showContent() 后 doOnLayout 回调仍执行
+            if (!showingSkeleton) return@doOnLayout
             val targets = AwSkeletonMaskCollector.collect(contentRoot, maskView, config.maskCornerRadiusPx)
             maskView.setTargets(targets)
-            if (showingSkeleton) {
-                setContentVisibleForSkeleton(false)
-            }
+            setContentVisibleForSkeleton(false)
         }
     }
 
-    fun dispose() {
+    override fun dispose() {
         maskView.stopShimmer()
         (maskView.parent as? ViewGroup)?.removeView(maskView)
+        // 恢复内容可见性
+        if (showingSkeleton) {
+            setContentVisibleForSkeleton(true)
+            showingSkeleton = false
+            contentHidden = false
+        }
     }
 }

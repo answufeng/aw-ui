@@ -148,18 +148,34 @@ class AwSkeletonLayout
             val content = contentRoot ?: return
             val mask = maskView ?: return
             content.post {
-                // layout 完成后先收集 bounds（此时 content 仍可见），再隐藏 content
+                // 检查是否仍处于骨架态，避免 showContent() 后回调仍执行
+                if (!showingSkeleton) return@post
                 val targets = AwSkeletonMaskCollector.collect(content, mask, config.maskCornerRadiusPx)
                 mask.setTargets(targets)
-                if (showingSkeleton) {
-                    content.visibility = INVISIBLE
-                }
+                content.visibility = INVISIBLE
             }
         }
 
         override fun onAttachedToWindow() {
             super.onAttachedToWindow()
             if (autoShow) showSkeleton()
+        }
+
+        override fun onDetachedFromWindow() {
+            maskView?.stopShimmer()
+            super.onDetachedFromWindow()
+        }
+
+        override fun dispose() {
+            maskView?.stopShimmer()
+            maskView?.let { removeView(it) }
+            maskView = null
+            // 恢复内容可见性
+            if (showingSkeleton) {
+                contentRoot?.visibility = VISIBLE
+                contentRoot?.isEnabled = true
+                showingSkeleton = false
+            }
         }
 
         /** 获取内容根 View，用于数据绑定 */

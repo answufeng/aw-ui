@@ -370,4 +370,234 @@
         <attr name="index_textSize" format="dimension" />
     </declare-styleable>
 
+
+    <!-- AwClearEditText 自定义属性 -->
+    <declare-styleable name="AwClearEditText">
+        <attr name="clearIcon" format="reference" />
+        <attr name="clearIconTint" format="color" />
+        <attr name="clearIconSize" format="dimension" />
+        <attr name="showClearAlways" format="boolean" />
+    </declare-styleable>
+
+    <!-- AwPasswordEditText 自定义属性 -->
+    <declare-styleable name="AwPasswordEditText">
+        <attr name="pwdToggleIconOn" format="reference" />
+        <attr name="pwdToggleIconOff" format="reference" />
+        <attr name="pwdToggleTint" format="color" />
+        <attr name="pwdToggleSize" format="dimension" />
+    </declare-styleable>
+
+    <!-- AwStepper 自定义属性 -->
+    <declare-styleable name="AwStepper">
+        <attr name="stepper_value" format="integer" />
+        <attr name="stepper_min" format="integer" />
+        <attr name="stepper_max" format="integer" />
+        <attr name="stepper_step" format="integer" />
+        <attr name="stepper_buttonWidth" format="dimension" />
+        <attr name="stepper_textColor" format="color" />
+        <attr name="stepper_buttonTextColor" format="color" />
+        <attr name="stepper_buttonBgColor" format="color" />
+        <attr name="stepper_valueBgColor" format="color" />
+        <attr name="stepper_borderColor" format="color" />
+        <attr name="stepper_borderWidth" format="dimension" />
+        <attr name="stepper_cornerRadius" format="dimension" />
+        <attr name="stepper_textSize" format="dimension" />
+        <attr name="stepper_editable" format="boolean" />
+        <attr name="stepper_longPressSpeed" format="integer" />
+        <attr name="stepper_showDividers" format="boolean" />
+    </declare-styleable>
+
+    <!-- AwHorizontalProgressBar 自定义属性 -->
+    <declare-styleable name="AwHorizontalProgressBar">
+        <attr name="hpb_progress" format="integer" />
+        <attr name="hpb_max" format="integer" />
+        <attr name="hpb_progressColor" format="color" />
+        <attr name="hpb_trackColor" format="color" />
+        <attr name="hpb_progressHeight" format="dimension" />
+        <attr name="hpb_cornerRadius" format="dimension" />
+        <attr name="hpb_showText" format="boolean" />
+        <attr name="hpb_textColor" format="color" />
+        <attr name="hpb_textSize" format="dimension" />
+        <attr name="hpb_indeterminate" format="boolean" />
+        <attr name="hpb_indeterminateDuration" format="integer" />
+        <attr name="hpb_indeterminateColor" format="color" />
+        <attr name="hpb_showProgressOnIndeterminate" format="boolean" />
+        <attr name="hpb_animateChanges" format="boolean" />
+        <attr name="hpb_animDuration" format="integer" />
+        <attr name="hpb_secondaryProgress" format="integer" />
+        <attr name="hpb_secondaryProgressColor" format="color" />
+    </declare-styleable>
+
+    <!-- AwCheckBox 自定义属性 -->
+    <declare-styleable name="AwCheckBox">
+        <attr name="checkBox_checked" format="boolean" />
+        <attr name="checkBox_text" format="string" />
+        <attr name="checkBox_textColor" format="color" />
+        <attr name="checkBox_textSize" format="dimension" />
+        <attr name="checkBox_checkedColor" format="color" />
+        <attr name="checkBox_uncheckedColor" format="color" />
+        <attr name="checkBox_checkIconSize" format="dimension" />
+        <attr name="checkBox_drawable" format="reference" />
+        <attr name="checkBox_drawableChecked" format="reference" />
+    </declare-styleable>
+
+    <!-- AwRadioButton 自定义属性 -->
+    <declare-styleable name="AwRadioButton">
+        <attr name="radio_checked" format="boolean" />
+        <attr name="radio_text" format="string" />
+        <attr name="radio_textColor" format="color" />
+        <attr name="radio_textSize" format="dimension" />
+        <attr name="radio_checkedColor" format="color" />
+        <attr name="radio_uncheckedColor" format="color" />
+        <attr name="radio_drawable" format="reference" />
+        <attr name="radio_drawableChecked" format="reference" />
+    </declare-styleable>
+
+    <!-- AwRadioGroup 自定义属性 -->
+    <declare-styleable name="AwRadioGroup">
+        <attr name="radioGroup_orientation" format="enum">
+            <enum name="horizontal" value="0" />
+            <enum name="vertical" value="1" />
+        </attr>
+        <attr name="radioGroup_checkedIndex" format="integer" />
+        <attr name="radioGroup_spacing" format="dimension" />
+    </declare-styleable>
+
+    <!-- AwDropDownMenu 自定义属性 -->
+    <declare-styleable name="AwDropDownMenu">
+        <attr name="ddm_hint" format="string" />
+        <attr name="ddm_textColor" format="color" />
+        <attr name="ddm_hintTextColor" format="color" />
+        <attr name="ddm_textSize" format="dimension" />
+        <attr name="ddm_bgColor" format="color" />
+        <attr name="ddm_cornerRadius" format="dimension" />
+        <attr name="ddm_borderColor" format="color" />
+        <attr name="ddm_borderWidth" format="dimension" />
+        <attr name="ddm_dropdownIcon" format="reference" />
+        <attr name="ddm_iconTint" format="color" />
+        <attr name="ddm_dropdownHeight" format="dimension" />
+        <attr name="ddm_itemTextColor" format="color" />
+        <attr name="ddm_itemTextSize" format="dimension" />
+        <attr name="ddm_itemBgColor" format="color" />
+        <attr name="ddm_itemSelectedColor" format="color" />
+        <attr name="ddm_itemHeight" format="dimension" />
+    </declare-styleable>
+
+    <!-- AwBottomSheetPanel 自定义属性 -->
+    <declare-styleable name="AwBottomSheetPanel">
+        <attr name="bs_cornerRadius" format="dimension" />
+        <attr name="bs_backgroundColor" format="color" />
+        <attr name="bs_maxHeight" format="dimension" />
+        <attr name="bs_dragHandleVisible" format="boolean" />
+        <attr name="bs_dragHandleColor" format="color" />
+        <attr name="bs_dimAmount" format="float" />
+        <attr name="bs_peekHeight" format="dimension" />
+    </declare-styleable>
+
+    <!-- AwDatePickerPanel 自定义属性 -->
+    <declare-styleable name="AwDatePickerPanel">
+        <attr name="dp_year" format="integer" />
+        <attr name="dp_month" format="integer" />
+        <attr name="dp_day" format="integer" />
+        <attr name="dp_textColor" format="color" />
+        <attr name="dp_textSize" format="dimension" />
+        <attr name="dp_selectedColor" format="color" />
+        <attr name="dp_headerColor" format="color" />
+        <attr name="dp_headerTextColor" format="color" />
+        <attr name="dp_startYear" format="integer" />
+        <attr name="dp_endYear" format="integer" />
+    </declare-styleable>
+
+    <!-- AwTimePickerPanel 自定义属性 -->
+    <declare-styleable name="AwTimePickerPanel">
+        <attr name="tp_hour" format="integer" />
+        <attr name="tp_minute" format="integer" />
+        <attr name="tp_textColor" format="color" />
+        <attr name="tp_textSize" format="dimension" />
+        <attr name="tp_selectedColor" format="color" />
+        <attr name="tp_showSeconds" format="boolean" />
+        <attr name="tp_is24Hour" format="boolean" />
+    </declare-styleable>
+
+    <!-- AwVerticalMarqueeView 自定义属性 -->
+    <declare-styleable name="AwVerticalMarqueeView">
+        <attr name="vm_interval" format="integer" />
+        <attr name="vm_animDuration" format="integer" />
+        <attr name="vm_textSize" format="dimension" />
+        <attr name="vm_textColor" format="color" />
+    </declare-styleable>
+
+    <!-- AwPickerView 自定义属性 -->
+    <declare-styleable name="AwPickerView">
+        <attr name="pv_textColor" format="color" />
+        <attr name="pv_selectedTextColor" format="color" />
+        <attr name="pv_visibleItemCount" format="integer" />
+        <attr name="pv_textSize" format="dimension" />
+    </declare-styleable>
+
+    <!-- AwRangeSeekBar 自定义属性 -->
+    <declare-styleable name="AwRangeSeekBar">
+        <attr name="rsb_min" format="float" />
+        <attr name="rsb_max" format="float" />
+        <attr name="rsb_step" format="float" />
+        <attr name="rsb_leftValue" format="float" />
+        <attr name="rsb_rightValue" format="float" />
+        <attr name="rsb_trackColor" format="color" />
+        <attr name="rsb_progressColor" format="color" />
+        <attr name="rsb_thumbColor" format="color" />
+        <attr name="rsb_thumbRadius" format="dimension" />
+        <attr name="rsb_trackHeight" format="dimension" />
+        <attr name="rsb_showLabels" format="boolean" />
+    </declare-styleable>
+
+    <!-- AwSwipeMenuLayout 自定义属性 -->
+    <declare-styleable name="AwSwipeMenuLayout">
+        <attr name="sm_menuWidth" format="dimension" />
+    </declare-styleable>
+
+    <!-- AwDotIndicator 自定义属性 -->
+    <declare-styleable name="AwDotIndicator">
+        <attr name="di_dotCount" format="integer" />
+        <attr name="di_dotRadius" format="dimension" />
+        <attr name="di_selectedDotRadius" format="dimension" />
+        <attr name="di_dotSpacing" format="dimension" />
+        <attr name="di_selectedDotColor" format="color" />
+        <attr name="di_unselectedDotColor" format="color" />
+        <attr name="di_animationDuration" format="integer" />
+    </declare-styleable>
+
+    <!-- AwCalendarView 自定义属性 -->
+    <declare-styleable name="AwCalendarView">
+        <attr name="cv_firstDayOfWeek" format="enum">
+            <enum name="SUN" value="1" />
+            <enum name="MON" value="2" />
+        </attr>
+        <attr name="cv_showWeekHeaders" format="boolean" />
+        <attr name="cv_todayColor" format="color" />
+        <attr name="cv_selectedColor" format="color" />
+        <attr name="cv_dayTextColor" format="color" />
+        <attr name="cv_weekHeaderTextColor" format="color" />
+        <attr name="cv_dayTextSize" format="dimension" />
+        <attr name="cv_weekHeaderTextSize" format="dimension" />
+    </declare-styleable>
+
+    <!-- AwProgressButton 自定义属性 -->
+    <declare-styleable name="AwProgressButton">
+        <attr name="pb_text" format="string" />
+        <attr name="pb_textColor" format="color" />
+        <attr name="pb_textSize" format="dimension" />
+        <attr name="pb_progressColor" format="color" />
+        <attr name="pb_backgroundColor" format="color" />
+        <attr name="pb_cornerRadius" format="dimension" />
+        <attr name="pb_progress" format="float" />
+        <attr name="pb_indeterminate" format="boolean" />
+    </declare-styleable>
+
+    <!-- AwNineGridImageView 自定义属性 -->
+    <declare-styleable name="AwNineGridImageView">
+        <attr name="ng_spacing" format="dimension" />
+        <attr name="ng_maxCount" format="integer" />
+        <attr name="ng_singleImageRatio" format="float" />
+        <attr name="ng_corner_radius" format="dimension" />
+    </declare-styleable>
 </resources>

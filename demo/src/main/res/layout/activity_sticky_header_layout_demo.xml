@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light"
+    android:orientation="vertical">
+
+    <com.answufeng.ui.widget.AwTitleBar
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:titleBar_showBack="true"
+        app:titleBar_showDivider="true"
+        app:titleBar_title="AwStickyHeaderLayout" />
+
+    <TextView
+        android:id="@+id/tv_sticky_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:text="头部未粘住"
+        android:textColor="#4CAF50"
+        android:textSize="14sp" />
+
+    <com.answufeng.ui.widget.AwStickyHeaderLayout
+        android:id="@+id/sticky_header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- 粘性头部 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="#FF9800"
+            android:gravity="center"
+            android:text="我是粘性头部，向上滚动我会固定在顶部"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- 可滚动内容 -->
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="向上滚动查看粘性头部效果"
+                    android:textSize="14sp"
+                    android:textColor="#666666" />
+
+                <!-- 生成多个内容块 -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="#E3F2FD"
+                    android:gravity="center"
+                    android:text="内容区域 1"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="#E8F5E9"
+                    android:gravity="center"
+                    android:text="内容区域 2"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="#FFF3E0"
+                    android:gravity="center"
+                    android:text="内容区域 3"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="#FCE4EC"
+                    android:gravity="center"
+                    android:text="内容区域 4"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="#F3E5F5"
+                    android:gravity="center"
+                    android:text="内容区域 5"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+    </com.answufeng.ui.widget.AwStickyHeaderLayout>
+
+</LinearLayout>

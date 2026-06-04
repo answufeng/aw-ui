@@ -10,7 +10,7 @@ import android.graphics.Shader
 import androidx.annotation.ColorInt
 
 /**
- * 共享 shimmer 动画引擎：ValueAnimator + LinearGradient，供 [AwSkeletonView] 与 [AwSkeletonMaskView] 复用。
+ * 共享 shimmer 动画引擎：ValueAnimator + LinearGradient，供 [AwSkeletonMaskView] 复用。
  */
 internal class AwSkeletonShimmer(
     @ColorInt var baseColor: Int,

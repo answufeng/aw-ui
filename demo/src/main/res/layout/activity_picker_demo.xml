@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light"
+    android:orientation="vertical">
+
+    <com.answufeng.ui.widget.AwTitleBar
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:titleBar_showBack="true"
+        app:titleBar_title="滚轮选择器" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView style="@style/Text.AwUi.Subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="AwPickerView — 单列滚轮" />
+
+            <com.answufeng.ui.widget.AwPickerView
+                android:id="@+id/pickerView"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:background="@android:color/white"
+                app:pv_visibleItemCount="3"
+                app:pv_textSize="15sp"
+                app:pv_selectedTextColor="#1976D2" />
+
+            <TextView
+                android:id="@+id/pickerResult"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="已选："
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:layout_marginBottom="16dp" />
+
+            <TextView style="@style/Text.AwUi.Subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="AwDatePickerPanel — 日期选择" />
+
+            <com.answufeng.ui.widget.AwDatePickerPanel
+                android:id="@+id/datePicker"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:background="@android:color/white"
+                app:dp_selectedColor="#1976D2" />
+
+            <TextView
+                android:id="@+id/dateResult"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="日期："
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:layout_marginBottom="16dp" />
+
+            <TextView style="@style/Text.AwUi.Subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="AwTimePickerPanel — 时间选择" />
+
+            <com.answufeng.ui.widget.AwTimePickerPanel
+                android:id="@+id/timePicker"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:background="@android:color/white"
+                app:tp_is24Hour="true"
+                app:tp_selectedColor="#1976D2" />
+
+            <TextView
+                android:id="@+id/timeResult"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="时间："
+                android:textSize="14sp"
+                android:textColor="#666666" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -51,8 +51,8 @@ class AwActionSheetDialog(context: Context) : Dialog(context, R.style.AwActionSh
     /** 破坏性（红色）项的索引，默认 -1（无） */
     var destructiveIndex: Int = -1
 
-    /** 取消按钮文本，默认 "取消" */
-    var cancelText: String = "取消"
+    /** 取消按钮文本，默认取字符串资源 */
+    var cancelText: String = context.getString(R.string.aw_action_sheet_cancel)
 
     /** 选中操作项时的回调，接收项索引 */
     var onSelect: ((Int) -> Unit)? = null

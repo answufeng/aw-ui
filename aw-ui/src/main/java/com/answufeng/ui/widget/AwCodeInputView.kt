@@ -234,13 +234,7 @@ class AwCodeInputView
             }
         }
 
-        internal fun onDigitCleared(index: Int) {
-            if (index > 0) {
-                val prevEt = getChildAt(index - 1) as? CodeEditText ?: return
-                prevEt.setText("")
-                prevEt.requestFocus()
-            }
-        }
+        internal fun onDigitCleared(index: Int) = onDigitDeleted(index)
 
         internal fun onPasteFullCode(pasted: String) {
             code = pasted

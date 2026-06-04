@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light"
+    android:orientation="vertical">
+
+    <com.answufeng.ui.widget.AwTitleBar
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:titleBar_showBack="true"
+        app:titleBar_title="选择控件演示" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView style="@style/Text.AwUi.Subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="AwCheckBox — 复选框" />
+
+            <com.answufeng.ui.widget.AwCheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:checkBox_text="同意用户协议" />
+            <com.answufeng.ui.widget.AwCheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:checkBox_text="记住登录状态"
+                app:checkBox_checked="true" />
+
+            <TextView style="@style/Text.AwUi.Subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="AwRadioGroup — 单选按钮组（垂直）" />
+
+            <com.answufeng.ui.widget.AwRadioGroup
+                android:id="@+id/radioGroupVertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:radioGroup_orientation="vertical"
+                app:radioGroup_checkedIndex="0"
+                app:radioGroup_spacing="12dp">
+                <com.answufeng.ui.widget.AwRadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:radio_text="选项 A" />
+                <com.answufeng.ui.widget.AwRadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:radio_text="选项 B" />
+                <com.answufeng.ui.widget.AwRadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:radio_text="选项 C" />
+            </com.answufeng.ui.widget.AwRadioGroup>
+
+            <TextView
+                android:id="@+id/radioGroupResult"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="已选：选项 A"
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:layout_marginBottom="16dp" />
+
+            <TextView style="@style/Text.AwUi.Subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="AwRadioGroup（水平排列）" />
+
+            <com.answufeng.ui.widget.AwRadioGroup
+                android:id="@+id/radioGroupHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:radioGroup_orientation="horizontal"
+                app:radioGroup_checkedIndex="0"
+                app:radioGroup_spacing="24dp">
+                <com.answufeng.ui.widget.AwRadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:radio_text="小" />
+                <com.answufeng.ui.widget.AwRadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:radio_text="中" />
+                <com.answufeng.ui.widget.AwRadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:radio_text="大" />
+            </com.answufeng.ui.widget.AwRadioGroup>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -173,13 +173,14 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
                     val total = rv.layoutManager?.itemCount ?: return
 
                     if (lastVisible >= total - 1 - preloadOffset) {
-                        // 在 onScrolled 内直接 notify 会触发非法状态，延后到 post；此时必为 IDLE，尚无 footer，需 insert 而非 change
                         loadState = LoadState.LOADING
-                        val footerPos = currentList.size
-                        rv.post {
-                            notifyItemInserted(footerPos)
-                            onLoadMore?.invoke()
+                        // 使用 submitList 的 commitCallback 确保 DiffUtil 完成后再通知 footer，
+                        // 避免在 DiffUtil 计算期间 notify 导致 Inconsistency
+                        val hadFooter = showFooter()
+                        if (!hadFooter) {
+                            notifyItemInserted(currentList.size)
                         }
+                        onLoadMore?.invoke()
                     }
                 }
             }
@@ -208,6 +209,7 @@ class AwLoadMoreAdapter<VB : ViewBinding, T>(
         super.submitList(list)
     }
 
+    @Deprecated("Use loadMore instead", ReplaceWith("loadMore(list, commitCallback)"))
     fun appendList(
         list: List<T>,
         commitCallback: Runnable? = null,

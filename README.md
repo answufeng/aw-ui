@@ -2,9 +2,7 @@
 
 [![JitPack](https://jitpack.io/v/answufeng/aw-ui.svg)](https://jitpack.io/#answufeng/aw-ui)
 
-基于 **Android View / XML** 的通用 UI 组件库，覆盖状态页、列表适配、弹窗、表单与输入、动效、标题栏、横幅等日常场景。
-
-如果你只想最快跑起来，直接看下面的「5 分钟上手」即可；其它内容都可以后置按需查阅。
+基于 **Android View / XML** 的通用 UI 组件库，覆盖状态页、列表适配、弹窗、表单与输入、动效、标题栏、横幅等日常场景。如果你只想最快跑起来，直接看下面的「5 分钟上手」即可；其它内容都可以后置按需查阅。
 
 ---
 
@@ -139,25 +137,174 @@ stateLayout.showContent()
 | 侧边索引 | `AwIndexBar` | [文档](aw-ui/doc/AwIndexBar.md) |
 | 列表吸顶 | `AwStickyHeaderDecoration` | 见 [RecyclerView](aw-ui/doc/RecyclerView.md) |
 | 底栏预设样式 | `Widget.AwBottomTabBar.*` | 见 [AwBottomTabBar](aw-ui/doc/AwBottomTabBar.md) |
+| 带清除输入 | `AwClearEditText` | — |
+| 密码切换输入 | `AwPasswordEditText` | — |
+| 数量加减 | `AwStepper` | — |
+| 水平进度条 | `AwHorizontalProgressBar` | — |
+| 复选框 | `AwCheckBox` | — |
+| 单选按钮组 | `AwRadioButton` / `AwRadioGroup` | — |
+| 下拉菜单 | `AwDropDownMenu` | — |
+| 滚轮选择器 | `AwPickerView` | — |
+| 日期/时间选择 | `AwDatePickerPanel` / `AwTimePickerPanel` | — |
+| 底部面板 | `AwBottomSheetDialog` | — |
+| 左滑菜单 | `AwSwipeMenuLayout` | — |
+| 范围选择 | `AwRangeSeekBar` | — |
+| 圆点指示器 | `AwDotIndicator` | — |
+| 日历选择 | `AwCalendarView` | — |
+| 垂直跑马灯 | `AwVerticalMarqueeView` | — |
+| 进度按钮 | `AwProgressButton` | — |
+| 九宫格图片 | `AwNineGridImageView` | — |
+| 粘性头部 | `AwStickyHeaderLayout` | — |
+
+---
+
+## 骨架屏（Skeleton）
+
+基于 **mask 模式** 的骨架屏方案：包裹真实 content layout，按子 View bounds 自动遮罩并统一 shimmer 动画，API 收敛为 `showSkeleton()` / `showContent()`。底层 shimmer 与 `AwSkeletonView` 共享 `AwSkeletonShimmer` 引擎。
+
+| 场景 | 推荐方式 |
+|------|----------|
+| 常规业务页、卡片 | `AwSkeletonLayout`（XML 包裹） |
+| RecyclerView 列表 | `RecyclerView.applyAwSkeleton` |
+| ViewPager2 | `ViewPager2.applyAwSkeleton` |
+| 任意 ViewGroup | `ViewGroup.createAwSkeleton` |
+| 营销页、精细手拼占位块 | `AwSkeletonView` |
+
+### XML 用法 — AwSkeletonLayout
+
+```xml
+<com.answufeng.ui.widget.skeleton.AwSkeletonLayout
+    android:id="@+id/skeletonLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:skeleton_autoShow="true">
+
+    <include layout="@layout/item_feed" />
+</com.answufeng.ui.widget.skeleton.AwSkeletonLayout>
+```
+
+```kotlin
+skeletonLayout.showSkeleton()
+viewModel.load { data ->
+    skeletonLayout.bindContent { root ->
+        // 绑定真实数据
+    }
+    skeletonLayout.showContent()
+}
+```
+
+### 代码用法 — createAwSkeleton / applyAwSkeleton
+
+**RecyclerView 列表骨架：**
+
+```kotlin
+val skeleton = recyclerView.applyAwSkeleton(
+    itemLayout = R.layout.item_feed,
+    itemCount = 6,
+)
+skeleton.setContentAdapter(adapter)
+skeleton.showSkeleton()
+
+viewModel.load { list ->
+    adapter.submitList(list)
+    skeleton.showContent()
+}
+```
+
+**ViewPager2 骨架：**
+
+```kotlin
+viewPager.applyAwSkeleton(R.layout.page_item, itemCount = 3).showSkeleton()
+```
+
+**任意 ViewGroup 骨架：**
+
+```kotlin
+val skeleton = contentRoot.createAwSkeleton()
+skeleton.showSkeleton()
+// ...
+skeleton.showContent(animate = true)
+```
+
+### AwSkeletonConfig 配置
+
+```kotlin
+data class AwSkeletonConfig(
+    val maskColor: Int,          // 遮罩基础色
+    val shimmerColor: Int,       // shimmer 高亮色
+    val maskCornerRadiusPx: Float, // 遮罩圆角（px）
+    val shimmerDurationMs: Long, // shimmer 周期（毫秒）
+    val showShimmer: Boolean,    // 是否启用 shimmer
+    val itemCount: Int = 6,      // 列表占位条数
+)
+```
+
+获取默认配置：
+
+```kotlin
+val config = AwSkeletonConfig.default(context)
+```
+
+### XML 属性（AwSkeletonLayout）
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `skeleton_maskColor` | color | 遮罩基础色，默认 `aw_color_skeleton_base` |
+| `skeleton_shimmerColor` | color | shimmer 高亮色 |
+| `skeleton_maskCornerRadius` | dimension | 遮罩圆角 |
+| `skeleton_shimmerDuration` | integer | shimmer 周期（毫秒） |
+| `skeleton_showShimmer` | boolean | 是否启用 shimmer |
+| `skeleton_autoShow` | boolean | attach 后自动 `showSkeleton()` |
+
+### 子 View 精细控制
+
+| 属性 | 说明 |
+|------|------|
+| `app:skeleton_mask="true"` | 强制参与遮罩（即使无尺寸） |
+| `app:skeleton_ignore="true"` | 排除不参与遮罩 |
+
+### AwStateLayout 集成
+
+`loadingStyle=skeleton` 时，`showLoading()` 不对 content 隐藏，而是在 content 上挂载 mask：
+
+```xml
+<com.answufeng.ui.statelayout.AwStateLayout
+    app:state_loadingStyle="skeleton">
+    <!-- content layout -->
+</com.answufeng.ui.statelayout.AwStateLayout>
+```
+
+```kotlin
+stateLayout.loadingStyle = AwStateLayout.LoadingStyle.SKELETON
+stateLayout.skeletonConfig = AwSkeletonConfig.default(context)
+stateLayout.showLoading()
+stateLayout.showContent()
+```
+
+> 更详细的骨架屏文档见 [AwSkeletonLayout](aw-ui/doc/AwSkeletonLayout.md) · [AwSkeletonView](aw-ui/doc/AwSkeletonView.md)
 
 ---
 
 ## 常用片段
 
-<details>
-<summary><strong>Dialog / Loading</strong></summary>
+<details><summary><strong>Dialog / Loading</strong></summary>
 
 ```kotlin
-AwDialog.Builder(context).title("提示").message("完成").positiveButton("确定").show()
+AwDialog.Builder(context)
+    .title("提示")
+    .message("完成")
+    .positiveButton("确定")
+    .show()
+
 // 或扩展函数
 context.showAwConfirm("确认", "确定提交吗？") { submit() }
+
 AwLoadingDialog.show(context, "提交中…")
 ```
 
 </details>
 
-<details>
-<summary><strong>Banner</strong></summary>
+<details><summary><strong>Banner</strong></summary>
 
 ```kotlin
 bannerView.setData(items) { container, item, _ -> /* 填充子 View */ }
@@ -167,8 +314,7 @@ bannerView.startAutoScroll()
 
 </details>
 
-<details>
-<summary><strong>StateLayout</strong></summary>
+<details><summary><strong>StateLayout</strong></summary>
 
 ```kotlin
 stateLayout.showLoading()
@@ -177,8 +323,7 @@ stateLayout.showError { retry() }
 
 </details>
 
-<details>
-<summary><strong>SwipeRefresh</strong></summary>
+<details><summary><strong>SwipeRefresh</strong></summary>
 
 ```kotlin
 swipeRefresh.refreshListener = {
@@ -190,13 +335,67 @@ swipeRefresh.refreshListener = {
 
 </details>
 
-<details>
-<summary><strong>ViewBinding / 尺寸</strong></summary>
+<details><summary><strong>ViewBinding / 尺寸</strong></summary>
 
 ```kotlin
 private val binding by viewBinding(ActivityMainBinding::class)
 // onCreate 中 setContentView(R.layout.activity_main) 后使用 binding
+
 val x = 16.dp
+```
+
+</details>
+
+<details><summary><strong>SwipeMenu / RangeSeek / DotIndicator</strong></summary>
+
+```kotlin
+// 左滑菜单
+swipeMenuLayout.onMenuOpenListener = { /* 菜单打开 */ }
+swipeMenuLayout.onMenuCloseListener = { /* 菜单关闭 */ }
+swipeMenuLayout.openMenu()
+swipeMenuLayout.closeMenu()
+
+// 范围选择
+rangeSeekBar.setRange(0f, 1000f, step = 50f)
+rangeSeekBar.onRangeChangeListener = { left, right -> /* 范围变化 */ }
+
+// 圆点指示器
+dotIndicator.bindViewPager2(viewPager2)
+```
+
+</details>
+
+<details><summary><strong>Calendar / Marquee / ProgressButton</strong></summary>
+
+```kotlin
+// 日历
+calendarView.setOnDateSelectedListener { year, month, day -> /* 选中日期 */ }
+calendarView.nextMonth()
+calendarView.goToToday()
+
+// 垂直跑马灯
+marqueeView.items = listOf("公告1", "公告2", "公告3")
+marqueeView.start()
+marqueeView.setOnItemClickListener { index -> /* 点击 */ }
+
+// 进度按钮
+progressButton.progress = 75f
+progressButton.isIndeterminate = true
+progressButton.setOnProgressCompleteListener { /* 完成 */ }
+```
+
+</details>
+
+<details><summary><strong>NineGrid / StickyHeader</strong></summary>
+
+```kotlin
+// 九宫格图片
+nineGridImageView.imageLoader = { iv, url -> Glide.with(iv).load(url).into(iv) }
+nineGridImageView.setImageUrls(urls)
+nineGridImageView.setOnImageClickListener { index -> /* 点击 */ }
+
+// 粘性头部
+stickyHeaderLayout.onHeaderStickListener = { stuck -> /* 头部粘住/取消 */ }
 ```
 
 </details>
@@ -224,19 +423,19 @@ val x = 16.dp
 
 ## 常见问题
 
-1. **无法解析 `SwipeRefreshLayout` / 刷新 API**  
+1. **无法解析 `SwipeRefreshLayout` / 刷新 API**
    库对 `androidx.swiperefreshlayout:swiperefreshlayout` 为 `api` 传递；若宿主 `exclude` 或版本冲突，请显式依赖兼容版本。
 
-2. **ViewBinding 委托不工作**  
+2. **ViewBinding 委托不工作**
    确认已在 `onCreate` / `onViewCreated` 中 `setContentView` 或已 inflate，且 Binding 与布局名一致。
 
-3. **Banner 不自动播**  
+3. **Banner 不自动播**
    调用 `startAutoScroll()`，且条数 ≥ 2。
 
-4. **StateLayout 切换无动效**  
+4. **StateLayout 切换无动效**
    内容视图就绪后再 `showXxx()`，并检查 `transition` 配置。
 
-5. **FlowLayout RTL**  
+5. **FlowLayout RTL**
    `flow_gravity` 使用 `start` / `end` 等，随系统 RTL 行为。
 
 ---

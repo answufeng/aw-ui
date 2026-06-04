@@ -41,14 +41,14 @@ fun View.sp2px(sp: Int): Int = resources.spToPx(sp)
  * 有 [View] 或 [android.content.Context] 时，优先使用 [Resources.dpToPx]。
  */
 val Int.dp: Int
-    get() = (this * Resources.getSystem().displayMetrics.density).toInt()
+    get() = (this * Resources.getSystem().displayMetrics.density).roundToInt()
 
 /**
  * 将浮点型 dp 值转换为 px（Int）。
  * @see Int.dp
  */
 val Float.dp: Int
-    get() = (this * Resources.getSystem().displayMetrics.density).toInt()
+    get() = (this * Resources.getSystem().displayMetrics.density).roundToInt()
 
 /**
  * 将浮点型 dp 值转换为 px（Float），保留小数精度。
@@ -65,14 +65,28 @@ val Float.dpFloat: Float
  * @see Int.dp
  */
 val Int.spToPx: Int
-    get() = (this * Resources.getSystem().displayMetrics.scaledDensity).toInt()
+    get() = (this * Resources.getSystem().displayMetrics.scaledDensity).roundToInt()
 
 /**
  * 将浮点型 sp 值转换为 px（Int）。
  * @see Int.spToPx
  */
 val Float.spToPx: Int
-    get() = (this * Resources.getSystem().displayMetrics.scaledDensity).toInt()
+    get() = (this * Resources.getSystem().displayMetrics.scaledDensity).roundToInt()
+
+/**
+ * 将整型 sp 值转换为 px（Int），与 [Int.dp] 命名风格统一。
+ * @see Int.dp
+ */
+val Int.sp: Int
+    get() = (this * Resources.getSystem().displayMetrics.scaledDensity).roundToInt()
+
+/**
+ * 将浮点型 sp 值转换为 px（Int），与 [Float.dp] 命名风格统一。
+ * @see Float.dp
+ */
+val Float.sp: Int
+    get() = (this * Resources.getSystem().displayMetrics.scaledDensity).roundToInt()
 
 /**
  * 将 px 值转换为 dp（Float）。
@@ -82,8 +96,22 @@ val Int.pxToDp: Float
     get() = this / Resources.getSystem().displayMetrics.density
 
 /**
+ * 将浮点 px 值转换为 dp（Float）。
+ * @see Int.pxToDp
+ */
+val Float.pxToDp: Float
+    get() = this / Resources.getSystem().displayMetrics.density
+
+/**
  * 将 px 值转换为 sp（Float）。
  * @see Int.spToPx
  */
 val Int.pxToSp: Float
+    get() = this / Resources.getSystem().displayMetrics.scaledDensity
+
+/**
+ * 将浮点 px 值转换为 sp（Float）。
+ * @see Int.pxToSp
+ */
+val Float.pxToSp: Float
     get() = this / Resources.getSystem().displayMetrics.scaledDensity

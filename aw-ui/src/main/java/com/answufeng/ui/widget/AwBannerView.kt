@@ -67,6 +67,7 @@ class AwBannerView
             set(value) {
                 if (field == value) return
                 field = value
+                // 使用 realItemCount（原始数据量）而非 adapter.itemCount（可能已被无限循环放大）
                 when (pagerEngine) {
                     PagerEngine.VIEW_PAGER2 -> viewPager2.adapter?.let { setAdapter(it, realItemCount) }
                     PagerEngine.VIEW_PAGER -> legacyViewPager?.adapter?.let { setPagerAdapter(it, realItemCount) }

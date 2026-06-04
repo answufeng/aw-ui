@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light"
+    android:orientation="vertical">
+
+    <com.answufeng.ui.widget.AwTitleBar
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:titleBar_showBack="true"
+        app:titleBar_title="底部面板" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView style="@style/Text.AwUi.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="点击按钮从底部滑出面板，支持拖拽手柄、标题和自定义内容。" />
+
+            <Button
+                android:id="@+id/btnSimpleSheet"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="显示简单面板"
+                android:backgroundTint="#1976D2" />
+
+            <Button
+                android:id="@+id/btnCustomSheet"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="12dp"
+                android:text="显示自定义面板"
+                android:backgroundTint="#7C3AED" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -139,6 +139,7 @@ class AwRoundLayout
             useOutlineProvider = topLeft == topRight && topRight == bottomRight && bottomRight == bottomLeft
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 clipToOutline = useOutlineProvider
+                invalidateOutline()
             }
             invalidate()
         }

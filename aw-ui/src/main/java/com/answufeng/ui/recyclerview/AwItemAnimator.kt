@@ -51,6 +51,7 @@ class AwItemAnimator : DefaultItemAnimator() {
 
                 override fun onAnimationCancel(animation: Animator) {
                     runningAnimations.remove(holder)
+                    dispatchRemoveFinished(holder)
                 }
             },
         )
@@ -88,6 +89,7 @@ class AwItemAnimator : DefaultItemAnimator() {
                         holder.itemView.alpha = 1f
                         holder.itemView.scaleX = 1f
                         holder.itemView.scaleY = 1f
+                        dispatchAddFinished(holder)
                     }
                 },
             )
@@ -102,6 +104,10 @@ class AwItemAnimator : DefaultItemAnimator() {
         item.itemView.animate().cancel()
         if (pendingAnimations.contains(item)) {
             pendingAnimations.remove(item)
+            // 恢复 alpha，避免 item 不可见
+            item.itemView.alpha = 1f
+            item.itemView.scaleX = 1f
+            item.itemView.scaleY = 1f
             dispatchAddFinished(item)
         }
         if (runningAnimations.contains(item)) {
@@ -114,6 +120,9 @@ class AwItemAnimator : DefaultItemAnimator() {
     override fun endAnimations() {
         for (holder in pendingAnimations.toList()) {
             pendingAnimations.remove(holder)
+            holder.itemView.alpha = 1f
+            holder.itemView.scaleX = 1f
+            holder.itemView.scaleY = 1f
             dispatchAddFinished(holder)
         }
         for (holder in runningAnimations.toList()) {

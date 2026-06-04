@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light"
+    android:orientation="vertical">
+
+    <com.answufeng.ui.widget.AwTitleBar
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:titleBar_showBack="true"
+        app:titleBar_title="水平进度条" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView style="@style/Text.AwUi.Subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="确定模式（绿色）" />
+
+            <com.answufeng.ui.widget.AwHorizontalProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:hpb_progress="60"
+                app:hpb_max="100"
+                app:hpb_showText="true"
+                app:hpb_progressColor="#4CAF50" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginBottom="16dp">
+                <Button
+                    android:id="@+id/btnDecrease"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-10" />
+                <Button
+                    android:id="@+id/btnIncrease"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+10"
+                    android:layout_marginStart="16dp" />
+            </LinearLayout>
+
+            <TextView style="@style/Text.AwUi.Subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="辅助进度（缓冲场景）" />
+
+            <com.answufeng.ui.widget.AwHorizontalProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:hpb_progress="30"
+                app:hpb_secondaryProgress="60"
+                app:hpb_progressColor="#1976D2"
+                app:hpb_secondaryProgressColor="#BBDEFB"
+                app:hpb_progressHeight="8dp"
+                app:hpb_cornerRadius="4dp" />
+
+            <TextView style="@style/Text.AwUi.Subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="不确定模式（加载中）" />
+
+            <com.answufeng.ui.widget.AwHorizontalProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:hpb_indeterminate="true"
+                app:hpb_indeterminateColor="#FF5722" />
+
+            <TextView style="@style/Text.AwUi.Subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="自定义样式（紫色细条）" />
+
+            <com.answufeng.ui.widget.AwHorizontalProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:hpb_progress="75"
+                app:hpb_progressColor="#9C27B0"
+                app:hpb_trackColor="#F3E5F5"
+                app:hpb_progressHeight="4dp"
+                app:hpb_cornerRadius="2dp"
+                app:hpb_showText="true"
+                app:hpb_textSize="10sp" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

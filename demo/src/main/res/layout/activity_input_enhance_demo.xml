@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light"
+    android:orientation="vertical">
+
+    <com.answufeng.ui.widget.AwTitleBar
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:titleBar_showBack="true"
+        app:titleBar_title="输入增强组件" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView style="@style/Text.AwUi.Subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="AwClearEditText — 带清除按钮" />
+
+            <com.answufeng.ui.widget.AwClearEditText
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="请输入内容..."
+                android:background="@android:color/white"
+                android:padding="12dp"
+                app:clearIconTint="#999999" />
+
+            <TextView style="@style/Text.AwUi.Subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="AwPasswordEditText — 密码可见切换" />
+
+            <com.answufeng.ui.widget.AwPasswordEditText
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="请输入密码"
+                android:background="@android:color/white"
+                android:padding="12dp" />
+
+            <TextView style="@style/Text.AwUi.Subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="AwStepper — 数量加减" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.answufeng.ui.widget.AwStepper
+                    android:id="@+id/stepper1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:stepper_value="1"
+                    app:stepper_min="0"
+                    app:stepper_max="99"
+                    app:stepper_step="1" />
+
+                <TextView
+                    android:id="@+id/stepperValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:text="值：1"
+                    android:textSize="14sp"
+                    android:textColor="#666666" />
+            </LinearLayout>
+
+            <TextView style="@style/Text.AwUi.Subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="AwDropDownMenu — 下拉选择菜单" />
+
+            <com.answufeng.ui.widget.AwDropDownMenu
+                android:id="@+id/dropDownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@android:color/white"
+                app:ddm_hint="请选择城市"
+                app:ddm_cornerRadius="4dp"
+                app:ddm_borderColor="#CCCCCC"
+                app:ddm_borderWidth="1dp" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

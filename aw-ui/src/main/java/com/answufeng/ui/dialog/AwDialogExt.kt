@@ -7,8 +7,8 @@ import androidx.fragment.app.Fragment
 fun Context.showAwMessage(
     title: String,
     message: String,
-) {
-    AwDialog.showMessage(this, title, message)
+): AwDialog {
+    return AwDialog.showMessage(this, title, message)
 }
 
 /** 显示确认对话框，点击确定后执行 [onConfirm]。 */
@@ -16,23 +16,25 @@ fun Context.showAwConfirm(
     title: String,
     message: String,
     onConfirm: () -> Unit,
-) {
-    AwDialog.showConfirm(this, title, message, onConfirm)
+): AwDialog {
+    return AwDialog.showConfirm(this, title, message, onConfirm)
 }
 
-/** [Fragment] 便捷封装，使用 [requireContext]。 */
+/** [Fragment] 便捷封装，安全获取 Context。 */
 fun Fragment.showAwMessage(
     title: String,
     message: String,
-) {
-    requireContext().showAwMessage(title, message)
+): AwDialog? {
+    val ctx = context ?: return null
+    return ctx.showAwMessage(title, message)
 }
 
-/** [Fragment] 便捷封装，使用 [requireContext]。 */
+/** [Fragment] 便捷封装，安全获取 Context。 */
 fun Fragment.showAwConfirm(
     title: String,
     message: String,
     onConfirm: () -> Unit,
-) {
-    requireContext().showAwConfirm(title, message, onConfirm)
+): AwDialog? {
+    val ctx = context ?: return null
+    return ctx.showAwConfirm(title, message, onConfirm)
 }
