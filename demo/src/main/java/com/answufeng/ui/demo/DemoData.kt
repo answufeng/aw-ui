@@ -191,6 +191,11 @@ object DemoData {
 
     private fun dialogEntries() = listOf(
         DemoEntry(
+            title = "AwSnackbar",
+            desc = "Snackbar 替代 Toast：预设样式、Builder 自定义、自动查找锚点",
+            activity = SnackbarDemoActivity::class.java,
+        ),
+        DemoEntry(
             title = "Dialog 总览",
             desc = "AwDialog、AwLoadingDialog、AwActionSheetDialog 与 Context 扩展",
             activity = ShowcaseActivity::class.java,

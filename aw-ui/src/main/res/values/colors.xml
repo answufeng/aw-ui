@@ -59,4 +59,11 @@
     <color name="aw_color_date_header_text">#FFFFFF</color>
     <color name="aw_color_date_selected">#1976D2</color>
     <color name="aw_color_picker_selected_text">#1976D2</color>
+
+    <color name="aw_color_snackbar_bg">#323232</color>
+    <color name="aw_color_snackbar_success">#4CAF50</color>
+    <color name="aw_color_snackbar_warning">#FF9800</color>
+    <color name="aw_color_snackbar_error">#F44336</color>
+    <color name="aw_color_snackbar_info">#2196F3</color>
+    <color name="aw_color_snackbar_text">#FFFFFF</color>
 </resources>

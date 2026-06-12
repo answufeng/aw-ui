@@ -160,7 +160,9 @@ class AwDotIndicator @JvmOverloads constructor(
         val totalWidth = if (dotCount <= 0) {
             0f
         } else {
-            dotCount * dotRadius * 2 + (dotCount - 1) * dotSpacing
+            // 选中圆点比未选中大，首尾圆点选中时会超出 dotRadius 范围，需补足差值
+            dotCount * dotRadius * 2 + (dotCount - 1) * dotSpacing +
+                (selectedDotRadius - dotRadius) * 2
         }
         val maxHeight = selectedDotRadius * 2
 
@@ -174,8 +176,9 @@ class AwDotIndicator @JvmOverloads constructor(
         super.onDraw(canvas)
         if (dotCount <= 0) return
 
-        val totalWidth = dotCount * dotRadius * 2 + (dotCount - 1) * dotSpacing
-        val startX = (width - totalWidth) / 2f
+        val extraPadding = selectedDotRadius - dotRadius
+        val totalWidth = dotCount * dotRadius * 2 + (dotCount - 1) * dotSpacing + extraPadding * 2
+        val startX = (width - totalWidth) / 2f + extraPadding
         val centerY = height / 2f
 
         for (i in 0 until dotCount) {

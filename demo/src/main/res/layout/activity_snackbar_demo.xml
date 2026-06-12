@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <com.answufeng.ui.widget.AwTitleBar
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:titleBar_showBack="true"
+        app:titleBar_showDivider="true"
+        app:titleBar_title="AwSnackbar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 预设样式 -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Card.AwUi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        style="@style/Text.AwUi.Subtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:text="默认样式 · Toast 风格（深灰背景 + 白色文字）" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_default"
+                        style="@style/MaterialButton.AwUi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="默认 Toast 风格" />
+
+                    <TextView
+                        style="@style/Text.AwUi.Subtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:text="预设样式 · success / warning / error / info" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_success"
+                            style="@style/MaterialButton.AwUi"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Success" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_warning"
+                            style="@style/MaterialButton.AwUi"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:text="Warning" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_error"
+                            style="@style/MaterialButton.AwUi"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Error" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_info"
+                            style="@style/MaterialButton.AwUi"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:text="Info" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 带操作按钮 -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Card.AwUi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        style="@style/Text.AwUi.Subtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:text="带操作按钮 · action()" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_action"
+                        style="@style/MaterialButton.AwUi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="带撤销按钮" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_action_retry"
+                        style="@style/MaterialButton.AwUi.Outlined"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="错误 + 重试按钮" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Builder 自定义 -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Card.AwUi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        style="@style/Text.AwUi.Subtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:text="Builder 自定义 · 长文本 / 持久显示 / 锚点" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_long_text"
+                        style="@style/MaterialButton.AwUi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="长文本（maxLines=3）" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_indefinite"
+                        style="@style/MaterialButton.AwUi.Outlined"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="持久显示 + 手动关闭" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_anchor"
+                        style="@style/MaterialButton.AwUi.Outlined"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="锚定到按钮上方" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 自定义 View -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Card.AwUi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        style="@style/Text.AwUi.Subtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:text="自定义 View · customView()" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_custom_view"
+                        style="@style/MaterialButton.AwUi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="图标 + 文字自定义布局" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_custom_progress"
+                        style="@style/MaterialButton.AwUi.Outlined"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="进度条 + 文字" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- AwSnackbarManager -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Card.AwUi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        style="@style/Text.AwUi.Subtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="4dp"
+                        android:text="AwSnackbarManager · 自动查找锚点" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:text="在 Application 中 install() 后，无需 View 引用即可弹出 Snackbar"
+                        android:textColor="#99000000"
+                        android:textSize="13sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_context_snackbar"
+                        style="@style/MaterialButton.AwUi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Context.showAwSnackbar()" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_context_success"
+                        style="@style/MaterialButton.AwUi.Outlined"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Context.showAwSuccess()" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_manager_status"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="查看 Manager 状态" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 扩展函数对比 -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Card.AwUi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        style="@style/Text.AwUi.Subtitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:text="View 扩展 vs Context 扩展" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_view_ext"
+                        style="@style/MaterialButton.AwUi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="View.showAwError()" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_fragment_ext"
+                        style="@style/MaterialButton.AwUi.Outlined"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Fragment.showAwInfo()" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

@@ -111,6 +111,7 @@ class AwBottomTabBar
         private var boundViewPager: ViewPager2? = null
         private var pageChangeCallback: ViewPager2.OnPageChangeCallback? = null
         private var ignorePagerCallback = false
+        private var pagerSyncInProgress = false
 
         private var tabSelectedListener: ((Int) -> Unit)? = null
         private var tabReselectedListener: ((Int) -> Unit)? = null
@@ -370,6 +371,13 @@ class AwBottomTabBar
             }
         }
 
+        override fun onScrollChanged(l: Int, t: Int, oldl: Int, oldt: Int) {
+            super.onScrollChanged(l, t, oldl, oldt)
+            if (layoutMode == LayoutMode.SCROLLABLE && !indicatorRect.isEmpty) {
+                invalidate()
+            }
+        }
+
         private fun applyAttributes(ta: TypedArray) {
             tabMode = TabMode.entries.getOrElse(ta.getInt(R.styleable.AwBottomTabBar_tab_mode, 0)) { TabMode.ICON_TEXT }
             layoutMode = LayoutMode.entries.getOrElse(ta.getInt(R.styleable.AwBottomTabBar_tab_layout_mode, 0)) { LayoutMode.FIXED }
@@ -542,6 +550,8 @@ class AwBottomTabBar
             if (layoutMode == LayoutMode.FIXED) {
                 params.width = LayoutParams.MATCH_PARENT
                 tabContainer.gravity = Gravity.CENTER
+                // FIXED 模式下内容不超出视口，scrollX 必须清零，否则 onDraw 中坐标会偏移
+                scrollTo(0, 0)
             } else {
                 params.width = LayoutParams.WRAP_CONTENT
                 tabContainer.gravity = Gravity.CENTER_VERTICAL
@@ -752,24 +762,20 @@ class AwBottomTabBar
             animate: Boolean,
             notifyListener: Boolean,
             syncPager: Boolean,
+            usePost: Boolean = true,
         ) {
             if (index !in tabs.indices) return
             val changed = currentIndex != index
             currentIndex = index
             pendingRestoreIndex = index
             updateTabColors()
-            refreshIndicatorPosition(animate)
-            ensureTabVisible(index, animate)
+            refreshIndicatorPosition(animate, usePost)
 
             if (syncPager) {
-                var changedPager = false
                 if (boundViewPager?.currentItem != index) {
                     ignorePagerCallback = true
+                    pagerSyncInProgress = true
                     boundViewPager?.setCurrentItem(index, animate)
-                    changedPager = true
-                }
-                if (changedPager) {
-                    post { ignorePagerCallback = false }
                 }
             }
 
@@ -827,13 +833,20 @@ class AwBottomTabBar
                 .start()
         }
 
-        private fun refreshIndicatorPosition(animate: Boolean) {
+        private fun refreshIndicatorPosition(
+            animate: Boolean,
+            usePost: Boolean = true,
+        ) {
             if (indicatorStyle == IndicatorStyle.NONE || tabViews.isEmpty() || currentIndex !in tabViews.indices) {
                 indicatorRect.setEmpty()
                 invalidate()
                 return
             }
-            post { moveIndicatorTo(currentIndex, animate) }
+            if (usePost) {
+                post { moveIndicatorTo(currentIndex, animate) }
+            } else {
+                moveIndicatorTo(currentIndex, animate)
+            }
         }
 
         private fun moveIndicatorTo(
@@ -842,16 +855,21 @@ class AwBottomTabBar
         ) {
             if (indicatorStyle == IndicatorStyle.NONE || index !in tabViews.indices) return
             val targetRect = computeIndicatorRect(index) ?: return
+            val targetScrollX = computeTargetScrollX(index)
+
+            indicatorAnimator?.cancel()
 
             if (!animate || indicatorRect.isEmpty) {
-                indicatorAnimator?.cancel()
                 indicatorRect.set(targetRect)
+                if (layoutMode == LayoutMode.SCROLLABLE) {
+                    scrollTo(targetScrollX, 0)
+                }
                 invalidate()
                 return
             }
 
             val startRect = RectF(indicatorRect)
-            indicatorAnimator?.cancel()
+            val startScrollX = scrollX
             indicatorAnimator =
                 ValueAnimator.ofFloat(0f, 1f).apply {
                     duration = indicatorAnimatorDuration
@@ -864,59 +882,106 @@ class AwBottomTabBar
                             lerp(startRect.right, targetRect.right, fraction),
                             lerp(startRect.bottom, targetRect.bottom, fraction),
                         )
+                        if (layoutMode == LayoutMode.SCROLLABLE && startScrollX != targetScrollX) {
+                            scrollTo(
+                                lerp(startScrollX.toFloat(), targetScrollX.toFloat(), fraction).toInt(),
+                                0,
+                            )
+                        }
                         invalidate()
                     }
                     start()
                 }
         }
 
-        private fun computeIndicatorRect(index: Int): RectF? {
-            val targetTab = tabViews.getOrNull(index) ?: return null
-            if (!targetTab.isLaidOut || targetTab.width == 0) return null
-
-            val left: Float
-            val right: Float
-            if (indicatorWidthMode == IndicatorWidthMode.FOLLOW_TEXT) {
-                val textView = findFirstViewWithTag(targetTab, TAG_TEXT) as? TextView
-                if (textView != null && textView.width > 0) {
-                    val titleWidth = textView.paint.measureText(textView.text.toString())
-                    val textCenter = viewCenterXInContainer(textView)
-                    left = textCenter - titleWidth / 2f
-                    right = textCenter + titleWidth / 2f
-                } else {
-                    val center = viewCenterXInContainer(targetTab)
-                    val fallbackWidth = targetTab.width * 0.52f
-                    left = center - fallbackWidth / 2f
-                    right = center + fallbackWidth / 2f
-                }
-            } else {
-                left = targetTab.left.toFloat()
-                right = targetTab.right.toFloat()
-            }
-
-            val bottom = height - indicatorMarginTop
-            val top = bottom - indicatorHeight
-            return RectF(left, top, right, bottom)
+        private fun computeTargetScrollX(index: Int): Int {
+            if (layoutMode != LayoutMode.SCROLLABLE) return scrollX
+            val targetTab = tabViews.getOrNull(index) ?: return scrollX
+            val center = targetTab.left + targetTab.width / 2f
+            val maxScroll = (tabContainer.width - width).coerceAtLeast(0)
+            return (center - width / 2f).toInt().coerceIn(0, maxScroll)
         }
 
+        private fun isIndicatorOnScreen(indicator: RectF): Boolean {
+            val screenLeft = indicator.left - scrollX
+            val screenRight = indicator.right - scrollX
+            return screenRight > 0 && screenLeft < width
+        }
+
+    private fun computeIndicatorRect(index: Int): RectF? {
+        val targetTab = tabViews.getOrNull(index) ?: return null
+
+        if (!targetTab.isLaidOut || targetTab.width == 0) {
+            return null
+        }
+
+        val left: Float
+        val right: Float
+
+        if (indicatorWidthMode == IndicatorWidthMode.FOLLOW_TEXT) {
+            val textView =
+                findFirstViewWithTag(targetTab, TAG_TEXT) as? TextView
+
+            if (textView != null && textView.width > 0) {
+                val titleWidth =
+                    textView.paint.measureText(textView.text.toString())
+
+                val textCenter = viewCenterXInContainer(textView)
+
+                left = textCenter - titleWidth / 2f
+                right = textCenter + titleWidth / 2f
+            } else {
+                val center = viewCenterXInContainer(targetTab)
+                val fallbackWidth = targetTab.width * 0.52f
+
+                left = center - fallbackWidth / 2f
+                right = center + fallbackWidth / 2f
+            }
+        } else {
+            left = targetTab.left.toFloat()
+            right = targetTab.right.toFloat()
+        }
+
+        val bottom =
+            (tabContainer.bottom - paddingBottom).toFloat() -
+                    indicatorMarginTop
+
+        val top = bottom - indicatorHeight
+
+        return RectF(
+            left,
+            top,
+            right,
+            bottom,
+        )
+    }
         private fun viewCenterXInContainer(view: View): Float {
             view.getDrawingRect(tempRect)
             tabContainer.offsetDescendantRectToMyCoords(view, tempRect)
             return tempRect.exactCenterX()
         }
 
-        override fun onDraw(canvas: Canvas) {
-            super.onDraw(canvas)
-            if (indicatorStyle == IndicatorStyle.NONE || indicatorRect.isEmpty) return
-            val radius = if (indicatorCornerRadius >= 0f) indicatorCornerRadius else indicatorHeight / 2f
-            drawingRect.set(
-                indicatorRect.left - scrollX,
-                indicatorRect.top,
-                indicatorRect.right - scrollX,
-                indicatorRect.bottom,
-            )
-            canvas.drawRoundRect(drawingRect, radius, radius, indicatorPaint)
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+
+        if (indicatorStyle == IndicatorStyle.NONE || indicatorRect.isEmpty) {
+            return
         }
+
+        val radius =
+            if (indicatorCornerRadius >= 0f) {
+                indicatorCornerRadius
+            } else {
+                indicatorHeight / 2f
+            }
+
+        canvas.drawRoundRect(
+            indicatorRect,
+            radius,
+            radius,
+            indicatorPaint,
+        )
+    }
 
         fun bindViewPager(viewPager: ViewPager2) {
             unbindViewPager()
@@ -933,34 +998,40 @@ class AwBottomTabBar
                         positionOffset: Float,
                         positionOffsetPixels: Int,
                     ) {
-                        if (!enableScrollSync || indicatorStyle == IndicatorStyle.NONE || tabViews.isEmpty()) return
+                        if (ignorePagerCallback || !enableScrollSync || indicatorStyle == IndicatorStyle.NONE || tabViews.isEmpty()) return
                         if (position !in tabs.indices) return
-                        val fromRect = computeIndicatorRect(position) ?: return
-                        val nextRect = computeIndicatorRect((position + 1).coerceAtMost(tabs.lastIndex)) ?: fromRect
-                        val fraction = positionOffset.coerceIn(0f, 1f)
-                        indicatorRect.set(
-                            lerp(fromRect.left, nextRect.left, fraction),
-                            lerp(fromRect.top, nextRect.top, fraction),
-                            lerp(fromRect.right, nextRect.right, fraction),
-                            lerp(fromRect.bottom, nextRect.bottom, fraction),
-                        )
+                        indicatorAnimator?.cancel()
                         if (layoutMode == LayoutMode.SCROLLABLE) {
-                            val currentCenter = lerp(fromRect.centerX(), nextRect.centerX(), fraction)
+                            val fromRect = computeIndicatorRect(position) ?: return
+                            val nextRect = computeIndicatorRect((position + 1).coerceAtMost(tabs.lastIndex)) ?: fromRect
+                            val currentCenter = lerp(fromRect.centerX(), nextRect.centerX(), positionOffset.coerceIn(0f, 1f))
                             smoothScrollToCentered(currentCenter, false)
                         }
-                        invalidate()
                     }
 
                     override fun onPageSelected(position: Int) {
-                        if (ignorePagerCallback || position !in tabs.indices) return
-                        setCurrentIndex(position, animate = true, notifyListener = true, syncPager = false)
-                    }
-
-                    override fun onPageScrollStateChanged(state: Int) {
-                        if (state == ViewPager2.SCROLL_STATE_IDLE && currentIndex in tabs.indices) {
-                            refreshIndicatorPosition(false)
+                        val wasSyncing = pagerSyncInProgress
+                        ignorePagerCallback = false
+                        pagerSyncInProgress = false
+                        if (position !in tabs.indices) return
+                        currentIndex = position
+                        pendingRestoreIndex = position
+                        updateTabColors()
+                        if (!wasSyncing) {
+                            indicatorAnimator?.cancel()
+                            val targetRect = computeIndicatorRect(position)
+                            if (targetRect != null) {
+                                indicatorRect.set(targetRect)
+                                if (layoutMode == LayoutMode.SCROLLABLE) {
+                                    scrollTo(computeTargetScrollX(position), 0)
+                                }
+                                invalidate()
+                            }
+                            tabSelectedListener?.invoke(position)
                         }
                     }
+
+                    override fun onPageScrollStateChanged(state: Int) = Unit
                 }
 
             viewPager.registerOnPageChangeCallback(pageChangeCallback!!)
@@ -986,6 +1057,7 @@ class AwBottomTabBar
             pageChangeCallback = null
             boundViewPager = null
             ignorePagerCallback = false
+            pagerSyncInProgress = false
         }
 
         fun setOnTabSelectedListener(listener: (Int) -> Unit) {
@@ -1114,20 +1186,11 @@ class AwBottomTabBar
                 }
         }
 
-        private fun ensureTabVisible(
-            index: Int,
-            animate: Boolean,
-        ) {
-            if (layoutMode != LayoutMode.SCROLLABLE) return
-            val targetTab = tabViews.getOrNull(index) ?: return
-            val center = targetTab.left + targetTab.width / 2f
-            smoothScrollToCentered(center, animate)
-        }
-
         private fun smoothScrollToCentered(
             centerX: Float,
             animate: Boolean,
         ) {
+            if (layoutMode != LayoutMode.SCROLLABLE) return
             val maxScroll = (tabContainer.width - width).coerceAtLeast(0)
             val targetScroll = (centerX - width / 2f).toInt().coerceIn(0, maxScroll)
             if (animate) smoothScrollTo(targetScroll, 0) else scrollTo(targetScroll, 0)
@@ -1223,7 +1286,6 @@ class AwBottomTabBar
             return Bundle().apply {
                 putParcelable(KEY_SUPER_STATE, super.onSaveInstanceState())
                 putInt(KEY_CURRENT_INDEX, currentIndex)
-                putInt(KEY_SCROLL_X, scrollX)
             }
         }
 
@@ -1241,16 +1303,11 @@ class AwBottomTabBar
                 }
             super.onRestoreInstanceState(superState)
             pendingRestoreIndex = state.getInt(KEY_CURRENT_INDEX, 0)
-            val restoredScrollX = state.getInt(KEY_SCROLL_X, 0)
             currentIndex = pendingRestoreIndex.coerceInTabRange()
             post {
                 currentIndex = pendingRestoreIndex.coerceInTabRange()
                 updateTabColors()
                 refreshIndicatorPosition(false)
-                if (layoutMode == LayoutMode.SCROLLABLE) {
-                    scrollTo(restoredScrollX, 0)
-                    ensureTabVisible(currentIndex, false)
-                }
             }
         }
 
@@ -1266,7 +1323,6 @@ class AwBottomTabBar
         companion object {
             private const val KEY_SUPER_STATE = "superState"
             private const val KEY_CURRENT_INDEX = "currentIndex"
-            private const val KEY_SCROLL_X = "scrollX"
 
             private const val TAG_ICON = "icon"
             private const val TAG_TEXT = "text"
